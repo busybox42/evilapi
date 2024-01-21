@@ -7,13 +7,13 @@ EvilAPI is a deliberately mischievous API, developed with for questionable purpo
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [Features](#features)
-4. [Dependencies](#dependencies)
-5. [Configuration](#configuration)
-6. [Documentation](#documentation)
-7. [Examples](#examples)
-8. [API Tests](#api-tests)
-9. [Contributors](#contributors)
-10. [License](#license)
+5. [Dependencies](#dependencies)
+6. [Configuration](#configuration)
+7. [Documentation](#documentation)
+8. [Examples](#examples)
+9. [API Tests](#api-tests)
+10. [Contributors](#contributors)
+11. [License](#license)
 
 ## Installation
 To install EvilAPI, follow these steps:
@@ -41,6 +41,21 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Customizable PGP Key Generation**: Generates temporary PGP keys for testing encryption and decryption.
 - **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
 - **Unpredictable Responses**: Some endpoints are designed to return unexpected or mischievous results, serving as a unique educational tool for understanding API behaviors and troubleshooting.
+
+### Known Issues
+The following are known issues with EvilAPI:
+
+1. **Email Headers API - Work in Progress**: The Email Headers API is currently under development and may contain bugs. Notably, the calculation of time between hops is not accurate, and there may be other parsing issues. Users should use this API with caution and report any anomalies they encounter.
+
+2. **Temporary Key Expiration**: Temporary PGP keys lack an automated expiration or deletion mechanism, leading to potential accumulation of unused keys.
+
+3. **SSL Configuration Limitations**: SSL setup requires manual file path inputs and does not automatically renew certificates, necessitating manual updates upon expiration.
+
+4. **File Size Limitations**: The API enforces a 100 MB limit for file and message sizes, which might not be suitable for all use cases.
+
+5. **Dependency Vulnerabilities**: Some dependencies may have unresolved security vulnerabilities. Regular updates and checks are recommended.
+
+Please feel free to contribute by addressing these issues or reporting new ones on our [GitHub repository](https://github.com/busybox42/evilapi).
 
 ## Dependencies
 EvilAPI relies on the following dependencies for its core functionality and additional features:
