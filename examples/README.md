@@ -90,7 +90,7 @@ This command will return information about the client's IP, such as the browser 
 curl https://www.some-website.tld:3011/api/whoami
 ```
 
-### etching Information for a Specific IP Address
+### Fetching Information for a Specific IP Address
 
 Replace `8.8.8.8` with the IP address you want to inquire about. This will return similar information as above, but for the specified IP address.
 
