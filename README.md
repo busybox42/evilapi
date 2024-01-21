@@ -41,7 +41,6 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Customizable PGP Key Generation**: Generates temporary PGP keys for testing encryption and decryption.
 - **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
 - **Whoami Information**: Provides details about the client's IP, browser info, OS, PTR record, geo location, and ISP info, and also supports querying information for a specified IP or hostname.
-- **Unpredictable Responses**: Some endpoints are designed to return unexpected or mischievous results, serving as a unique educational tool for understanding API behaviors and troubleshooting.
 
 ### Known Issues
 The following are known issues with EvilAPI:
