@@ -32,8 +32,15 @@ npm start
 ```
 
 ## Features
-- RESTful API endpoints with a twist.
-- Unconventional logic for educational purposes.
+EvilAPI offers a range of features with a focus on unconventional and educational purposes:
+
+- **Blacklist Check**: Determines if a domain is on various email blacklists.
+- **Email Header Analysis**: Analyzes email headers for spam indicators, sender authenticity, and more.
+- **PGP Encryption/Decryption**: Offers endpoints for encrypting and decrypting messages using PGP, including file encryption and decryption.
+- **SMTP Server Testing**: Tests SMTP servers for connection reliability, TLS support, and open relay vulnerabilities.
+- **Customizable PGP Key Generation**: Generates temporary PGP keys for testing encryption and decryption.
+- **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
+- **Unpredictable Responses**: Some endpoints are designed to return unexpected or mischievous results, serving as a unique educational tool for understanding API behaviors and troubleshooting.
 
 ## Dependencies
 EvilAPI relies on the following dependencies:
