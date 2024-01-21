@@ -7,13 +7,13 @@ EvilAPI is a deliberately mischievous API, developed with for questionable purpo
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [Features](#features)
-4. [Dependencies](#dependencies)
-5. [Configuration](#configuration)
-6. [Documentation](#documentation)
-7. [Examples](#examples)
-8. [API Tests](#api-tests)
-9. [Contributors](#contributors)
-10. [License](#license)
+5. [Dependencies](#dependencies)
+6. [Configuration](#configuration)
+7. [Documentation](#documentation)
+8. [Examples](#examples)
+9. [API Tests](#api-tests)
+10. [Contributors](#contributors)
+11. [License](#license)
 
 ## Installation
 To install EvilAPI, follow these steps:
@@ -42,6 +42,21 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
 - **Unpredictable Responses**: Some endpoints are designed to return unexpected or mischievous results, serving as a unique educational tool for understanding API behaviors and troubleshooting.
 
+### Known Issues
+The following are known issues with EvilAPI:
+
+1. **Email Headers API - Work in Progress**: The Email Headers API is currently under development and may contain bugs. Notably, the calculation of time between hops is not accurate, and there may be other parsing issues...
+
+2. **Temporary Key Expiration**: Temporary PGP keys lack an automated expiration or deletion mechanism, leading to potential accumulation of unused keys.
+
+3. **SSL Configuration Limitations**: SSL setup requires manual file path inputs and does not automatically renew certificates, necessitating manual updates upon expiration.
+
+4. **File Size Limitations**: The API enforces a 100 MB limit for file and message sizes, which might not be suitable for all use cases.
+
+5. **Dependency Vulnerabilities**: Some dependencies may have unresolved security vulnerabilities. Regular updates and checks are recommended.
+
+Please feel free to contribute by addressing these issues or reporting new ones on our [GitHub repository](https://github.com/busybox42/evilapi).
+
 ## Dependencies
 EvilAPI relies on the following dependencies for its core functionality and additional features:
 
@@ -63,7 +78,15 @@ For running the test script:
 - **fs** and **fs.promises**: Node.js file system module for handling file operations in tests.
 
 ## Configuration
-Configuration details are located in the `config` directory. Adjust the settings to suit your environment.
+Configuration details for EvilAPI are managed in the `config` directory. Here you can adjust the settings to suit your specific environment and requirements. Key configuration options include:
+
+- Server settings: Define the port and hostname for the API.
+- SSL configuration: Enable SSL and specify paths to key, certificate, and CA files.
+- PGP keys: Configure PGP keys for encryption and decryption purposes.
+- Limits: Set file size limits for uploads and message processing.
+- Memcached settings: Specify the host and port for the memcached server, used for managing temporary PGP keys.
+
+Refer to the `config.js` file in the `config` directory for an example and further details on each configuration option.
 
 ## Documentation
 Further documentation detailing API endpoints and their quirky behaviors can be found in the `docs` directory.
