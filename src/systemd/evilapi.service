@@ -1,0 +1,13 @@
+[Unit]
+Description=Evil API Service
+After=network.target
+
+[Service]
+Type=simple
+User=someguy
+WorkingDirectory=/opt/evilapi/src
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
