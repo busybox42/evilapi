@@ -1,6 +1,3 @@
-Absolutely, I'll modify the README to reflect the changes you requested. Here's the updated version with the Troubleshooting section removed and a new section added for API Tests:
-
-````markdown
 # EvilAPI
 
 ## Introduction
@@ -106,6 +103,7 @@ git clone https://github.com/busybox42/evilapi.git
 cd evilapi
 npm install
 ````
+
 ````
 
 ## Usage
@@ -156,6 +154,4 @@ API tests are designed to ensure the functionality and integrity of the EvilAPI 
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
----
-
-Please provide any additional information or specific details you would like to include, especially in sections like Documentation, Examples, and Troubleshooting where I've made assumptions based on typical project structures.
+````
