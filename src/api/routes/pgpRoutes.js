@@ -7,11 +7,18 @@ const upload = multer({
 });
 const openpgp = require("openpgp");
 const fs = require("fs");
-const config = require("../../config/config"); // Adjust this path based on your directory structure
+const config = require("../../config/config");
 const { logError } = require("../../utils/logger");
-const { getKeyFromMemcached } = require("../../services/memcachedService");
-const { storeKeyInMemcached } = require("../../services/memcachedService");
+const {
+  getKeyFromMemcached,
+  storeKeyInMemcached,
+} = require("../../services/memcachedService");
 const { generateStaticKeys } = require("../../utils/pgpUtils");
+
+const sendJsonResponse = (res, statusCode, data) => {
+  res.status(statusCode).setHeader("Content-Type", "application/json");
+  res.send(JSON.stringify(data, null, 2) + "\n");
+};
 
 router.post("/generate-temp-key", async (req, res) => {
   try {
@@ -27,7 +34,6 @@ router.post("/generate-temp-key", async (req, res) => {
 
     // Generate keys
     const tempKey = await generateStaticKeys(name, email, password);
-    console.log("Generated Key Pair:", tempKey);
 
     if (!tempKey.publicKeyArmored || !tempKey.privateKeyArmored) {
       return logError(
@@ -46,7 +52,7 @@ router.post("/generate-temp-key", async (req, res) => {
     // Store the generated key in Memcached
     await storeKeyInMemcached(name, keyData, req); // Pass the request object for error logging
 
-    res.json({
+    sendJsonResponse(res, 200, {
       message: "Key generated successfully",
       publicKey: tempKey.publicKeyArmored,
     });
@@ -87,7 +93,7 @@ router.post("/encrypt", async (req, res) => {
       encryptionKeys: encryptionKeys,
     });
 
-    res.json({ result: encryptedMessage });
+    sendJsonResponse(res, 200, { result: encryptedMessage });
   } catch (error) {
     logError(req, "Error in encrypt endpoint", error);
     res.status(500).json({ error: error.message });
@@ -146,7 +152,7 @@ router.post("/decrypt", async (req, res) => {
       }
 
       // Send the decrypted message
-      res.json({ result: decryptedMessage.data });
+      sendJsonResponse(res, 200, { result: decryptedMessage.data });
     } catch (error) {
       console.error("Error in decrypt endpoint:", error);
       logError(req, "Error in decrypt endpoint", error);
