@@ -82,6 +82,30 @@ curl -X POST -F "file=@/path/to/your/encrypted_file.pgp" \
      -o /path/to/decrypted_file.txt
 ```
 
+### Fetching Information for the Client's IP Address
+
+This command will return information about the client's IP, such as the browser info, OS, PTR record, geo location, and ISP info, if available.
+
+```bash
+curl https://www.some-website.tld:3011/api/whoami
+```
+
+### etching Information for a Specific IP Address
+
+Replace `8.8.8.8` with the IP address you want to inquire about. This will return similar information as above, but for the specified IP address.
+
+```bash
+curl "https://www.some-website.tld:3011/api/whoami?ip=8.8.8.8"
+```
+
+### Fetching Information for a Hostname
+
+Replace `example.com` with the hostname you are interested in. The response will include details about the hostname, such as geo location and ISP info.
+
+```bash
+curl "https://www.some-website.tld:3011/api/whoami?ip=example.com"
+```
+
 ### Notes and Reminders
 
 - Replace `/path/to/your/file.txt` and `/path/to/your/encrypted_file.pgp` with the actual paths to your files for file encryption and decryption commands.

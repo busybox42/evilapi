@@ -2,12 +2,14 @@ const axios = require("axios");
 const fs = require("fs");
 const fsPromises = require("fs").promises;
 const FormData = require("form-data");
+const dns = require("dns").promises;
+const geoip = require("geoip-lite");
 
 // Global constants
-const API_HOST = "https://www.some-website.tld";
+const API_HOST = "https://www.some-domain.tld";
 const API_PORT = 3011;
 const BASE_URL = `${API_HOST}:${API_PORT}`;
-const DOMAIN = "some-website.tld";
+const DOMAIN = "some-domain.tld";
 
 // Global variables for encrypted message and file content
 let encryptedMessageGlobal = "";
@@ -23,13 +25,13 @@ const messageData = {
 // Data for custom key
 const customKeyData = {
   name: "YourNameHere",
-  email: "YourNameHere@some-website.tld",
+  email: "YourNameHere@some-domain.tld",
   password: "YourRandomPasswordHere",
 };
 
 // Global variable for SMTP test data
 const smtpTestData = {
-  serverAddress: "mail.some-website.tld",
+  serverAddress: "mail.some-domain.tld",
   port: "587",
 };
 
@@ -37,6 +39,8 @@ const smtpTestData = {
 const filePath = "/tmp/file.txt";
 const fileData = "Super Secret Message";
 const hdrFilePath = "/tmp/hdr.txt";
+const TEST_IP = "8.8.8.8"; // Public IP for testing
+const TEST_HOSTNAME = "mail.some-domain.tld"; // Hostname for testing
 
 // Setup function for test file
 async function setupTestFile() {
@@ -50,6 +54,45 @@ beforeAll(async () => {
 
 // Test suite
 describe("EvilAPI Tests", () => {
+  describe("Whoami API Tests", () => {
+    test("should return information for a specific IP", async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/whoami?ip=${TEST_IP}`
+        );
+        expect(response.status).toBe(200);
+        expect(response.data).toHaveProperty("ip", TEST_IP);
+        // ... (other assertions)
+        console.log(
+          "Whoami API Response for IP:",
+          JSON.stringify(response.data, null, 2)
+        );
+      } catch (error) {
+        console.error("Error:", error.message);
+        throw error;
+      }
+    });
+
+    test("should return information for a specific hostname", async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/api/whoami?ip=${TEST_HOSTNAME}`
+        );
+        expect(response.status).toBe(200);
+        // The API returns the hostname as 'ip', so we check for that
+        expect(response.data).toHaveProperty("ip", TEST_HOSTNAME);
+        // ... (other assertions)
+        console.log(
+          "Whoami API Response for Hostname:",
+          JSON.stringify(response.data, null, 2)
+        );
+      } catch (error) {
+        console.error("Error:", error.message);
+        throw error;
+      }
+    });
+  });
+
   describe("Email Info API Tests", () => {
     test("should return email information for a domain", async () => {
       const response = await axios.get(`${BASE_URL}/api/email-info/${DOMAIN}`);
@@ -252,7 +295,7 @@ describe("EvilAPI Tests", () => {
 
       expect(response.status).toBe(200);
       expect(response.data).toHaveProperty("result");
-      expect(response.data.result).toBe("Hello, Alan!");
+      expect(response.data.result).toBe(messageData.message);
 
       // Log the decrypted message for visual verification
       console.log("Decrypted Message:", response.data.result);

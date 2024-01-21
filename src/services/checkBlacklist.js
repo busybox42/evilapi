@@ -8,11 +8,9 @@ async function checkDnsbl(ip, dnsbl) {
 
   try {
     await dns.resolve(`${ip.split(".").reverse().join(".")}.${dnsbl.host}`);
-    console.log(`IP ${ip} is listed in ${dnsbl.host}`); // Debug log for a listed result
     return { listed: true, details: dnsbl.details };
   } catch (err) {
     if (err.code === "ENOTFOUND") {
-      console.log(`IP ${ip} is not listed in ${dnsbl.host}`); // Debug log for a not listed result
       return { listed: false };
     } else {
       throw err;

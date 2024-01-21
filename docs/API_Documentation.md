@@ -78,6 +78,20 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - Decrypted message or file.
 
+### 6. Whoami Information Endpoint
+
+#### Endpoint: `/api/whoami`
+
+- **Purpose**: Provides information about the client's IP address, including browser info, OS, PTR record, geo location, and ISP info. It can also accept an IP address or hostname as a query parameter to return information about a specific IP or domain.
+- **Methods**: GET
+- **Query Parameters**:
+  - `ip` (optional): The IP address or hostname to inquire about. If not provided, the API uses the client's IP.
+- **Response**:
+  - `ip`: The IP address or hostname queried.
+  - `geoInfo`: Geographical information about the IP, if available.
+  - `ptrRecord`: The PTR record associated with the IP, if available.
+  - `ispInfo`: Information about the Internet Service Provider, if available.
+
 ---
 
 ## Additional Notes
