@@ -43,12 +43,24 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Unpredictable Responses**: Some endpoints are designed to return unexpected or mischievous results, serving as a unique educational tool for understanding API behaviors and troubleshooting.
 
 ## Dependencies
-EvilAPI relies on the following dependencies:
+EvilAPI relies on the following dependencies for its core functionality and additional features:
 
-- express: ^4.18.2
-- body-parser: ^1.20.2
-- cors: ^2.8.5
-- morgan: ^1.10.0
+- **express**: ^4.18.2 - A web application framework for Node.js.
+- **body-parser**: ^1.20.2 - Middleware for parsing incoming request bodies.
+- **cors**: ^2.8.5 - Package for providing a Connect/Express middleware that can be used to enable CORS.
+- **morgan**: ^1.10.0 - HTTP request logger middleware for Node.js.
+
+Additionally, the following are required for specific functionalities:
+
+- **memcached**: A high-performance distributed memory object caching system, necessary for storing temporary PGP keys.
+- **openpgp**: A library for PGP encryption and decryption (required for PGP-related endpoints).
+
+For running the test script:
+
+- **jest**: A JavaScript testing framework.
+- **axios**: Promise based HTTP client for the browser and Node.js (used in the test script).
+- **form-data**: A module to create readable `"multipart/form-data"` streams (used in file upload tests).
+- **fs** and **fs.promises**: Node.js file system module for handling file operations in tests.
 
 ## Configuration
 Configuration details are located in the `config` directory. Adjust the settings to suit your environment.
