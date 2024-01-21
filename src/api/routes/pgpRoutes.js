@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const fsPromises = require("fs").promises;
 const multer = require("multer");
 const upload = multer({
   dest: "uploads/",
   limits: { fileSize: 100 * 1024 * 1024 },
 });
 const openpgp = require("openpgp");
-const fs = require("fs");
 const config = require("../../config/config");
 const { logError } = require("../../utils/logger");
 const {
@@ -193,8 +193,8 @@ router.post("/encrypt-file", upload.single("file"), async (req, res) => {
     // Read public key
     const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
 
-    // Read file contents
-    const fileBuffer = fs.readFileSync(req.file.path);
+    // Read file contents asynchronously
+    const fileBuffer = await fsPromises.readFile(req.file.path);
     const fileData = fileBuffer.toString("utf8");
 
     // Encrypt file contents
@@ -217,6 +217,10 @@ router.post("/encrypt-file", upload.single("file"), async (req, res) => {
 
 // Endpoint for decrypting file
 router.post("/decrypt-file", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
   if (req.file.size > 100 * 1024 * 1024) {
     // 100 MB limit
     return res.status(413).json({ error: "File size exceeds limit of 100MB" });
@@ -240,8 +244,8 @@ router.post("/decrypt-file", upload.single("file"), async (req, res) => {
         return res.status(404).json({ error: `${keyType} key not found` });
       }
 
-      privateKeyArmored = req.staticKeyPairs[keyType].privateKey; // Use the armored private key
-      passphrase = keyInfo.passphrase; // Use the passphrase
+      privateKeyArmored = keyInfo.privateKeyArmored; // Retrieve armored private key from config
+      passphrase = keyInfo.passphrase;
     }
 
     // Decrypt private key
@@ -252,8 +256,8 @@ router.post("/decrypt-file", upload.single("file"), async (req, res) => {
       passphrase: passphrase,
     });
 
-    // Read file contents
-    const fileBuffer = fs.readFileSync(req.file.path);
+    // Read file contents asynchronously
+    const fileBuffer = await fsPromises.readFile(req.file.path);
     const fileData = fileBuffer.toString("utf8");
 
     // Decrypt file contents
@@ -272,7 +276,7 @@ router.post("/decrypt-file", upload.single("file"), async (req, res) => {
     });
     res.end(decryptedMessage.data);
   } catch (error) {
-    logError(req, "Error decrypting file", error);
+    console.error("Error decrypting file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
