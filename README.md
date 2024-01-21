@@ -63,7 +63,15 @@ For running the test script:
 - **fs** and **fs.promises**: Node.js file system module for handling file operations in tests.
 
 ## Configuration
-Configuration details are located in the `config` directory. Adjust the settings to suit your environment.
+Configuration details for EvilAPI are managed in the `config` directory. Here you can adjust the settings to suit your specific environment and requirements. Key configuration options include:
+
+- Server settings: Define the port and hostname for the API.
+- SSL configuration: Enable SSL and specify paths to key, certificate, and CA files.
+- PGP keys: Configure PGP keys for encryption and decryption purposes.
+- Limits: Set file size limits for uploads and message processing.
+- Memcached settings: Specify the host and port for the memcached server, used for managing temporary PGP keys.
+
+Refer to the `config.js` file in the `config` directory for an example and further details on each configuration option.
 
 ## Documentation
 Further documentation detailing API endpoints and their quirky behaviors can be found in the `docs` directory.
