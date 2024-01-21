@@ -45,7 +45,7 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 ### Known Issues
 The following are known issues with EvilAPI:
 
-1. **Email Headers API - Work in Progress**: The Email Headers API is currently under development and may contain bugs. Notably, the calculation of time between hops is not accurate, and there may be other parsing issues. Users should use this API with caution and report any anomalies they encounter.
+1. **Email Headers API - Work in Progress**: The Email Headers API is currently under development and may contain bugs. Notably, the calculation of time between hops is not accurate, and there may be other parsing issues...
 
 2. **Temporary Key Expiration**: Temporary PGP keys lack an automated expiration or deletion mechanism, leading to potential accumulation of unused keys.
 
