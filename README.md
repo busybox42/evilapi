@@ -48,13 +48,11 @@ The following are known issues with EvilAPI:
 
 1. **Email Headers API - Work in Progress**: The Email Headers API is currently under development and may contain bugs. Notably, the calculation of time between hops is not accurate, and there may be other parsing issues...
 
-2. **Temporary Key Expiration**: Temporary PGP keys lack an automated expiration or deletion mechanism, leading to potential accumulation of unused keys.
+2. **SSL Configuration Limitations**: SSL setup requires manual file path inputs and does not automatically renew certificates, necessitating manual updates upon expiration.
 
-3. **SSL Configuration Limitations**: SSL setup requires manual file path inputs and does not automatically renew certificates, necessitating manual updates upon expiration.
+3. **File Size Limitations**: The API enforces a 100 MB limit for file and message sizes, which might not be suitable for all use cases.
 
-4. **File Size Limitations**: The API enforces a 100 MB limit for file and message sizes, which might not be suitable for all use cases.
-
-5. **Dependency Vulnerabilities**: Some dependencies may have unresolved security vulnerabilities. Regular updates and checks are recommended.
+4. **Dependency Vulnerabilities**: Some dependencies may have unresolved security vulnerabilities. Regular updates and checks are recommended.
 
 Please feel free to contribute by addressing these issues or reporting new ones on our [GitHub repository](https://github.com/busybox42/evilapi).
 
