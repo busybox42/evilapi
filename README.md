@@ -41,7 +41,6 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Customizable PGP Key Generation**: Generates temporary PGP keys for testing encryption and decryption.
 - **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
 - **Whoami Information**: Provides details about the client's IP, browser info, OS, PTR record, geo location, and ISP info, and also supports querying information for a specified IP or hostname.
-- **Unpredictable Responses**: Some endpoints are designed to return unexpected or mischievous results, serving as a unique educational tool for understanding API behaviors and troubleshooting.
 
 ### Known Issues
 The following are known issues with EvilAPI:
@@ -70,13 +69,18 @@ Additionally, the following are required for specific functionalities:
 
 - **memcached**: A high-performance distributed memory object caching system, necessary for storing temporary PGP keys.
 - **openpgp**: A library for PGP encryption and decryption (required for PGP-related endpoints).
+- **geoip-lite**: A light-weight native JavaScript library for looking up IP addresses to their geographical location.
+- **dns**: Node.js DNS module for performing DNS lookups, including reverse DNS lookups (PTR records).
+- **whois-json**: A Node.js library for fetching WHOIS information, including ISP details.
 
 For running the test script:
 
 - **jest**: A JavaScript testing framework.
-- **axios**: Promise based HTTP client for the browser and Node.js (used in the test script).
+- **axios**: Promise-based HTTP client for the browser and Node.js (used in the test script).
 - **form-data**: A module to create readable `"multipart/form-data"` streams (used in file upload tests).
 - **fs** and **fs.promises**: Node.js file system module for handling file operations in tests.
+
+These dependencies ensure the API can effectively handle various network-related operations, data processing, and security functionalities.
 
 ## Configuration
 Configuration details for EvilAPI are managed in the `config` directory. Here you can adjust the settings to suit your specific environment and requirements. Key configuration options include:
