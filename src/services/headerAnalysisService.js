@@ -1,31 +1,12 @@
-function parseHeaders(rawHeaders) {
-  let headers = {};
-  if (!rawHeaders) {
-    console.error("No headers provided for parsing");
-    return headers;
-  }
+const { simpleParser } = require("mailparser");
 
-  const lines = rawHeaders.split("\n").reduce((acc, line) => {
-    if (line.match(/^\s/) && acc.length > 0) {
-      acc[acc.length - 1] += " " + line.trim();
-    } else {
-      acc.push(line);
-    }
-    return acc;
-  }, []);
-
-  lines.forEach((line) => {
-    const [key, value] = line.split(/:\s+/);
-    if (key && value) {
-      headers[key.trim()] = value.trim();
-    }
-  });
-
-  return headers;
+async function parseRawHeaders(rawHeaders) {
+  const mail = await simpleParser(rawHeaders);
+  return mail.headers;
 }
 
 function analyzeSpf(headers) {
-  const spfHeader = headers["Received-SPF"];
+  const spfHeader = headers.get("received-spf");
   if (!spfHeader) {
     return "No SPF Record";
   }
@@ -33,37 +14,67 @@ function analyzeSpf(headers) {
 }
 
 function analyzeDkim(headers) {
-  if (headers["Authentication-Results"]) {
-    return headers["Authentication-Results"].includes("dkim=pass")
-      ? "Pass"
-      : "Fail";
+  const dkimHeader = headers.get("authentication-results");
+  if (!dkimHeader) {
+    return "No DKIM Record";
   }
-  return "No DKIM Record";
+  return dkimHeader.includes("dkim=pass") ? "Pass" : "Fail";
 }
 
 function analyzeDmarc(headers) {
-  if (headers["Authentication-Results"]) {
-    return headers["Authentication-Results"].includes("dmarc=pass")
-      ? "Pass"
-      : "Fail";
+  const dmarcHeader = headers.get("authentication-results");
+  if (!dmarcHeader) {
+    return "No DMARC Record";
   }
-  return "No DMARC Record";
+  return dmarcHeader.includes("dmarc=pass") ? "Pass" : "Fail";
+}
+
+function formatAddress(headerValue) {
+  if (!headerValue || !headerValue.value || !Array.isArray(headerValue.value)) {
+    return "No Address";
+  }
+
+  return headerValue.value
+    .map(({ name, address }) => {
+      return name ? `${name} <${address}>` : address;
+    })
+    .join(", ");
 }
 
 function extractHeader(headers, headerName) {
-  return headers[headerName] || `No ${headerName} Header`;
+  const header = headers.get(headerName.toLowerCase());
+  if (!header) {
+    return `No ${headerName} Header`;
+  }
+
+  if (
+    headerName.toLowerCase() === "to" ||
+    headerName.toLowerCase() === "from"
+  ) {
+    return formatAddress(header);
+  }
+
+  return header;
 }
 
 function extractReceivedHeaders(headers) {
-  return headers["Received"] ? headers["Received"].split("\n") : [];
+  const received = headers.get("received");
+  if (!received) {
+    return [];
+  }
+
+  const receivedStr = Array.isArray(received) ? received.join("\n") : received;
+  return receivedStr.split("\n");
 }
 
 function parseDateFromReceivedHeader(header) {
-  const dateRegex = /;\s*(.+)$/; // Regular expression to extract the date
+  const dateRegex = /;\s*(.+)$/;
   const dateMatch = header.match(dateRegex);
   if (dateMatch) {
     try {
-      return new Date(dateMatch[1].trim());
+      const parsedDate = new Date(dateMatch[1].trim());
+      console.log(`Parsed Date: ${parsedDate}`); // Debug: Log parsed date
+      return parsedDate;
     } catch (error) {
       console.error("Error parsing date:", error);
       return null;
@@ -73,35 +84,42 @@ function parseDateFromReceivedHeader(header) {
 }
 
 function calculateReceivedDelays(receivedHeaders) {
-  let previousDate = null;
   let delays = [];
   let totalTime = 0;
+  let previousDate = null; // Initialize previousDate
 
-  // Process the received headers in reverse order (from oldest to newest)
   receivedHeaders.reverse().forEach((header) => {
+    console.log(`Processing header: ${header}`); // Debug: Log each header
     const date = parseDateFromReceivedHeader(header);
     if (date) {
-      if (previousDate) {
-        const delay = (date - previousDate) / 1000; // Convert milliseconds to seconds
-        totalTime += delay;
-        delays.push({
-          header: header.split(" ")[0],
-          delay: `${delay.toFixed(2)}s`,
-        });
+      const hostMatch = /from\s+([\S]+)\s+\(/.exec(header);
+      const host = hostMatch ? hostMatch[1] : null;
+      if (host) {
+        if (previousDate) {
+          const delay = (date - previousDate) / 1000;
+          console.log(`Delay: ${delay.toFixed(2)}s`); // Debug: Log calculated delay
+          console.log(`Host: ${host}`); // Debug: Log host or IP address
+          totalTime += delay;
+          delays.push({
+            header: header.split(" ")[0],
+            delay: `${delay.toFixed(2)}s`,
+            host: host,
+          });
+        }
+        previousDate = date;
       }
-      previousDate = date;
     }
   });
 
   return { delays, totalTime: `${totalTime.toFixed(2)}s` };
 }
 
-function analyze(rawHeaders) {
+async function analyze(rawHeaders) {
   if (!rawHeaders) {
     return { error: "No header data provided" };
   }
 
-  const headers = parseHeaders(rawHeaders);
+  const headers = await parseRawHeaders(rawHeaders);
   const receivedHeaders = extractReceivedHeaders(headers);
   const { delays, totalTime } = calculateReceivedDelays(receivedHeaders);
 
