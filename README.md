@@ -101,7 +101,7 @@ Further documentation detailing API endpoints and their quirky behaviors can be 
 For practical examples of using the API, please refer to the [examples directory](./examples) in the project repository.
 
 ## API Tests
-API tests are designed to ensure the functionality and integrity of the EvilAPI endpoints. Follow the instructions in the `test/README.md` file to setup and run the tests.
+API tests are designed to ensure the functionality and integrity of the EvilAPI endpoints. Follow the instructions in the `apiTest/README.md` file to setup and run the tests.
 
 ## Contributors
 - Alan Denniston (author and maintainer)
