@@ -92,6 +92,23 @@ This document provides detailed information about the API endpoints of EvilAPI. 
   - `ptrRecord`: The PTR record associated with the IP, if available.
   - `ispInfo`: Information about the Internet Service Provider, if available.
 
+### 7. SSL Validation Endpoint
+
+#### Endpoint: `/api/validate-ssl`
+
+- **Purpose**: Validates SSL certificates for a given hostname or URL, providing details about the certificate's validity, issuer, valid duration, and more.
+- **Methods**: GET
+- **Query Parameters**:
+  - `hostname`: The hostname or URL for which the SSL certificate will be validated.
+- **Response**:
+  - `valid`: A boolean indicating whether the SSL certificate is valid.
+  - `details`: Detailed information about the SSL certificate, if valid. Includes:
+    - `subject`: Information about whom the SSL certificate is issued to. Contains fields like `CN` (Common Name).
+    - `issuer`: Information about the issuer of the SSL certificate. Fields include `C` (Country), `O` (Organization), and `CN` (Common Name).
+    - `validFrom`: The start date of the SSL certificate's validity period.
+    - `validTo`: The end date of the SSL certificate's validity period.
+    - `serialNumber`: The serial number of the SSL certificate
+
 ---
 
 ## Additional Notes

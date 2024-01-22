@@ -90,7 +90,7 @@ This command will return information about the client's IP, such as the browser 
 curl https://www.some-website.tld:3011/api/whoami
 ```
 
-### etching Information for a Specific IP Address
+### Fetching Information for a Specific IP Address
 
 Replace `8.8.8.8` with the IP address you want to inquire about. This will return similar information as above, but for the specified IP address.
 
@@ -104,6 +104,14 @@ Replace `example.com` with the hostname you are interested in. The response will
 
 ```bash
 curl "https://www.some-website.tld:3011/api/whoami?ip=example.com"
+```
+
+### Fetching SSL Informtation for a Hostname
+
+Replace `example.com` with the hostname you are interested in. The response will include details about the SSL certificate for the site.
+
+```bash
+curl https://www.evil-admin.com:3010/api/validate-ssl?hostname=example.com
 ```
 
 ### Notes and Reminders
