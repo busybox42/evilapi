@@ -12,13 +12,13 @@ Welcome to the test suite for the API. This document will guide you through sett
 1. **Clone the Repository**: If not already done, clone the API repository to your local machine.
 
    ```bash
-   git clone https://github.com/your-repository/api.git
+   git clone git@github.com:busybox42/evilapi.git
    ```
 
 2. **Navigate to Test Directory**: Change into the test directory within the cloned repository.
 
    ```bash
-   cd api/tests
+   cd evilapi/apiTest
    ```
 
 3. **Install Dependencies**: Run npm to install necessary Node.js dependencies.
