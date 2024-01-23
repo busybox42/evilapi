@@ -76,11 +76,18 @@ async function checkBlacklist(ip) {
     dnsblList.map((dnsbl) => checkDnsbl(ip, dnsbl))
   );
 
-  // Map the results to include RBL details and listing status
   const formattedResults = results.map((result, index) => ({
     rbl: dnsblList[index].details,
     listed: result.listed,
   }));
+
+  // Sort the results so that 'listed: true' values are on top
+  formattedResults.sort((a, b) => {
+    if (a.listed === b.listed) {
+      return 0; // Keep original order if both are true or both are false
+    }
+    return a.listed ? -1 : 1; // Move 'true' before 'false'
+  });
 
   return formattedResults;
 }

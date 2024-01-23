@@ -86,28 +86,41 @@ function parseDateFromReceivedHeader(header) {
 function calculateReceivedDelays(receivedHeaders) {
   let delays = [];
   let totalTime = 0;
-  let previousDate = null; // Initialize previousDate
+  let previousDate = null;
 
-  receivedHeaders.reverse().forEach((header) => {
+  // Reverse the headers to process them in chronological order
+  receivedHeaders = receivedHeaders.reverse();
+
+  receivedHeaders.forEach((header, index) => {
     console.log(`Processing header: ${header}`); // Debug: Log each header
     const date = parseDateFromReceivedHeader(header);
     if (date) {
       const hostMatch = /from\s+([\S]+)\s+\(/.exec(header);
-      const host = hostMatch ? hostMatch[1] : null;
-      if (host) {
-        if (previousDate) {
-          const delay = (date - previousDate) / 1000;
-          console.log(`Delay: ${delay.toFixed(2)}s`); // Debug: Log calculated delay
-          console.log(`Host: ${host}`); // Debug: Log host or IP address
-          totalTime += delay;
-          delays.push({
-            header: header.split(" ")[0],
-            delay: `${delay.toFixed(2)}s`,
-            host: host,
-          });
-        }
-        previousDate = date;
+      const host = hostMatch ? hostMatch[1] : "Unknown Host";
+
+      if (index > 0 && previousDate) {
+        // Calculate delay from the previous hop
+        const delay = (date - previousDate) / 1000;
+        console.log(`Delay: ${delay.toFixed(2)}s`); // Debug: Log calculated delay
+        totalTime += delay;
+
+        delays.push({
+          hop: index + 1,
+          header: header.split(" ")[0],
+          delay: `${delay.toFixed(2)}s`,
+          host: host,
+        });
+      } else {
+        // First hop
+        delays.push({
+          hop: index + 1,
+          header: header.split(" ")[0],
+          delay: "0.00s",
+          host: host,
+        });
       }
+
+      previousDate = date;
     }
   });
 
@@ -123,6 +136,38 @@ async function analyze(rawHeaders) {
   const receivedHeaders = extractReceivedHeaders(headers);
   const { delays, totalTime } = calculateReceivedDelays(receivedHeaders);
 
+  // Create a Headers Found section
+  const headersFound = Array.from(headers).map(([headerName, headerValue]) => {
+    let value;
+
+    // Check if header value is an object and format accordingly
+    if (typeof headerValue === "object" && headerValue !== null) {
+      if (
+        headerName.toLowerCase() === "to" ||
+        headerName.toLowerCase() === "from"
+      ) {
+        // Address-like headers
+        value = formatAddress(headerValue);
+      } else if (Array.isArray(headerValue)) {
+        // Array of values
+        value = headerValue.join(", ");
+      } else if (headerValue.value && Array.isArray(headerValue.value)) {
+        // Header with 'value' property as an array
+        value = headerValue.value
+          .map((val) => val.text || val.address || val)
+          .join(", ");
+      } else {
+        // Object, but not address-like or array
+        value = JSON.stringify(headerValue);
+      }
+    } else {
+      // String or other simple types
+      value = headerValue.toString();
+    }
+
+    return { headerName, headerValue: value };
+  });
+
   return {
     subject: extractHeader(headers, "Subject"),
     to: extractHeader(headers, "To"),
@@ -133,6 +178,7 @@ async function analyze(rawHeaders) {
     dmarc: analyzeDmarc(headers),
     receivedDelays: delays,
     totalTime: totalTime,
+    headersFound,
   };
 }
 

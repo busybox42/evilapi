@@ -1,9 +1,10 @@
 const https = require("https");
 
-const validateSSL = async (hostname) => {
+const validateSSL = async (hostname, port = 443) => {
   return new Promise((resolve, reject) => {
     const options = {
       hostname,
+      port,
       agent: false,
       rejectUnauthorized: false,
       ciphers: "ALL",
