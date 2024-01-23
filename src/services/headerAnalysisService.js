@@ -73,7 +73,6 @@ function parseDateFromReceivedHeader(header) {
   if (dateMatch) {
     try {
       const parsedDate = new Date(dateMatch[1].trim());
-      console.log(`Parsed Date: ${parsedDate}`); // Debug: Log parsed date
       return parsedDate;
     } catch (error) {
       console.error("Error parsing date:", error);
@@ -92,7 +91,6 @@ function calculateReceivedDelays(receivedHeaders) {
   receivedHeaders = receivedHeaders.reverse();
 
   receivedHeaders.forEach((header, index) => {
-    console.log(`Processing header: ${header}`); // Debug: Log each header
     const date = parseDateFromReceivedHeader(header);
     if (date) {
       const hostMatch = /from\s+([\S]+)\s+\(/.exec(header);
@@ -101,7 +99,6 @@ function calculateReceivedDelays(receivedHeaders) {
       if (index > 0 && previousDate) {
         // Calculate delay from the previous hop
         const delay = (date - previousDate) / 1000;
-        console.log(`Delay: ${delay.toFixed(2)}s`); // Debug: Log calculated delay
         totalTime += delay;
 
         delays.push({
