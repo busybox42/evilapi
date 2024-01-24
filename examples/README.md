@@ -111,7 +111,31 @@ curl "https://www.some-website.tld:3011/api/whoami?ip=example.com"
 Replace `example.com` with the hostname you are interested in. The response will include details about the SSL certificate for the site.
 
 ```bash
-curl https://www.evil-admin.com:3010/api/validate-ssl?hostname=example.com
+curl https://www.some-website.tld:3011/api/validate-ssl?hostname=example.com
+```
+
+### 1. Encoding a Text String
+
+This API endpoint allows you to encode a plain text string into base64 format. Replace `"Hello, World!"` with the text you wish to encode. The response will include the base64 encoded version of the provided text.
+
+```bash
+curl -X POST https://www.some-website.tld:3011/api/encode -H "Content-Type: application/json" -d '{"text":"Hello, World!"}'
+```
+
+### 2. Decoding a Base64 String
+
+This API endpoint allows you to decode a base64 encoded string back into plain text. Replace `"SGVsbG8sIFdvcmxkIQ=="` with the base64 string you wish to decode. The response will include the decoded text.
+
+```bash
+curl -X POST https://www.some-website.tld:3011/api/decode -H "Content-Type: application/json" -d '{"encodedText":"SGVsbG8sIFdvcmxkIQ=="}'
+```
+
+### Removing Whitespace from a Text String
+
+Replace `"Your text with spaces"` with the text from which you want to remove all whitespace. The response will return the text with all spaces, tabs, and other whitespace characters removed.
+
+```bash
+curl -X POST https://www.www.some-website.tld:3011/api/remove-whitespace -H "Content-Type: application/json" -d '{"text": "Your text with spaces"}'
 ```
 
 ### Notes and Reminders

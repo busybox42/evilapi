@@ -109,6 +109,37 @@ This document provides detailed information about the API endpoints of EvilAPI. 
     - `validTo`: The end date of the SSL certificate's validity period.
     - `serialNumber`: The serial number of the SSL certificate
 
+### API Documentation for Base64 Encoding and Decoding
+
+#### Endpoint: `/api/encode`
+
+- **Purpose**: Encodes a given text string into base64 format.
+- **Methods**: POST
+- **Request Body**:
+  - `text`: The plain text string to be encoded.
+- **Response**:
+  - `encodedText`: The base64 encoded version of the provided text.
+
+#### Endpoint: `/api/decode`
+
+- **Purpose**: Decodes a given base64 encoded string back into plain text.
+- **Methods**: POST
+- **Request Body**:
+  - `encodedText`: The base64 string to be decoded.
+- **Response**:
+  - `decodedText`: The plain text version of the provided base64 string.
+
+### API Documentation for Remove Whitespace
+
+#### Endpoint: `/api/remove-whitespace`
+
+- **Purpose**: Removes all whitespace from a given text string.
+- **Methods**: POST
+- **Request Body**:
+  - `text`: The text string from which all whitespace will be removed.
+- **Response**:
+  - `textWithoutWhitespace`: The provided text string with all whitespace removed.
+
 ---
 
 ## Additional Notes
