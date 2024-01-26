@@ -17,7 +17,13 @@ const validateSSL = async (hostname, port = 443) => {
         const validFrom = new Date(certificate.valid_from).toISOString();
         const validTo = new Date(certificate.valid_to).toISOString();
 
-        resolve({
+        // Extracting alternative hostnames
+        const altNames = certificate.subjectaltname
+          ?.split(", ")
+          .filter((name) => name.startsWith("DNS:"))
+          .map((name) => name.replace("DNS:", ""));
+
+        const response = {
           valid: res.socket.authorized,
           details: {
             subject: certificate.subject,
@@ -27,7 +33,14 @@ const validateSSL = async (hostname, port = 443) => {
             serialNumber: certificate.serialNumber,
             algorithm: certificate.sigalg,
           },
-        });
+        };
+
+        // Only add alternative hostnames if they exist
+        if (altNames && altNames.length > 0) {
+          response.details.alternativeHostnames = altNames;
+        }
+
+        resolve(response);
       } else {
         resolve({ valid: false });
       }
