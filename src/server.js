@@ -10,6 +10,7 @@ const config = require("./config/config");
 const { initializeStaticKeys } = require("./utils/pgpUtils");
 
 const app = express();
+const webApp = express();
 
 // Function to dynamically load route and service files
 const loadFiles = (directoryPath, appInstance) => {
@@ -49,7 +50,18 @@ const loadFiles = (directoryPath, appInstance) => {
     loadFiles(path.join(__dirname, "api", "routes"), app);
     loadFiles(path.join(__dirname, "services"), app);
 
-    app.use(express.static("public"));
+    // Optional Web Server Configuration
+    if (config.webServer.enabled) {
+      webApp.use(express.static(path.join(__dirname, "web-interface")));
+
+      webApp.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "web-interface", "index.html"));
+      });
+
+      http.createServer(webApp).listen(config.webServer.webPort, () => {
+        console.log(`Web Server running on port ${config.webServer.webPort}`);
+      });
+    }
 
     // Global error handler
     app.use((err, req, res, next) => {

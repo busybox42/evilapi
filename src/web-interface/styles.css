@@ -1,0 +1,212 @@
+body,
+html {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  /* Dark background for dark mode */
+  color: #ffffff;
+  /* Light text for readability in dark mode */
+}
+
+.center-text h2,
+.center-text p {
+  text-align: center;
+}
+
+.header {
+  background-color: #1A1A1A;
+  /* Slightly lighter dark shade for the header */
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  /* Space below the header */
+}
+
+.site-title {
+  font-size: 2.5rem;
+  color: #D3D3D3;
+  /* Light grey for the site title */
+  font-weight: bold;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  /* Centers the navigation buttons */
+  flex-wrap: wrap;
+  /* Ensures wrapping for small screens */
+}
+
+.nav-btn {
+  background-color: #2563EB;
+  /* Blue buttons */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  /* Space around buttons */
+  border-radius: 0.25rem;
+  cursor: pointer;
+  /* Mouse cursor indication for clickable buttons */
+  transition: background-color 0.3s;
+  /* Smooth transition for hover effect */
+}
+
+.nav-btn:hover {
+  background-color: #3B82F6;
+  /* Lighter blue on hover */
+}
+
+.main {
+  width: 100%;
+  padding: 1rem;
+}
+
+.content-view {
+  background-color: #1A1A1A;
+  /* Slightly lighter dark shade for content background */
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  /* Space between content views */
+}
+
+#key-select {
+  background-color: #2C2C2C;
+  /* Dark background for the dropdown */
+  color: white;
+  /* Light color for the text */
+  border: 1px solid #3B82F6;
+  /* Blue border to match other elements */
+  border-radius: 0.25rem;
+  /* Rounded corners */
+  padding: 0.5rem;
+  /* Padding for some space inside the dropdown */
+  appearance: none;
+  /* Removes default browser styling */
+  -webkit-appearance: none;
+  /* Specifically for WebKit browsers */
+  -moz-appearance: none;
+  /* Specifically for Mozilla browsers */
+  background-image: url('data:image/svg+xml;charset=US-ASCII, ...');
+  /* Custom arrow icon, replace with actual data URI */
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.5rem;
+}
+
+/* Style for input fields and text areas */
+input[type="text"],
+textarea {
+  width: 100%;
+  /* Full width */
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  /* Margin below inputs and text areas */
+  background-color: #2C2C2C;
+  /* Even darker shade for input backgrounds */
+  border: 1px solid #3B82F6;
+  /* Blue border for a bit of color */
+  border-radius: 0.25rem;
+  color: white;
+  /* White text color */
+}
+
+/* Loading indicator style */
+.loading-indicator {
+  color: #D3D3D3;
+  /* Light grey for loading text */
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Style for preformatted text blocks */
+pre {
+  white-space: pre-wrap;
+  /* Allows wrapping */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: left;
+  /* Align to the left */
+  padding: 1rem;
+  /* Padding inside pre blocks */
+  margin: 0;
+  /* Reset margins for pre blocks */
+  background-color: #2C2C2C;
+  /* Even darker shade for pre background */
+  border-radius: 0.25rem;
+}
+
+#pgpEncryptionView {
+  background-color: #262626;
+  /* Slightly different shade for distinction */
+  padding: 1rem;
+  border-radius: 0.25rem;
+  /* Consistent with other sections */
+}
+
+#keySelect {
+  width: 100%;
+  /* Full width for consistency */
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  /* Consistent spacing */
+  background-color: #2C2C2C;
+  border: 1px solid #3B82F6;
+  border-radius: 0.25rem;
+  color: white;
+}
+
+input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: #2C2C2C;
+  border: 1px solid #3B82F6;
+  border-radius: 0.25rem;
+  color: white;
+}
+
+#output {
+  background-color: #2C2C2C;
+  border: 1px solid #3B82F6;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 0.25rem;
+  color: white;
+  min-height: 100px;
+  /* Ensures a minimum height for visibility */
+  word-wrap: break-word;
+}
+
+#pgpEncryptionView p {
+  color: #D3D3D3;
+  /* Consistent light grey color */
+  font-size: 0.9rem;
+  /* Slightly smaller font size */
+  margin-top: 0.5rem;
+}
+
+.content-view iframe {
+  background-color: transparent;
+  width: 100%;
+  /* Full width */
+  height: 100vh;
+  /* Full height of the viewport */
+  border: none;
+  /* No border */
+  margin: 0;
+  /* No margins */
+  padding: 0;
+  /* No padding */
+  display: block;
+  /* Prevent inline spacing */
+  overflow: hidden;
+}
+
+.hidden {
+  display: none;
+  /* Hide elements with the hidden class */
+}

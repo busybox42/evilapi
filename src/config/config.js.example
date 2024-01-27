@@ -1,17 +1,29 @@
 const fs = require("fs");
 
-// Configuration settings
+// Main configuration object
 const config = {
+  // Server configuration
   server: {
     port: process.env.PORT || 3011,
-    hostname: "https://www.some-website.tld",
+    hostname: "http://localhost.tld",
   },
+
+  // Web server configuration
+  webServer: {
+    enabled: process.env.WEB_SERVER_ENABLED === "true",
+    webHost: process.env.WEB_SERVER_HOST || "http://localhost",
+    webPort: process.env.WEB_SERVER_PORT || 8080,
+  },
+
+  // SSL configuration
   ssl: {
-    enabled: false,
+    enabled: false, // SSL enabled status
     keyPath: "/opt/evilcrypt/ssl/some-website.tld.key",
     certPath: "/opt/evilcrypt/ssl/some-website.tld.crt",
     caPath: "/opt/evilcrypt/ssl/some-website.tld.ca",
   },
+
+  // PGP key configuration
   pgpKeys: [
     {
       type: "General",
@@ -24,17 +36,21 @@ const config = {
       passphrase: "SuperEvilPassword",
     },
   ],
+
+  // File and message size limits
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100 MB
-    messageSize: 100 * 1024 * 1024, // 100 MB
+    fileSize: 100 * 1024 * 1024, // Max file size (100 MB)
+    messageSize: 100 * 1024 * 1024, // Max message size (100 MB)
   },
+
+  // Memcached configuration
   memcached: {
     host: "localhost",
     port: 11211,
   },
 };
 
-// Conditionally load SSL files if SSL is enabled
+// Load SSL files if SSL is enabled
 if (config.ssl.enabled) {
   config.ssl.key = fs.readFileSync(config.ssl.keyPath);
   config.ssl.cert = fs.readFileSync(config.ssl.certPath);

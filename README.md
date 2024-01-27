@@ -1,21 +1,24 @@
 # EvilAPI
 
 ## Introduction
+
 EvilAPI is a deliberately mischievous API, developed with for questionable purposes. This project is intended for educational and demonstration purposes only.
 
 ## Table of Contents
+
 1. [Installation](#installation)
 2. [Usage](#usage)
 3. [Features](#features)
-5. [Dependencies](#dependencies)
-6. [Configuration](#configuration)
-7. [Documentation](#documentation)
-8. [Examples](#examples)
-9. [API Tests](#api-tests)
-10. [Contributors](#contributors)
-11. [License](#license)
+4. [Dependencies](#dependencies)
+5. [Configuration](#configuration)
+6. [Documentation](#documentation)
+7. [Examples](#examples)
+8. [API Tests](#api-tests)
+9. [Contributors](#contributors)
+10. [License](#license)
 
 ## Installation
+
 To install EvilAPI, follow these steps:
 
 ```bash
@@ -25,6 +28,7 @@ npm install
 ```
 
 ## Usage
+
 To run EvilAPI, use the following command:
 
 ```bash
@@ -32,6 +36,7 @@ npm start
 ```
 
 ## Features
+
 EvilAPI offers a range of features with a focus on unconventional and educational purposes:
 
 - **Blacklist Check**: Determines if a domain is on various email blacklists.
@@ -42,11 +47,15 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
 - **Whoami Information**: Provides details about the client's IP, browser info, OS, PTR record, geo location, and ISP info, and also supports querying information for a specified IP or hostname.
 - **SSL Validation**: Validates SSL certificates for specified hostnames or URLs, detailing certificate validity, issuer information, validity period, and more.
+- **Whitespace Removal API**: Provides a utility to remove unnecessary whitespace from text data, improving efficiency in data transmission and storage.
+- **Base64 Encoder/Decoder API**: Offers a versatile tool for encoding and decoding data in Base64 format, useful in various encoding scenarios and data handling.
+- **Optional Web Server**: Features an optional integrated web server for the API, enhancing usability and accessibility for users preferring web interfaces. This server can be enabled or disabled as per the configuration.
 
 ### Known Issues
+
 The following are known issues with EvilAPI:
 
-1. **Email Headers API - Work in Progress**: The Email Headers API is currently under development and may contain bugs. Notably, the calculation of time between hops is not accurate, and there may be other parsing issues...
+1. **Custom PGP Key Dependency**: For custom PGP encryption keys to function correctly, Memcached is required. Without Memcached, the feature will not work.
 
 2. **SSL Configuration Limitations**: SSL setup requires manual file path inputs and does not automatically renew certificates, necessitating manual updates upon expiration.
 
@@ -57,6 +66,7 @@ The following are known issues with EvilAPI:
 Please feel free to contribute by addressing these issues or reporting new ones on our [GitHub repository](https://github.com/busybox42/evilapi).
 
 ## Dependencies
+
 EvilAPI relies on the following dependencies for its core functionality and additional features:
 
 - **express**: ^4.18.2 - A web application framework for Node.js.
@@ -82,6 +92,7 @@ For running the test script:
 These dependencies ensure the API can effectively handle various network-related operations, data processing, and security functionalities.
 
 ## Configuration
+
 Configuration details for EvilAPI are managed in the `config` directory. Here you can adjust the settings to suit your specific environment and requirements. Key configuration options include:
 
 - Server settings: Define the port and hostname for the API.
@@ -93,17 +104,23 @@ Configuration details for EvilAPI are managed in the `config` directory. Here yo
 Refer to the `config.js` file in the `config` directory for an example and further details on each configuration option.
 
 ## Documentation
+
 Further documentation detailing API endpoints and their quirky behaviors can be found in the `docs` directory.
+
 - For detailed API usage, see [API Documentation](docs/API_Documentation.md).
 
 ## Examples
+
 For practical examples of using the API, please refer to the [examples directory](./examples) in the project repository.
 
 ## API Tests
+
 API tests are designed to ensure the functionality and integrity of the EvilAPI endpoints. Follow the instructions in the `apiTest/README.md` file to setup and run the tests.
 
 ## Contributors
+
 - Alan Denniston (author and maintainer)
 
 ## License
+
 This project is licensed under the MIT License - see the LICENSE file for details.

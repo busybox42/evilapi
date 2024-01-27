@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evil Tools</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <header id="navbar" class="header">
+    <h1 class="site-title">Evil Tools</h1>
+    <nav class="nav">
+      <button id="emailInfoBtn" class="nav-btn">Email Info</button>
+      <button id="smtpTestBtn" class="nav-btn">SMTP Test</button>
+      <button id="blacklistCheckBtn" class="nav-btn">Email Blacklist Check</button>
+      <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
+      <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
+      <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
+      <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
+      <button id="removeWhitespaceBtn" class="nav-btn">Whitespace Remover</button>
+      <button id="base64DecoderBtn" class="nav-btn">Base64 Decoder</button>
+    </nav>
+  </header>
+  <main id="mainContent" class="main">
+    <div id="defaultView" class="content-view hidden" />
+    <div class="center-text">
+      <h2>Welcome to Evil Tools</h2>
+      <p>Select a tool from the navigation bar to get started.</p>
+    </div>
+    </div>
+    <div id="emailInfoView" class="content-view hidden">
+      <h2>Email Configuration Info</h2>
+      <input type="text" id="domainInput" placeholder="Enter domain here" style="width: 200px;" />
+      <button id="fetchEmailInfoBtn" class="nav-btn">Get Email Info</button>
+      <div id="emailInfoResults"></div>
+    </div>
+    <div id="smtpTestView" class="content-view hidden">
+      <h2>SMTP Test</h2>
+      <input type="text" id="smtpServerInput" placeholder="mail.domain.tld " style="width: 200px;" />
+      <input type="text" id="smtpPortInput" placeholder="587" style="width: 75px;" />
+      <button id="performSmtpTestBtn" class="nav-btn">Perform SMTP Test</button>
+      <div id="smtpTestResults"></div>
+    </div>
+    <div id="blacklistCheckView" class="content-view hidden">
+      <h2>Email Blacklist Check</h2>
+      <input type="text" id="blacklistDomainInput" placeholder="Enter domain here" style="width: 200px;" />
+      <button id="performBlacklistCheckBtn" class="nav-btn">Check Blacklist</button>
+      <div id="blacklistCheckLoading" class="loading-indicator hidden">Loading...</div>
+      <div id="blacklistCheckResults"></div>
+    </div>
+    <div id="headerAnalysisView" class="content-view hidden">
+      <h2>Email Header Analysis</h2>
+      <textarea id="emailHeaderInput" placeholder="Paste email header here" rows="6"></textarea>
+      <button id="analyzeHeaderBtn" class="nav-btn">Analyze Header</button>
+      <div id="headerAnalysisResults"></div>
+    </div>
+    <div id="whoAmIView" class="content-view hidden">
+      <h2>Who Am I</h2>
+      <input type="text" id="ipInput" placeholder="Enter IP address or hostname here" style="width: 300px;" />
+      <button id="checkWhoAmIBtn" class="nav-btn">Check Info</button>
+      <div id="whoAmIResults"></div>
+    </div>
+    <div id="sslValidationView" class="content-view hidden">
+      <h2>SSL Certificate Validation</h2>
+      <input type="text" id="hostnameInput" placeholder="Enter hostname or URL [optional port]" style="width: 300px;" />
+      <button id="validateSslBtn" class="nav-btn">Validate SSL</button>
+      <div id="sslValidationResults"></div>
+    </div>
+    <div id="pgpEncryptionView" class="content-view hidden">
+      <h2>PGP Encryption</h2>
+      <br>
+      <div class="key-selection">
+        <label for="key-select">Select Key:</label>
+        <select id="key-select">
+          <option value="General">General</option>
+          <option value="Evil">Evil</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="message-input">
+        <br>
+        <textarea id="message-input" placeholder="Enter message" style="height: 100px;"></textarea>
+        <input type="file" id="file-input">
+      </div>
+      <div class="output">
+        <textarea id="output" placeholder="Output will appear here" readonly style="height: 200px;"></textarea>
+      </div>
+      <div class="actions">
+        <button id="encrypt-btn" class="nav-btn">Encrypt</button>
+        <button id="decrypt-btn" class="nav-btn">Decrypt</button>
+        <button id="generate-temp-key-btn" class="nav-btn">Generate Temporary Key</button>
+      </div>
+      <div class="message">
+        <p>- Temporary keys vanish into the ether after 1 hour.</p>
+        <p>- Maximum file size for encryption/decryption is 100MB.</p>
+        <p>- All keys are 4096 bit RSA.</p>
+      </div>
+    </div>
+    <div id="removeWhitespaceView" class="content-view hidden">
+      <h2>Whitespace Remover</h2>
+      <textarea id="textArea" placeholder="Type or paste text here..." style="height: 300px;"></textarea>
+      <button id="removeSpacesBtn" class="nav-btn">Remove All Spaces</button>
+      <button id="copyToClipboardBtn" class="nav-btn">Copy to clipboard</button>
+    </div>
+    <div id="base64DecoderView" class="content-view hidden">
+      <h2>Base64 Decoder</h2>
+      <textarea id="base64TextArea" placeholder="Type or paste text here..." style="height: 300px;"></textarea>
+      <button id="base64EncodeBtn" class="nav-btn">Base64 Encode</button>
+      <button id="base64DecodeBtn" class="nav-btn">Base64 Decode</button>
+    </div>
+  </main>
+  <script type="module" src="main.js"></script>
+</body>
+
+</html>
