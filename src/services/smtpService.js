@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const dns = require("dns").promises;
 const { performance } = require("perf_hooks");
+const net = require("net");
 
 async function testSmtpServer(serverAddress, port) {
   let report = {};
@@ -49,6 +50,10 @@ async function testSmtpServer(serverAddress, port) {
       "test@example.com"
     );
     report.openRelay = openRelayResult;
+
+    // Check SMTP AUTH Support
+    const smtpAuthSupport = await testSmtpAuthSupport(serverAddress, port);
+    report.smtpAuthSupport = smtpAuthSupport;
   } catch (error) {
     report.error = error.message;
   }
@@ -150,9 +155,35 @@ async function checkOpenRelay(serverAddress, port, testEmail) {
   }
 }
 
+async function testSmtpAuthSupport(serverAddress, port) {
+  return new Promise((resolve, reject) => {
+    const client = net.createConnection(
+      { host: serverAddress, port: port },
+      () => {
+        client.write(`EHLO checkAuthSupport\r\n`);
+      }
+    );
+
+    client.on("data", (data) => {
+      const response = data.toString();
+      if (response.includes("250-AUTH")) {
+        resolve(true);
+      } else if (response.startsWith("250 ")) {
+        resolve(false);
+      }
+      client.end();
+    });
+
+    client.on("error", (err) => {
+      reject(`Error: ${err.message}`);
+    });
+  });
+}
+
 module.exports = {
   testSmtpServer,
   testTransactionTime,
   testTlsSupport,
   checkOpenRelay,
+  testSmtpAuthSupport,
 };

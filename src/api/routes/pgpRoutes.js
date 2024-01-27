@@ -240,11 +240,11 @@ router.post("/decrypt-file", upload.single("file"), async (req, res) => {
     } else {
       const keyInfo = config.pgpKeys.find((key) => key.type === keyType);
       if (!keyInfo) {
-        console.error("Key not found for type:", keyType); // Error log if key not found
+        console.error("Key not found for type:", keyType);
         return res.status(404).json({ error: `${keyType} key not found` });
       }
 
-      privateKeyArmored = keyInfo.privateKeyArmored; // Retrieve armored private key from config
+      privateKeyArmored = req.staticKeyPairs[keyType].privateKey; // Adjusted to match working endpoint
       passphrase = keyInfo.passphrase;
     }
 
@@ -277,7 +277,9 @@ router.post("/decrypt-file", upload.single("file"), async (req, res) => {
     res.end(decryptedMessage.data);
   } catch (error) {
     console.error("Error decrypting file:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", debugInfo: error.message });
   }
 });
 
