@@ -5,7 +5,7 @@ const config = {
   // Server configuration
   server: {
     port: process.env.PORT || 3011,
-    hostname: "http://localhost.tld",
+    hostname: "http://localhost:8080",
   },
 
   webServer: {
