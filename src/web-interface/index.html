@@ -21,6 +21,7 @@
       <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
+      <button id="portScanBtn" class="nav-btn">Port Scanner</button>
       <button id="removeWhitespaceBtn" class="nav-btn">Whitespace Remover</button>
       <button id="base64DecoderBtn" class="nav-btn">Base64 Decoder</button>
     </nav>
@@ -100,6 +101,14 @@
         <p>- All keys are 4096 bit RSA.</p>
       </div>
     </div>
+    <div id="portScanView" class="content-view hidden">
+      <h2>Port Scan</h2>
+      <input type="text" id="hostInput" placeholder="Enter hostname or IP" style="width: 200px;" />
+      <input type="text" id="portInput" placeholder="[port optional]" style="width: 100px;" />
+      <button id="performPortScanBtn" class="nav-btn">Perform Port Scan</button>
+      <div id="portScanLoading" class="loading-indicator hidden">Loading...</div>
+      <div id="portScanResults"></div>
+    </div>    
     <div id="removeWhitespaceView" class="content-view hidden">
       <h2>Whitespace Remover</h2>
       <textarea id="textArea" placeholder="Type or paste text here..." style="height: 300px;"></textarea>

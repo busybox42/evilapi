@@ -140,6 +140,20 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - `textWithoutWhitespace`: The provided text string with all whitespace removed.
 
+### API Documentation for Port Scan
+
+#### Endpoint: `/api/scan`
+
+- **Purpose**: Scans the specified host (IP address or hostname) for open ports. It can scan either common ports or a specific port if provided.
+- **Methods**: GET
+- **Request Parameters**:
+  - `host`: The IP address or hostname of the target for the port scan.
+  - `port` (optional): A specific port to scan on the target host. If not provided, common ports will be scanned.
+- **Response**:
+  - An array of objects, each representing a port and its status. Each object contains:
+    - `port`: The port number.
+    - `status`: The status of the port, either 'open' or 'closed'.
+
 ---
 
 ## Additional Notes

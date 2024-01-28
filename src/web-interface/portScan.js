@@ -1,0 +1,32 @@
+import { API_URL } from "./config.js";
+
+function initPortScan() {
+  const portScanBtn = document.getElementById("portScanBtn");
+  const performPortScanBtn = document.getElementById("performPortScanBtn");
+  const hostInput = document.getElementById("hostInput");
+  const portInput = document.getElementById("portInput");
+  const portScanResults = document.getElementById("portScanResults");
+  const portScanLoading = document.getElementById("portScanLoading");
+
+  performPortScanBtn.addEventListener("click", async () => {
+    const host = hostInput.value;
+    const port = portInput.value;
+
+    portScanResults.innerText = ""; // Clear previous results
+    portScanLoading.classList.remove("hidden"); // Show loading indicator
+
+    try {
+      const response = await axios.get(`${API_URL}/scan`, {
+        params: { host, port },
+      });
+
+      portScanResults.innerText = JSON.stringify(response.data, null, 2);
+    } catch (error) {
+      portScanResults.innerText = `Error: ${error.message}`;
+    } finally {
+      portScanLoading.classList.add("hidden"); // Hide loading indicator
+    }
+  });
+}
+
+export { initPortScan };

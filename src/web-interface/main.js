@@ -8,6 +8,7 @@ import { initSslValidation } from "./sslValidation.js";
 import { initRemoveWhitespace } from "./removeWhitespace.js";
 import { initBase64Decoder } from "./base64Decoder.js";
 import { initPgpEncryption } from "./pgpEncryption.js";
+import { initPortScan } from "./portScan.js";
 
 // Function to toggle visibility of content views
 function toggleView(viewId) {
@@ -29,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initRemoveWhitespace();
   initBase64Decoder();
   initPgpEncryption();
+  initPortScan();
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -59,6 +61,9 @@ document
 document
   .getElementById("base64DecoderBtn")
   .addEventListener("click", () => toggleView("base64DecoderView"));
+document
+  .getElementById("portScanBtn")
+  .addEventListener("click", () => toggleView("portScanView"));
 
 // Event listeners for input fields to trigger actions on Enter key press
 document

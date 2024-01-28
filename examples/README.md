@@ -135,8 +135,28 @@ curl -X POST https://www.some-website.tld:3011/api/decode -H "Content-Type: appl
 Replace `"Your text with spaces"` with the text from which you want to remove all whitespace. The response will return the text with all spaces, tabs, and other whitespace characters removed.
 
 ```bash
-curl -X POST https://www.www.some-website.tld:3011/api/remove-whitespace -H "Content-Type: application/json" -d '{"text": "Your text with spaces"}'
+curl -X POST https://www.some-website.tld:3011/api/remove-whitespace -H "Content-Type: application/json" -d '{"text": "Your text with spaces"}'
 ```
+
+## Scanning Ports on a Host
+
+To scan a host (IP address or hostname) for open ports, replace `"example.com"` with the target host. If you want to scan a specific port, also include the `port` parameter. The response will return an array of objects, each indicating a port number and its status ('open' or 'closed').
+
+- **Scanning Common Ports on a Host:**
+
+  Replace `"example.com"` with the IP address or hostname you want to scan. This example scans the most common ports.
+
+  ```bash
+  curl -X GET "https://www.some-website.tld:3011/api/scan?host=example.com"
+  ```
+
+- **Scanning a Specific Port on a Host:**
+
+  Replace `"example.com"` and `80` with your target host and the specific port you want to scan.
+
+  ```bash
+  curl -X GET "https://www.some-website.tld:3011/api/scan?host=example.com&port=80"
+  ```
 
 ### Notes and Reminders
 
