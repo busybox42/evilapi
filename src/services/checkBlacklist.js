@@ -3,7 +3,7 @@ const dns = require("dns").promises;
 async function checkDnsbl(ip, dnsbl) {
   if (typeof ip !== "string") {
     console.error(`Invalid IP: ${ip}`);
-    return { listed: false, details: `Invalid IP: ${ip}` };
+    return { listed: false, details: `Invalid IP: ${ip}`, error: "Invalid IP" };
   }
 
   try {
@@ -12,8 +12,12 @@ async function checkDnsbl(ip, dnsbl) {
   } catch (err) {
     if (err.code === "ENOTFOUND") {
       return { listed: false };
+    } else if (err.code === "ECONNREFUSED") {
+      console.error(`Connection refused for ${dnsbl.host}: ${err.message}`);
+      return { listed: false, error: "Connection refused" };
     } else {
-      throw err;
+      console.error(`Error checking ${dnsbl.host}: ${err.message}`);
+      return { listed: false, error: "Other error" };
     }
   }
 }
