@@ -67,20 +67,22 @@ Please feel free to contribute by addressing these issues or reporting new ones 
 
 ## Dependencies
 
-EvilAPI relies on the following dependencies for its core functionality and additional features:
+EvilAPI leverages a range of Node.js packages for its core and specific functionalities:
 
-- **express**: ^4.18.2 - A web application framework for Node.js.
-- **body-parser**: ^1.20.2 - Middleware for parsing incoming request bodies.
-- **cors**: ^2.8.5 - Package for providing a Connect/Express middleware that can be used to enable CORS.
-- **morgan**: ^1.10.0 - HTTP request logger middleware for Node.js.
+- **express** (v4.18.2): A robust web application framework for Node.js, facilitating the creation of web servers and APIs.
+- **body-parser** (v1.20.2): Middleware that parses incoming request bodies, essential for handling JSON, URL-encoded data, and more.
+- **cors** (v2.8.5): Middleware to enable Cross-Origin Resource Sharing (CORS), allowing your API to be accessed from various domains.
+- **morgan** (v1.10.0): An HTTP request logger middleware, useful for monitoring and debugging API requests.
+- **axios** (v1.6.5): A promise-based HTTP client, ideal for making HTTP requests within your API.
+- **geoip-lite** (v1.4.9): A lightweight library for geolocating IP addresses, enhancing your API's capability to provide geographic information.
+- **multer** (v1.4.5-lts.1): A middleware for handling `multipart/form-data`, primarily used for uploading files.
+- **openpgp** (v5.11.0): A comprehensive library for PGP encryption and decryption, crucial for your API's security-related features.
+- **memcached** (v2.2.2): A distributed memory caching system, vital for efficient storage and retrieval of temporary PGP keys.
+- **nodemailer** (v6.9.8): A module for sending emails, supporting various transports and features.
+- **whois-json** (v2.0.4): For fetching WHOIS data, offering insights into domain registrations and associated details.
+- **mailparser** (v3.6.6): A robust module for parsing raw emails into a more readable format.
 
-Additionally, the following are required for specific functionalities:
-
-- **memcached**: A high-performance distributed memory object caching system, necessary for storing temporary PGP keys.
-- **openpgp**: A library for PGP encryption and decryption (required for PGP-related endpoints).
-- **geoip-lite**: A light-weight native JavaScript library for looking up IP addresses to their geographical location.
-- **dns**: Node.js DNS module for performing DNS lookups, including reverse DNS lookups (PTR records).
-- **whois-json**: A Node.js library for fetching WHOIS information, including ISP details.
+These dependencies form the backbone of EvilAPI, enabling a wide array of features from basic web server setup to complex security and email-related functionalities.
 
 For running the test script:
 
