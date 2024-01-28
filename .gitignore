@@ -9,3 +9,6 @@ uploads/
 
 # User config
 src/config/config.js
+
+# Ignore package-lock.json for now.
+package-lock.json
