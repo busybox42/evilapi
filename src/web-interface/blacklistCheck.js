@@ -29,7 +29,7 @@ async function fetchBlacklistInfo(domain) {
 function displayBlacklistInfo(data) {
   const resultsDiv = document.getElementById("blacklistCheckResults");
   resultsDiv.innerHTML = `
-    <div><strong>Domain Checked:</strong> ${data.identifier}</div>
+    <div><strong>Hostname Checked:</strong> ${data.identifier}</div>
     <div><strong>IP Address:</strong> ${data.ip}</div>
     <div><strong>Blacklist Results:</strong> <pre>${JSON.stringify(
       data.blacklistResults,
