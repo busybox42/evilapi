@@ -25,6 +25,27 @@ const loadFiles = (directoryPath, appInstance) => {
   });
 };
 
+// Function to prune uploads directory
+function pruneUploads() {
+  const uploadsDir = path.join(__dirname, "uploads");
+  if (fs.existsSync(uploadsDir)) {
+    const files = fs.readdirSync(uploadsDir);
+    const now = new Date().getTime();
+
+    files.forEach((file) => {
+      const filePath = path.join(uploadsDir, file);
+      const fileStat = fs.statSync(filePath);
+      const age = now - fileStat.mtimeMs;
+
+      // If the file is older than 24 hours (86400000 ms)
+      if (age > 86400000) {
+        fs.unlinkSync(filePath);
+        console.log(`Deleted old file: ${file}`);
+      }
+    });
+  }
+}
+
 (async () => {
   try {
     // Initialize static PGP key pairs
@@ -79,6 +100,9 @@ const loadFiles = (directoryPath, appInstance) => {
         console.log(`HTTP Server running on port ${config.server.port}`);
       });
     }
+
+    // Start the cleanup process every day
+    setInterval(pruneUploads, 86400000); // 24 hours in milliseconds
   } catch (error) {
     console.error("Failed to initialize static key pairs:", error);
   }

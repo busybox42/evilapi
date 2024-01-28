@@ -1,0 +1,11 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Uploads dir
+uploads/
+
+# User config
+src/config/config.js
