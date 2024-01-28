@@ -2,7 +2,7 @@
 
 ## Introduction
 
-EvilAPI is a deliberately mischievous API, developed with for questionable purposes. This project is intended for educational and demonstration purposes only.
+EvilAPI is a versatile collection of utilities designed for email and security research. This project is intended for educational and demonstration purposes only.
 
 ## Table of Contents
 
