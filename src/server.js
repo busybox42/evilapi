@@ -93,11 +93,11 @@ function pruneUploads() {
     // Start the server
     if (config.ssl.enabled) {
       https.createServer(config.ssl, app).listen(config.server.port, () => {
-        console.log(`HTTPS Server running on port ${config.server.port}`);
+        console.log(`HTTPS API Server running on port ${config.server.port}`);
       });
     } else {
       http.createServer(app).listen(config.server.port, () => {
-        console.log(`HTTP Server running on port ${config.server.port}`);
+        console.log(`HTTP API Server running on port ${config.server.port}`);
       });
     }
 
