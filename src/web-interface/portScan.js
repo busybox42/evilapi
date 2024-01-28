@@ -8,7 +8,7 @@ function initPortScan() {
   const portScanResults = document.getElementById("portScanResults");
   const portScanLoading = document.getElementById("portScanLoading");
 
-  performPortScanBtn.addEventListener("click", async () => {
+  const performScan = async () => {
     const host = hostInput.value;
     const port = portInput.value;
 
@@ -25,6 +25,24 @@ function initPortScan() {
       portScanResults.innerText = `Error: ${error.message}`;
     } finally {
       portScanLoading.classList.add("hidden"); // Hide loading indicator
+    }
+  };
+
+  performPortScanBtn.addEventListener("click", performScan);
+
+  // Event listener for the Enter key in the host input
+  hostInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      performScan();
+    }
+  });
+
+  // Event listener for the Enter key in the port input
+  portInput.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      performScan();
     }
   });
 }
