@@ -87,20 +87,25 @@ function calculateReceivedDelays(receivedHeaders) {
   let totalTime = 0;
   let previousDate = null;
 
-  // Reverse the headers to process them in chronological order
-  receivedHeaders = receivedHeaders.reverse();
+  receivedHeaders = receivedHeaders.reverse(); // Reverse for chronological order
 
   receivedHeaders.forEach((header, index) => {
     const date = parseDateFromReceivedHeader(header);
+
     if (date) {
-      const hostMatch = /from\s+([\S]+)\s+\(/.exec(header);
+      let hostMatch;
+      if (header.startsWith("from")) {
+        // Regex for "Received: from" headers
+        hostMatch = /from\s+([^\s\(\)]+)/.exec(header);
+      } else if (header.startsWith("by")) {
+        // Regex for "Received: by" headers
+        hostMatch = /by\s+([^\s\(\)]+)/.exec(header);
+      }
       const host = hostMatch ? hostMatch[1] : "Unknown Host";
 
       if (index > 0 && previousDate) {
-        // Calculate delay from the previous hop
         const delay = (date - previousDate) / 1000;
         totalTime += delay;
-
         delays.push({
           hop: index + 1,
           header: header.split(" ")[0],
@@ -108,7 +113,6 @@ function calculateReceivedDelays(receivedHeaders) {
           host: host,
         });
       } else {
-        // First hop
         delays.push({
           hop: index + 1,
           header: header.split(" ")[0],
@@ -116,7 +120,6 @@ function calculateReceivedDelays(receivedHeaders) {
           host: host,
         });
       }
-
       previousDate = date;
     }
   });
