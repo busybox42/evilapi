@@ -29,6 +29,14 @@ npm install
 
 ## Usage
 
+Before running EvilAPI, set up the configuration:
+
+1. Copy the example configuration file:
+   ```bash
+   cp src/config/config.js.example src/config/config.js
+   ```
+2. Modify `src/config/config.js` as needed to suit your environment and requirements.
+
 To run EvilAPI, use the following command:
 
 ```bash

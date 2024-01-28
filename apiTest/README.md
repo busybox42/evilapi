@@ -28,13 +28,19 @@ Welcome to the test suite for the API. This document will guide you through sett
 
 ## Running Tests
 
+Before running the tests, ensure you have set up the configuration:
+
+1. Copy and modify the example configuration file for testing:
+   ```bash
+   cp apiTest/config/config.js.example apiTest/config/config.js
+   ```
+2. Adjust `apiTest/config/config.js` as required for your testing environment.
+
 To execute the test suites, use the command:
 
 ```bash
 npm test
 ```
-
-This will run tests using Jest, a JavaScript testing framework.
 
 ## Test Configuration
 
