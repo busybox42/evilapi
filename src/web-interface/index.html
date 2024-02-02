@@ -18,6 +18,8 @@
       <button id="smtpTestBtn" class="nav-btn">SMTP Test</button>
       <button id="blacklistCheckBtn" class="nav-btn">Email Blacklist Check</button>
       <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
+      <button id="validateDmarcBtn" class="nav-btn">Validate DMARC</button>
+      <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>
       <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
@@ -58,6 +60,20 @@
       <textarea id="emailHeaderInput" placeholder="Paste email header here" rows="6"></textarea>
       <button id="analyzeHeaderBtn" class="nav-btn">Analyze Header</button>
       <div id="headerAnalysisResults"></div>
+    </div>
+    <div id="validateDmarcView" class="content-view hidden">
+      <h2>DMARC Validation</h2>
+      <input type="text" id="dmarcDomainInput" placeholder="Enter domain here" style="width: 200px;" />
+      <button id="fetchDmarcBtn" class="nav-btn">Validate DMARC</button>
+      <div id="dmarcResults"></div>
+    </div>
+    <div id="dkimView" class="content-view hidden">
+      <h2>DKIM Tools</h2>
+      <input type="text" id="dkimDomainInput" placeholder="Enter domain here" style="width: 200px;" />
+      <input type="text" id="dkimSelectorInput" placeholder="Enter selector here" style="width: 200px;" />
+      <button id="validateDkimBtn" class="nav-btn">Validate DKIM</button>
+      <button id="generateDkimBtn" class="nav-btn">Generate DKIM Keys</button>
+      <div id="dkimResults"></div>
     </div>
     <div id="whoAmIView" class="content-view hidden">
       <h2>Who Am I</h2>

@@ -124,19 +124,16 @@ textarea {
 
 /* Style for preformatted text blocks */
 pre {
-  white-space: pre-wrap;
-  /* Allows wrapping */
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  text-align: left;
-  /* Align to the left */
-  padding: 1rem;
-  /* Padding inside pre blocks */
-  margin: 0;
-  /* Reset margins for pre blocks */
-  background-color: #2C2C2C;
-  /* Even darker shade for pre background */
+  white-space: pre-wrap; /* Allows wrapping */
+  word-wrap: break-word; /* Break the word at the end of the line */
+  overflow-wrap: break-word; /* Same as word-wrap */
+  text-align: left; /* Align to the left */
+  padding: 1rem; /* Padding inside pre blocks */
+  margin: 0; /* Reset margins for pre blocks */
+  background-color: #2C2C2C; /* Even darker shade for pre background */
   border-radius: 0.25rem;
+  color: #ffffff; /* Ensures text color is white for dark mode */
+  border: 1px solid #3B82F6; /* Adds a border that matches the theme */
 }
 
 #pgpEncryptionView {

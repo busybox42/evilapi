@@ -9,6 +9,8 @@ import { initRemoveWhitespace } from "./removeWhitespace.js";
 import { initBase64Decoder } from "./base64Decoder.js";
 import { initPgpEncryption } from "./pgpEncryption.js";
 import { initPortScan } from "./portScan.js";
+import { initValidateDmarc } from "./validateDmarc.js";
+import { initDkimTools } from "./dkimTools.js";
 
 // Function to toggle visibility of content views
 function toggleView(viewId) {
@@ -31,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initBase64Decoder();
   initPgpEncryption();
   initPortScan();
+  initValidateDmarc();
+  initDkimTools();
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -64,6 +68,12 @@ document
 document
   .getElementById("portScanBtn")
   .addEventListener("click", () => toggleView("portScanView"));
+document
+  .getElementById("validateDmarcBtn")
+  .addEventListener("click", () => toggleView("validateDmarcView"));
+document
+  .getElementById("dkimToolsBtn")
+  .addEventListener("click", () => toggleView("dkimView"));
 
 // Event listeners for input fields to trigger actions on Enter key press
 document
