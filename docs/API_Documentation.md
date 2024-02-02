@@ -109,7 +109,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
     - `validTo`: The end date of the SSL certificate's validity period.
     - `serialNumber`: The serial number of the SSL certificate
 
-### API Documentation for Base64 Encoding and Decoding
+### 8. API Documentation for Base64 Encoding and Decoding
 
 #### Endpoint: `/api/encode`
 
@@ -129,7 +129,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - `decodedText`: The plain text version of the provided base64 string.
 
-### API Documentation for Remove Whitespace
+### 9. API Documentation for Remove Whitespace
 
 #### Endpoint: `/api/remove-whitespace`
 
@@ -140,7 +140,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - `textWithoutWhitespace`: The provided text string with all whitespace removed.
 
-### API Documentation for Port Scan
+### 10. API Documentation for Port Scan
 
 #### Endpoint: `/api/scan`
 
@@ -154,7 +154,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
     - `port`: The port number.
     - `status`: The status of the port, either 'open' or 'closed'.
 
-### API Documentation for DKIM Record Lookup
+### 11. API Documentation for DKIM Record Lookup
 
 #### Endpoint: `/api/lookup-dkim`
 
@@ -174,7 +174,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
   - **Content**:
     - `error`: "DKIM records not found or invalid parameters provided."
 
-### API Documentation for DKIM Key Generation
+### 12. API Documentation for DKIM Key Generation
 
 #### Endpoint: `/api/generate-dkim-keys`
 
@@ -197,7 +197,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
   - **Content**:
     - `error`: "An error occurred during the key generation process."
 
-### API Documentation for DMARC Record Validation
+### 13. API Documentation for DMARC Record Validation
 
 #### Endpoint: `/api/validate-dmarc`
 
