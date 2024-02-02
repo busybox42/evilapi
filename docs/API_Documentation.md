@@ -154,6 +154,77 @@ This document provides detailed information about the API endpoints of EvilAPI. 
     - `port`: The port number.
     - `status`: The status of the port, either 'open' or 'closed'.
 
+### API Documentation for DKIM Record Lookup
+
+#### Endpoint: `/api/lookup-dkim`
+
+- **Purpose**: Looks up DomainKeys Identified Mail (DKIM) records for a specified domain and selector to verify the presence and validity of the records.
+- **Methods**: GET
+- **URL Parameters**:
+  - `domain`: The domain name for which DKIM records are being requested.
+  - `selector`: The selector string used to query specific DKIM records associated with the domain.
+- **Success Response**:
+  - **Code**: 200 OK
+  - **Content**:
+    - `message`: Descriptive message regarding the lookup result.
+    - `records`: Array of strings representing the found DKIM records.
+    - `lookedUp`: The complete selector record string that was looked up.
+- **Error Response**:
+  - **Code**: 404 Not Found
+  - **Content**:
+    - `error`: "DKIM records not found or invalid parameters provided."
+
+### API Documentation for DKIM Key Generation
+
+#### Endpoint: `/api/generate-dkim-keys`
+
+- **Purpose**: Generates a new set of DomainKeys Identified Mail (DKIM) keys for a specified domain and selector. This includes both the public DKIM record to be added to the domain's DNS and the private key for signing emails.
+- **Methods**: GET
+- **URL Parameters**:
+  - `selector`: The selector string that will be used to distinguish the DKIM public key in the DNS records.
+  - `domain`: The domain name for which the DKIM keys are being generated.
+- **Success Response**:
+  - **Code**: 200 OK
+  - **Content**:
+    - `dkimRecord`: The full DKIM TXT record to be added to the domain's DNS. This includes the selector, public key, and other necessary DKIM parameters.
+    - `privateKeyWarning`: A warning message about the handling of the private key.
+    - `privateKey`: The private key in PEM format. This key should be securely stored and used to sign outgoing emails from the domain.
+- **Error Response**:
+  - **Code**: 400 Bad Request
+  - **Content**:
+    - `error`: "Invalid request parameters. Please check the selector and domain name."
+  - **Code**: 500 Internal Server Error
+  - **Content**:
+    - `error`: "An error occurred during the key generation process."
+
+### API Documentation for DMARC Record Validation
+
+#### Endpoint: `/api/validate-dmarc`
+
+- **Purpose**: Validates the Domain-based Message Authentication, Reporting, and Conformance (DMARC) record for a specified domain. The API retrieves the DMARC record, parses it, and provides a detailed report on each tag in the record, along with overall validation tests.
+- **Methods**: GET
+- **URL Parameters**:
+  - `domain`: The domain name for which the DMARC record is being validated.
+- **Success Response**:
+  - **Code**: 200 OK
+  - **Content**:
+    - `dmarc`: The domain name the DMARC record belongs to.
+    - `record`: The full DMARC record string as found in the DNS.
+    - `report`: An array of objects, each representing a DMARC tag in the record, including the tag name, value, and a description of what it specifies.
+    - `tests`: An array of test results related to the DMARC record validation, including test name, result, and description.
+- **Error Response**:
+  - **Code**: 404 Not Found
+  - **Content**:
+    - `error`: "DMARC record not found for the specified domain."
+  - **Code**: 400 Bad Request
+  - **Content**:
+    - `error`: "Invalid domain name provided."
+- **Notes**:
+  - The `report` section provides a detailed breakdown of the DMARC record, explaining each part of the record for better understanding and validation purposes.
+  - The `tests` section summarizes the validation results, indicating whether the DMARC record is correctly published and syntactically valid.
+  - It's crucial to ensure the domain name is correctly specified to retrieve and validate the DMARC record accurately.
+  - This API is beneficial for administrators and security teams to verify the DMARC policy's correctness and effectiveness in combating email spoofing and phishing attacks.
+
 ---
 
 ## Additional Notes
