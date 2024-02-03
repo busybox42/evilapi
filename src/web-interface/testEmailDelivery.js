@@ -46,7 +46,10 @@ async function testEmailDelivery() {
     authTimeout: 3000,
   };
 
-  const timeout = 60000;
+  // Retrieve the timeout value from the input field or default to 60 seconds
+  const timeoutInput = document.getElementById("timeoutInput");
+  const timeoutSeconds = timeoutInput ? parseInt(timeoutInput.value, 10) : 60;
+  const timeoutMilliseconds = timeoutSeconds * 1000; // Convert to milliseconds
 
   try {
     const response = await fetch(`${API_URL}/test-email-delivery`, {
@@ -54,7 +57,11 @@ async function testEmailDelivery() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ smtpConfig, imapConfig, timeout }),
+      body: JSON.stringify({
+        smtpConfig,
+        imapConfig,
+        timeout: timeoutMilliseconds,
+      }),
     });
 
     if (!response.ok) {
