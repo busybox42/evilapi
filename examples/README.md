@@ -217,6 +217,22 @@ curl -X POST http://localhost:3000/api/test-email-delivery \
 
 This `curl` command sends a POST request to the `/api/test-email-delivery` endpoint with a JSON payload specifying the SMTP configuration for sending the email and the IMAP configuration for verifying its receipt. The `timeout` parameter determines how long (in milliseconds) the service will wait for the email to be received before concluding the test.
 
+## Ping Endpoint Example
+
+To perform a ping operation to the IP address `192.168.1.1`, you can use the following curl command:
+
+```bash
+curl http://localhost:3011/api/ping/192.168.1.1
+```
+
+## Traceroute Endpoint Example
+
+To execute a traceroute to the IP address 192.168.1.1, you can use the following curl command:
+
+```bash
+curl http://localhost:3011/api/traceroute/192.168.1.1
+```
+
 ### Notes and Reminders
 
 - Replace `/path/to/your/file.txt` and `/path/to/your/encrypted_file.pgp` with the actual paths to your files for file encryption and decryption commands.

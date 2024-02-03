@@ -1,4 +1,6 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
+const ipAccessControl = require("express-ip-access-control");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -58,7 +60,7 @@ function pruneUploads() {
     });
 
     const corsOptions = {
-      origin: config.server.hostname,
+      origin: config.server.url,
       optionsSuccessStatus: 200,
     };
 
@@ -88,6 +90,17 @@ function pruneUploads() {
     app.use((err, req, res, next) => {
       console.error(`Error in ${req.method} ${req.path}:`, err);
       res.status(500).send("Internal Server Error");
+    });
+
+    // Rate-limiting access control service
+    const limiter = rateLimit(config.rateLimitConfig);
+    app.use(ipAccessControl(config.ipAccessControlConfig));
+    app.use("/api", limiter);
+    app.use((req, res, next) => {
+      console.log(
+        `Remaining requests for ${req.ip}: ${req.rateLimit.remaining}`
+      );
+      next();
     });
 
     // Start the server

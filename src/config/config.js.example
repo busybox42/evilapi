@@ -5,7 +5,8 @@ const config = {
   // Server configuration
   server: {
     port: process.env.PORT || 3011,
-    hostname: "http://localhost:8080",
+    hostname: "localhost",
+    url: "http://localhost:8080",
   },
 
   webServer: {
@@ -47,6 +48,17 @@ const config = {
     host: "localhost",
     port: 11211,
   },
+
+  rateLimitConfig: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // Max requests per IP
+    message: 'Too many requests from this IP, please try again later.',
+  },
+
+  ipAccessControlConfig: {
+    whitelist: ['192.168.1.1', '192.168.1.2'],
+    blacklist: ['192.168.1.100', '192.168.1.101'],
+  },  
 };
 
 // Load SSL files if SSL is enabled

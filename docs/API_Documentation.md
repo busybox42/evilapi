@@ -259,6 +259,28 @@ This document provides detailed information about the API endpoints of EvilAPI. 
     - `success`: A boolean indicating the operation was unsuccessful (false).
     - `message`: A string message detailing the failure, such as "Email not received within the timeout period." or the error message.
 
+### 15. Ping Endpoint
+
+#### Endpoint: `/api/ping/{target}`
+
+- **Purpose**: Performs a ping operation to the specified IP address or hostname.
+- **Method**: GET
+- **URL Params**:
+  - `target`: The IP address or hostname to ping.
+- **Response**:
+  - A summary of the ping operation, including success status, and ping results.
+
+### 16. Traceroute Endpoint
+
+#### Endpoint: `/api/traceroute/{target}`
+
+- **Purpose**: Executes a traceroute to the specified IP address or hostname.
+- **Method**: GET
+- **URL Params**:
+  - `target`: The IP address or hostname for the traceroute.
+- **Response**:
+  - A summary of the traceroute operation, including success status, and traceroute results.
+
 ---
 
 ## Additional Notes
