@@ -225,6 +225,40 @@ This document provides detailed information about the API endpoints of EvilAPI. 
   - It's crucial to ensure the domain name is correctly specified to retrieve and validate the DMARC record accurately.
   - This API is beneficial for administrators and security teams to verify the DMARC policy's correctness and effectiveness in combating email spoofing and phishing attacks.
 
+### 14. API Documentation for Email Delivery Test
+
+#### Endpoint: `/api/test-email-delivery`
+
+- **Purpose**: Tests email delivery by sending an email to the specified recipient using SMTP and then verifying its arrival through IMAP. It utilizes a unique identifier to ensure the specific email sent is the one checked for arrival.
+- **Methods**: POST
+- **Request Body**:
+  - `smtpConfig`: Configuration for SMTP to send the email.
+    - `host`: The hostname or IP address of the SMTP server.
+    - `port`: The port on which the SMTP server is listening.
+    - `user`: The username for SMTP authentication.
+    - `password`: The password for SMTP authentication.
+    - `from`: The email address from which the email will be sent.
+    - `to`: The recipient email address.
+  - `imapConfig`: Configuration for IMAP to check the email's arrival.
+    - `user`: The username for IMAP authentication.
+    - `password`: The password for IMAP authentication.
+    - `host`: The hostname or IP address of the IMAP server.
+    - `port`: The port on which the IMAP server is listening.
+    - `tls`: A boolean indicating if TLS should be used for the IMAP connection.
+    - `authTimeout`: The timeout in milliseconds for IMAP authentication (optional).
+  - `timeout`: The duration in milliseconds to wait for the email to arrive before timing out.
+- **Response**:
+  - On success, returns an object with the following properties:
+    - `success`: A boolean indicating the operation was successful (true).
+    - `message`: A string message, "Email successfully received."
+    - `details`: An object containing information about the received email:
+      - `from`: The sender's email address.
+      - `subject`: The subject of the email.
+      - `date`: The date and time the email was received.
+  - On failure (email not received within the timeout period or an error occurred), returns an object with:
+    - `success`: A boolean indicating the operation was unsuccessful (false).
+    - `message`: A string message detailing the failure, such as "Email not received within the timeout period." or the error message.
+
 ---
 
 ## Additional Notes

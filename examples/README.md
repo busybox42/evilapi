@@ -188,6 +188,35 @@ To validate the DMARC record for your domain, replace `"example.com"` with your 
 curl "http://localhost:3011/api/validate-dmarc?domain=example.com"
 ```
 
+### Testing Email Delivery for SMTP and IMAP Configuration
+
+To test email delivery using your SMTP and IMAP configurations, construct a `curl` request that includes your SMTP settings for sending an email and IMAP settings for checking its arrival. Replace the placeholders with your actual SMTP and IMAP server details, email addresses, and authentication credentials. This request sends an email to the specified recipient and then verifies its arrival through the specified IMAP server, returning details about the sent email, including the sender, subject, and reception time.
+
+```bash
+curl -X POST http://localhost:3000/api/test-email-delivery \
+-H "Content-Type: application/json" \
+-d '{
+  "smtpConfig": {
+    "host": "smtp.example.com",
+    "port": 587,
+    "user": "user@example.com",
+    "password": "password123",
+    "from": "test@sender.com",
+    "to": "recipient@example.com"
+  },
+  "imapConfig": {
+    "user": "imap_user@example.com",
+    "password": "imap_password123",
+    "host": "imap.example.com",
+    "port": 993,
+    "tls": true
+  },
+  "timeout": 60000
+}'
+```
+
+This `curl` command sends a POST request to the `/api/test-email-delivery` endpoint with a JSON payload specifying the SMTP configuration for sending the email and the IMAP configuration for verifying its receipt. The `timeout` parameter determines how long (in milliseconds) the service will wait for the email to be received before concluding the test.
+
 ### Notes and Reminders
 
 - Replace `/path/to/your/file.txt` and `/path/to/your/encrypted_file.pgp` with the actual paths to your files for file encryption and decryption commands.
