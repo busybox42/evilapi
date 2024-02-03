@@ -21,6 +21,9 @@ const testEmailDelivery = async ({ smtpConfig, imapConfig, timeout }) => {
     },
   });
 
+  // Capture send timestamp
+  const sendTimestamp = Date.now();
+
   try {
     await transporter.sendMail({
       from: smtpConfig.from,
@@ -55,10 +58,10 @@ const testEmailDelivery = async ({ smtpConfig, imapConfig, timeout }) => {
       struct: true,
     };
 
-    const startTime = Date.now();
     let emailDetails = null;
+    let receivedTimestamp;
 
-    while (!emailDetails && Date.now() - startTime < timeout) {
+    while (!emailDetails && Date.now() - sendTimestamp < timeout) {
       const messages = await connection.search(searchCriteria, fetchOptions);
 
       for (const message of messages) {
@@ -69,6 +72,7 @@ const testEmailDelivery = async ({ smtpConfig, imapConfig, timeout }) => {
           const header = headerPart.body;
           const subject = header.subject ? header.subject[0] : "";
           if (subject.includes(uniqueId)) {
+            receivedTimestamp = Date.now(); // Capture received timestamp
             emailDetails = {
               from: header.from[0],
               subject,
@@ -89,11 +93,13 @@ const testEmailDelivery = async ({ smtpConfig, imapConfig, timeout }) => {
 
     await connection.end();
 
-    if (emailDetails) {
+    if (emailDetails && receivedTimestamp) {
+      const latency = receivedTimestamp - sendTimestamp; // Calculate latency
       return {
         success: true,
         message: "Email successfully received.",
         details: emailDetails,
+        latency: `${latency}ms`, // Include latency in the response
       };
     } else {
       logWithTimestamp("Email not received within the timeout period.");

@@ -20,6 +20,7 @@
       <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
       <button id="validateDmarcBtn" class="nav-btn">Validate DMARC</button>
       <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>
+      <button id="testEmailDeliveryBtn" class="nav-btn">Test Email Delivery</button>
       <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
@@ -75,6 +76,32 @@
       <button id="generateDkimBtn" class="nav-btn">Generate DKIM Keys</button>
       <div id="dkimResults"></div>
     </div>
+    <div id="testEmailDeliveryView" class="content-view hidden">
+      <h2>Test Email Delivery</h2>
+      <div class="config-container">
+        <div class="config-column">
+          <h3>SMTP Configuration</h3>
+          <input type="text" id="smtpFrom" placeholder="From" />
+          <input type="text" id="smtpTo" placeholder="To" />
+          <input type="text" id="smtpHost" placeholder="SMTP Host" />
+          <input type="number" id="smtpPort" placeholder="SMTP Port" />
+          <input type="text" id="smtpUser" placeholder="SMTP User" />
+          <input type="password" id="smtpPassword" placeholder="SMTP Password" />
+        </div>
+        <div class="config-column">
+          <h3>IMAP Configuration</h3>
+          <input type="text" id="imapUser" placeholder="IMAP User" />
+          <input type="password" id="imapPassword" placeholder="IMAP Password" />
+          <input type="text" id="imapHost" placeholder="IMAP Host" />
+          <input type="number" id="imapPort" placeholder="IMAP Port" />
+          <label for="imapTls">TLS:</label>
+          <input type="checkbox" id="imapTls" checked />
+        </div>
+      </div>
+      <button id="performTestEmailDeliveryBtn" class="nav-btn">Perform Test</button>
+      <div id="loadingIndicator" class="loading-indicator hidden">Loading...</div>
+      <div id="emailTestResults"></div>
+    </div>          
     <div id="whoAmIView" class="content-view hidden">
       <h2>Who Am I</h2>
       <input type="text" id="ipInput" placeholder="Enter IP address or hostname here" style="width: 300px;" />

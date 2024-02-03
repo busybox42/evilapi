@@ -99,6 +99,8 @@ html {
 
 /* Style for input fields and text areas */
 input[type="text"],
+input[type="password"],
+input[type="number"],
 textarea {
   width: 100%;
   /* Full width */
@@ -202,6 +204,42 @@ input[type="file"] {
   /* Prevent inline spacing */
   overflow: hidden;
 }
+
+.configuration {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  align-items: flex-start; 
+}
+
+.config-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.config-column {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.config-column label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.config-column input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.config-column .tls-checkbox {
+  align-self: flex-start;
+}
+
 
 .hidden {
   display: none;

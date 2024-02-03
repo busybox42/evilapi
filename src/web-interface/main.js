@@ -11,9 +11,10 @@ import { initPgpEncryption } from "./pgpEncryption.js";
 import { initPortScan } from "./portScan.js";
 import { initValidateDmarc } from "./validateDmarc.js";
 import { initDkimTools } from "./dkimTools.js";
+import { initTestEmailDelivery } from "./testEmailDelivery.js";
 
 // Function to toggle visibility of content views
-function toggleView(viewId) {
+export function toggleView(viewId) {
   document.querySelectorAll(".content-view").forEach((view) => {
     view.classList.add("hidden");
   });
@@ -35,95 +36,51 @@ document.addEventListener("DOMContentLoaded", () => {
   initPortScan();
   initValidateDmarc();
   initDkimTools();
+  initTestEmailDelivery();
 });
 
 // Event listeners for navigation buttons to toggle views
-document
-  .getElementById("emailInfoBtn")
-  .addEventListener("click", () => toggleView("emailInfoView"));
-document
-  .getElementById("smtpTestBtn")
-  .addEventListener("click", () => toggleView("smtpTestView"));
-document
-  .getElementById("blacklistCheckBtn")
-  .addEventListener("click", () => toggleView("blacklistCheckView"));
-document
-  .getElementById("headerAnalysisBtn")
-  .addEventListener("click", () => toggleView("headerAnalysisView"));
-document
-  .getElementById("whoAmIBtn")
-  .addEventListener("click", () => toggleView("whoAmIView"));
-document
-  .getElementById("sslValidationBtn")
-  .addEventListener("click", () => toggleView("sslValidationView"));
-document
-  .getElementById("pgpEncryptionBtn")
-  .addEventListener("click", () => toggleView("pgpEncryptionView"));
-document
-  .getElementById("removeWhitespaceBtn")
-  .addEventListener("click", () => toggleView("removeWhitespaceView"));
-document
-  .getElementById("base64DecoderBtn")
-  .addEventListener("click", () => toggleView("base64DecoderView"));
-document
-  .getElementById("portScanBtn")
-  .addEventListener("click", () => toggleView("portScanView"));
-document
-  .getElementById("validateDmarcBtn")
-  .addEventListener("click", () => toggleView("validateDmarcView"));
-document
-  .getElementById("dkimToolsBtn")
-  .addEventListener("click", () => toggleView("dkimView"));
+const buttonIds = [
+  "emailInfoBtn",
+  "smtpTestBtn",
+  "blacklistCheckBtn",
+  "headerAnalysisBtn",
+  "whoAmIBtn",
+  "sslValidationBtn",
+  "pgpEncryptionBtn",
+  "removeWhitespaceBtn",
+  "base64DecoderBtn",
+  "portScanBtn",
+  "validateDmarcBtn",
+  "dkimToolsBtn",
+  "testEmailDeliveryBtn",
+];
+
+buttonIds.forEach((buttonId) => {
+  document
+    .getElementById(buttonId)
+    .addEventListener("click", () =>
+      toggleView(`${buttonId.replace("Btn", "View")}`)
+    );
+});
 
 // Event listeners for input fields to trigger actions on Enter key press
-document
-  .getElementById("domainInput")
-  .addEventListener("keypress", function (event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.getElementById("fetchEmailInfoBtn").click();
-    }
-  });
-document
-  .getElementById("smtpServerInput")
-  .addEventListener("keypress", function (event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.getElementById("performSmtpTestBtn").click();
-    }
-  });
-document
-  .getElementById("smtpPortInput")
-  .addEventListener("keypress", function (event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.getElementById("performSmtpTestBtn").click();
-    }
-  });
-document
-  .getElementById("blacklistDomainInput")
-  .addEventListener("keypress", function (event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.getElementById("performBlacklistCheckBtn").click();
-    }
-  });
-document
-  .getElementById("ipInput")
-  .addEventListener("keypress", function (event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.getElementById("checkWhoAmIBtn").click();
-    }
-  });
-document
-  .getElementById("hostnameInput")
-  .addEventListener("keypress", function (event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      document.getElementById("validateSslBtn").click();
-    }
-  });
+const inputIds = [
+  "domainInput",
+  "smtpServerInput",
+  "smtpPortInput",
+  "blacklistDomainInput",
+  "ipInput",
+  "hostnameInput",
+];
 
-// Exporting toggleView for potential use in other modules
-export { toggleView };
+inputIds.forEach((inputId) => {
+  document
+    .getElementById(inputId)
+    .addEventListener("keypress", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById(`${inputId.replace("Input", "Btn")}`).click();
+      }
+    });
+});
