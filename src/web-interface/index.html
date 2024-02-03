@@ -25,6 +25,7 @@
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
       <button id="portScanBtn" class="nav-btn">Port Scanner</button>
+      <button id="networkTestBtn" class="nav-btn">Network Tests</button>
       <button id="removeWhitespaceBtn" class="nav-btn">Whitespace Remover</button>
       <button id="base64DecoderBtn" class="nav-btn">Base64 Decoder</button>
     </nav>
@@ -151,7 +152,14 @@
       <button id="performPortScanBtn" class="nav-btn">Perform Port Scan</button>
       <div id="portScanLoading" class="loading-indicator hidden">Loading...</div>
       <div id="portScanResults"></div>
-    </div>    
+    </div>
+    <div id="networkTestView" class="content-view hidden">
+      <h2>Network Test</h2>
+      <input type="text" id="networkDomainInput" placeholder="Enter domain here" style="width: 200px;" />
+      <button id="pingBtn" class="nav-btn">Ping</button>
+      <button id="tracerouteBtn" class="nav-btn">Traceroute</button>
+      <pre id="networkResults" class="network-output"></pre>
+    </div>        
     <div id="removeWhitespaceView" class="content-view hidden">
       <h2>Whitespace Remover</h2>
       <textarea id="textArea" placeholder="Type or paste text here..." style="height: 300px;"></textarea>

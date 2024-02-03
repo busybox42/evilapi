@@ -12,6 +12,7 @@ import { initPortScan } from "./portScan.js";
 import { initValidateDmarc } from "./validateDmarc.js";
 import { initDkimTools } from "./dkimTools.js";
 import { initTestEmailDelivery } from "./testEmailDelivery.js";
+import { initNetworkTests } from "./networkTests.js";
 
 // Function to toggle visibility of content views
 export function toggleView(viewId) {
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initValidateDmarc();
   initDkimTools();
   initTestEmailDelivery();
+  initNetworkTests();
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -59,6 +61,7 @@ const buttonIds = [
   "validateDmarcBtn",
   "dkimToolsBtn",
   "testEmailDeliveryBtn",
+  "networkTestBtn",
 ];
 
 buttonIds.forEach((buttonId) => {
