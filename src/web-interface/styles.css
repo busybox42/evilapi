@@ -69,17 +69,19 @@ select {
   width: 100%;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
-  background-color: #2C2C2C; /* Dark background for the dropdown */
-  border: 1px solid #3B82F6; /* Blue border to match other elements */
-  border-radius: 0.25rem; /* Rounded corners */
-  color: white; /* Light color for the text */
-  appearance: none; /* Removes default browser styling */
-  -webkit-appearance: none; /* Specifically for WebKit browsers */
-  -moz-appearance: none; /* Specifically for Mozilla browsers */
-  background-image: url('data:image/svg+xml;charset=US-ASCII, ...'); /* Custom arrow icon, replace with actual data URI */
+  background-color: #2C2C2C;
+  border: 1px solid #3B82F6;
+  border-radius: 0.25rem;
+  color: white;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII, ...');
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
   background-size: 1.5rem;
+  text-align: left;
+  text-indent: 0.5rem;
 }
 
 /* Input and textarea styles */

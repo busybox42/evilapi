@@ -108,18 +108,18 @@
     <div id="authValidatorView" class="content-view hidden">
       <h2>Authentication Validator</h2>
       <form id="authForm">
-        <input type="text" id="authUsername" placeholder="Username" />
-        <input type="password" id="authPassword" placeholder="Password" />
-        <input type="text" id="authHostname" placeholder="Hostname" />
-        <label for="authProtocol">Protocol:</label>
-        <select id="authProtocol">
+        <input type="text" id="authUsername" placeholder="Username" style="width: 200px;" />
+        <input type="password" id="authPassword" placeholder="Password" style="width: 200px;" />
+        <input type="text" id="authHostname" placeholder="Hostname" style="width: 200px;" >
+        <select id="authProtocol" style="width: 110px; height: 42px;" >
+          <option value="" disabled selected>Protocol</option>
+          <option value="submission">Submission</option>
+          <option value="smtp">SMTP</option>
+          <option value="smtps">SMTPS</option>
           <option value="pop3">POP3</option>
           <option value="pop3s">POP3S</option>
           <option value="imap">IMAP</option>
           <option value="imaps">IMAPS</option>
-          <option value="smtp">SMTP</option>
-          <option value="smtps">SMTPS</option>
-          <option value="submission">SUBMISSION</option>
         </select>
         <button id="performAuthBtn" class="nav-btn">Authenticate!</button>
       </form>
