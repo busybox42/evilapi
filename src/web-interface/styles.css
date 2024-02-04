@@ -37,7 +37,7 @@ html {
 }
 
 .nav-btn {
-  background-color: #2563EB; /* Blue buttons */
+  background-color: #0c425e; /* Blue buttons */
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -48,7 +48,7 @@ html {
 }
 
 .nav-btn:hover {
-  background-color: #3B82F6; /* Lighter blue on hover */
+  background-color: #2ea4c0; /* Lighter blue on hover */
 }
 
 /* Main content styles */

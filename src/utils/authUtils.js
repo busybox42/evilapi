@@ -14,6 +14,16 @@ const protocolPortMap = {
   submission: { port: 587, secure: false },
 };
 
+// Helper function to prepend a timestamp to log messages
+const logWithTimestamp = (message) => {
+  console.log(`${new Date().toISOString()} - ${message}`);
+};
+
+// Helper function to prepend a timestamp to error messages
+const errorWithTimestamp = (message) => {
+  console.error(`${new Date().toISOString()} - ${message}`);
+};
+
 const authPop3 = async (username, password, hostname, protocol) => {
   let { port, secure } = protocolPortMap[protocol.toLowerCase()] || {};
   if (port === undefined) {
@@ -30,14 +40,14 @@ const authPop3 = async (username, password, hostname, protocol) => {
 
   try {
     await pop3.connect();
-    console.log(`Connected to ${protocol.toUpperCase()} server`);
+    logWithTimestamp(`Connected to ${protocol.toUpperCase()} server`);
 
     // Use "NOOP" command to check if the server is responding
     const [noopResponse] = await pop3.command("NOOP");
-    console.log(`NOOP response: ${noopResponse}`);
+    logWithTimestamp(`NOOP response: ${noopResponse}`);
 
     await pop3.QUIT();
-    console.log("Logged out successfully");
+    logWithTimestamp("Logged out successfully");
 
     return {
       protocol: protocol.toUpperCase(),
@@ -45,7 +55,7 @@ const authPop3 = async (username, password, hostname, protocol) => {
       message: "Authentication successful",
     };
   } catch (error) {
-    console.error(`Authentication failed: ${error.message}`);
+    errorWithTimestamp(`Authentication failed: ${error.message}`);
     throw error;
   }
 };
@@ -69,13 +79,13 @@ const authImap = async (username, password, hostname, protocol) => {
 
   try {
     const connection = await imaps.connect(config);
-    console.log(
+    logWithTimestamp(
       `Authenticated ${username} with ${protocol.toUpperCase()} at ${hostname}`
     );
     connection.end();
     return { protocol: protocol.toUpperCase(), success: true };
   } catch (error) {
-    console.error(
+    errorWithTimestamp(
       `Authentication failed for ${username} with ${protocol.toUpperCase()} at ${hostname}: ${error}`
     );
     throw error;
@@ -100,12 +110,12 @@ const authSmtp = async (username, password, hostname, protocol) => {
 
   try {
     await transporter.verify();
-    console.log(
+    logWithTimestamp(
       `Authenticated ${username} with ${protocol.toUpperCase()} at ${hostname}`
     );
     return { protocol: protocol.toUpperCase(), success: true };
   } catch (error) {
-    console.error(
+    errorWithTimestamp(
       `Authentication failed for ${username} with ${protocol.toUpperCase()} at ${hostname}: ${error}`
     );
     throw error;
@@ -113,7 +123,9 @@ const authSmtp = async (username, password, hostname, protocol) => {
 };
 
 const authFtp = async (username, password, hostname, protocol = "FTP") => {
-  console.log(`Authenticating ${username} with ${protocol} at ${hostname}`);
+  logWithTimestamp(
+    `Authenticating ${username} with ${protocol} at ${hostname}`
+  );
 
   if (protocol.toUpperCase() === "FTP") {
     const client = new Client.Client();
@@ -124,11 +136,11 @@ const authFtp = async (username, password, hostname, protocol = "FTP") => {
         password: password,
         secure: false, // Set true for FTPS
       });
-      console.log("FTP Authentication successful");
+      logWithTimestamp("FTP Authentication successful");
       client.close();
       return { protocol: "FTP", success: true };
     } catch (error) {
-      console.error("FTP Authentication failed:", error.message);
+      errorWithTimestamp("FTP Authentication failed:", error.message);
       throw error; // Rethrow or adjust as needed
     }
   } else if (protocol.toUpperCase() === "SFTP") {
@@ -140,11 +152,11 @@ const authFtp = async (username, password, hostname, protocol = "FTP") => {
         username: username,
         password: password,
       });
-      console.log("SFTP Authentication successful");
+      logWithTimestamp("SFTP Authentication successful");
       sftp.end();
       return { protocol: "SFTP", success: true };
     } catch (error) {
-      console.error("SFTP Authentication failed:", error.message);
+      errorWithTimestamp("SFTP Authentication failed:", error.message);
       throw error; // Rethrow or adjust as needed
     }
   } else {
