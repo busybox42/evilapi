@@ -21,6 +21,7 @@
       <button id="validateDmarcBtn" class="nav-btn">Validate DMARC</button>
       <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>
       <button id="testEmailDeliveryBtn" class="nav-btn">Test Email Delivery</button>
+      <button id="authValidatorBtn" class="nav-btn">Auth Validator</button>
       <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
@@ -103,7 +104,27 @@
       <button id="performTestEmailDeliveryBtn" class="nav-btn">Perform Test</button>
       <div id="loadingIndicator" class="loading-indicator hidden">Loading...</div>
       <div id="emailTestResults"></div>
-    </div>          
+    </div>
+    <div id="authValidatorView" class="content-view hidden">
+      <h2>Authentication Validator</h2>
+      <form id="authForm">
+        <input type="text" id="authUsername" placeholder="Username" />
+        <input type="password" id="authPassword" placeholder="Password" />
+        <input type="text" id="authHostname" placeholder="Hostname" />
+        <label for="authProtocol">Protocol:</label>
+        <select id="authProtocol">
+          <option value="pop3">POP3</option>
+          <option value="pop3s">POP3S</option>
+          <option value="imap">IMAP</option>
+          <option value="imaps">IMAPS</option>
+          <option value="smtp">SMTP</option>
+          <option value="smtps">SMTPS</option>
+          <option value="submission">SUBMISSION</option>
+        </select>
+        <button id="performAuthBtn" class="nav-btn">Authenticate!</button>
+      </form>
+      <div id="authResults"></div>
+    </div>           
     <div id="whoAmIView" class="content-view hidden">
       <h2>Who Am I</h2>
       <input type="text" id="ipInput" placeholder="Enter IP address or hostname here" style="width: 300px;" />
