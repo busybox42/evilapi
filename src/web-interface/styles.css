@@ -121,7 +121,7 @@ pre {
 
 /* PGP Encryption View styles */
 #pgpEncryptionView {
-  background-color: #262626; /* Slightly different shade for distinction */
+  background-color: #1A1A1A; /* Slightly different shade for distinction */
   padding: 1rem;
   border-radius: 0.25rem; /* Consistent with other sections */
 }
