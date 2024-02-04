@@ -12,7 +12,9 @@
 
 <body>
   <header id="navbar" class="header">
-    <h1 class="site-title">Evil Tools</h1>
+    <a id="defaultViewLink" style="text-decoration: none; color: inherit; cursor: pointer;">
+      <h1 class="site-title">Evil Tools</h1>
+    </a>    
     <nav class="nav">
       <button id="emailInfoBtn" class="nav-btn">Email Info</button>
       <button id="smtpTestBtn" class="nav-btn">SMTP Test</button>
@@ -33,10 +35,12 @@
   </header>
   <main id="mainContent" class="main">
     <div id="defaultView" class="content-view hidden" />
-    <div class="center-text">
-      <h2>Welcome to Evil Tools</h2>
-      <p>Select a tool from the navigation bar to get started.</p>
-    </div>
+      <div class="center-text">
+        <h2>Welcome to Evil Tools</h2>
+        <p>Select a tool from the navigation bar to get started.</p>
+        <img src="experiments.jpg" style="width: 30%; display: block; margin-left: auto; margin-right: auto;" alt="Evil Experiments">
+        <p>Note: EvilAPI has agressive ratelimits to prevent abuse.</p>
+      </div>
     </div>
     <div id="emailInfoView" class="content-view hidden">
       <h2>Email Configuration Info</h2>

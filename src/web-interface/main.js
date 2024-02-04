@@ -28,6 +28,18 @@ export function toggleView(viewId) {
   }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultViewLink = document.getElementById("defaultViewLink");
+  if (defaultViewLink) {
+    defaultViewLink.addEventListener("click", function (event) {
+      event.preventDefault(); // Prevent following the link
+      window.location.reload(true); // Deprecated but intended for a hard refresh
+      // Alternatively, for a more consistent hard refresh across browsers:
+      // window.location.href = window.location.href;
+    });
+  }
+});
+
 // Initialize functionalities after the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
   toggleView("defaultView");
