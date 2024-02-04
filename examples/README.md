@@ -250,6 +250,14 @@ curl -X POST http://localhost:3011/api/auth \
 
 This curl command sends a POST request to the /api/auth endpoint with a JSON payload specifying the user's credentials and the desired authentication protocol. Supported protocols include submission, pop3, pop3s, imap, imaps, smtp, smtps, ftp, and sftp. The request initiates an authentication process against the specified hostname using the protocol provided, and on success, returns a JSON object detailing the outcome of the authentication attempt.
 
+### DNS Lookup API
+
+Perform a DNS lookup for a specific host and record type:
+
+```bash
+curl "http://localhost:3011/api/lookup?host=example.com&type=A"
+```
+
 ### Notes and Reminders
 
 - Replace `/path/to/your/file.txt` and `/path/to/your/encrypted_file.pgp` with the actual paths to your files for file encryption and decryption commands.

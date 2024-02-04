@@ -300,6 +300,24 @@ The request body must include the following fields:
 - **hostname** (string): The server's hostname where the authentication should occur.
 - **protocol** (string): The protocol to use for authentication. Supported protocols are `submission`, `pop3`, `pop3s`, `imap`, `imaps`, `smtp`, `smtps`, `ftp`, and `sftp`.
 
+### 17. DNS Lookup Endpoint
+
+#### Endpoint: `/api/lookup`
+
+- **Purpose**: Performs a DNS lookup for the specified host and record type, optionally using a specified DNS server.
+- **Method**: GET
+- **URL Params**:
+  - `host`: The hostname or IP address for the DNS lookup.
+  - `type`: The type of DNS record to look up (e.g., `A`, `MX`, `PTR`). Defaults to `A` for hostnames and `PTR` for IP addresses if not specified.
+  - `dnsServer`: (Optional) The IP address of the DNS server to use for the lookup. If not specified, the system's default DNS server is used.
+- **Response**:
+  - `host`: The queried hostname or IP address.
+  - `type`: The type of DNS record looked up.
+  - `addresses`: An array of the lookup results, specific to the record type.
+  - `dnsServer`: The DNS server used for the lookup, if specified.
+  - On success, returns an object containing the lookup results.
+  - On failure, returns an object with an `error` key and a message describing the failure.
+
 ---
 
 ## Additional Notes

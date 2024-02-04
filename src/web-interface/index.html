@@ -25,6 +25,7 @@
       <button id="testEmailDeliveryBtn" class="nav-btn">Test Email Delivery</button>
       <button id="authValidatorBtn" class="nav-btn">Auth Validator</button>
       <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
+      <button id="dnsLookupBtn" class="nav-btn">DNS Lookup</button>
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
       <button id="portScanBtn" class="nav-btn">Port Scanner</button>
@@ -137,6 +138,29 @@
       <input type="text" id="ipInput" placeholder="Enter IP address or hostname here" style="width: 300px;" />
       <button id="checkWhoAmIBtn" class="nav-btn">Check Info</button>
       <div id="whoAmIResults"></div>
+    </div>
+    <div id="dnsLookupView" class="content-view hidden">
+      <h2>DNS Lookup</h2>
+      <input type="text" id="dnsHostInput" placeholder="Enter hostname or IP" style="width: 200px;" />
+      <input type="text" id="dnsServerInput" placeholder="DNS Server (Optional)" style="width: 200px;" />
+      <div class="config-container" style="align-items: center; justify-content: start; width: auto; padding: 0;">
+        <label for="dnsTypeSelect" style="margin-right: 10px;">Record Type:</label>
+        <select id="dnsTypeSelect" style="width: 50px">
+          <option value="A">A</option>
+          <option value="MX">MX</option>
+          <option value="PTR">PTR</option>
+          <option value="NS">NS</option>
+          <option value="CNAME">CNAME</option>
+          <option value="TXT">TXT</option>
+          <option value="SRV">SRV</option>
+          <option value="SOA">SOA</option>
+          <option value="AAAA">AAAA</option>
+          <option value="LOC">LOC</option>
+        </select>
+      </div>      
+      <br>
+      <button id="performDnsLookupBtn" class="nav-btn">Perform DNS Lookup</button>
+      <div id="dnsLookupResults"></div>
     </div>
     <div id="sslValidationView" class="content-view hidden">
       <h2>SSL Certificate Validation</h2>
