@@ -27,9 +27,22 @@ function displayWhoAmIInfo(data) {
   resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
 }
 
+// Function to fetch and display the user's IP address
+async function fetchAndDisplayUserIp() {
+  try {
+    const response = await fetch("https://api.ipify.org?format=json");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const { ip } = await response.json();
+    document.getElementById("ipInput").value = ip; // Set the user's IP as default
+  } catch (error) {
+    console.error("Could not fetch the user's IP address:", error);
+  }
+}
+
 // Initialization function for Who Am I functionality
 export function initWhoAmI() {
-  // Existing event listener for checkWhoAmIBtn
   document
     .getElementById("checkWhoAmIBtn")
     .addEventListener("click", function () {
@@ -37,9 +50,6 @@ export function initWhoAmI() {
       fetchWhoAmIInfo(ipAddress);
     });
 
-  // Add event listener for whoAmIBtn
-  document.getElementById("whoAmIBtn").addEventListener("click", function () {
-    // Call fetchWhoAmIInfo without an IP address to use the client's IP
-    fetchWhoAmIInfo();
-  });
+  // Call fetchAndDisplayUserIp to set the user's IP in the input field on load
+  fetchAndDisplayUserIp();
 }
