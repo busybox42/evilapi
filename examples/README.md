@@ -233,6 +233,23 @@ To execute a traceroute to the IP address 192.168.1.1, you can use the following
 curl http://localhost:3011/api/traceroute/192.168.1.1
 ```
 
+### Authenticating Against Email and File Transfer Protocols
+
+To authenticate using supported email and file transfer protocols, construct a `curl` request that includes the required credentials and protocol details. Replace the placeholders with your actual server details, user credentials, and the specific protocol you wish to authenticate against. This request authenticates the user against the specified server and protocol, returning information about the authentication attempt, including the protocol used, success status, and any relevant user and server details.
+
+```bash
+curl -X POST http://localhost:3011/api/auth \
+-H "Content-Type: application/json" \
+-d '{
+  "username": "test@evil-admin.com",
+  "password": "13atbac0n",
+  "hostname": "mail.evil-admin.com",
+  "protocol": "imaps"
+}'
+```
+
+This curl command sends a POST request to the /api/auth endpoint with a JSON payload specifying the user's credentials and the desired authentication protocol. Supported protocols include submission, pop3, pop3s, imap, imaps, smtp, smtps, ftp, and sftp. The request initiates an authentication process against the specified hostname using the protocol provided, and on success, returns a JSON object detailing the outcome of the authentication attempt.
+
 ### Notes and Reminders
 
 - Replace `/path/to/your/file.txt` and `/path/to/your/encrypted_file.pgp` with the actual paths to your files for file encryption and decryption commands.

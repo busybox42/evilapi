@@ -281,6 +281,25 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - A summary of the traceroute operation, including success status, and traceroute results.
 
+## 16. Authentication Endpoint
+
+#### Endpoint: POST /api/auth
+
+This endpoint allows users to authenticate against various email and file transfer protocols. It supports a range of protocols including `submission`, `pop3`, `pop3s`, `imap`, `imaps`, `smtp`, `smtps`, `ftp`, and `sftp`.
+
+#### Request Headers
+
+- **Content-Type**: `application/json`
+
+#### Request Body
+
+The request body must include the following fields:
+
+- **username** (string): The user's email address.
+- **password** (string): The user's password.
+- **hostname** (string): The server's hostname where the authentication should occur.
+- **protocol** (string): The protocol to use for authentication. Supported protocols are `submission`, `pop3`, `pop3s`, `imap`, `imaps`, `smtp`, `smtps`, `ftp`, and `sftp`.
+
 ---
 
 ## Additional Notes
