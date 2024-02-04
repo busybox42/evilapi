@@ -318,6 +318,22 @@ The request body must include the following fields:
   - On success, returns an object containing the lookup results.
   - On failure, returns an object with an `error` key and a message describing the failure.
 
+### 18. Hash Validation Endpoint
+
+#### Endpoint: `/api/validate-hash`
+
+- **Purpose**: Validates a given password against a specified hash using the chosen algorithm.
+- **Method**: POST
+- **Request Body**:
+  - `algorithm`: The hash algorithm to use (e.g., `md5`, `sha1`, `sha256`, `sha512`, `bcrypt`, `argon2`).
+  - `password`: The plaintext password to validate.
+  - `hash`: The hash to compare against.
+- **Response**:
+  - `isValid`: A boolean indicating if the password matches the hash.
+  - `algorithm`: The algorithm used for validation.
+  - `hash`: The original hash provided in the request.
+  - `generatedHash`: The hash generated from the provided password using the specified algorithm.
+
 ---
 
 ## Additional Notes

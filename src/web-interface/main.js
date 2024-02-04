@@ -15,6 +15,7 @@ import { initTestEmailDelivery } from "./testEmailDelivery.js";
 import { initNetworkTests } from "./networkTests.js";
 import { initAuthValidator } from "./authValidator.js";
 import { initDnsLookup } from "./dnsLookup.js";
+import { initHashValidation } from "./hashValidation.js";
 
 // Function to toggle visibility of content views
 export function toggleView(viewId) {
@@ -60,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initNetworkTests();
   initAuthValidator();
   initDnsLookup();
+  initHashValidation();
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -80,6 +82,7 @@ const buttonIds = [
   "networkTestBtn",
   "authValidatorBtn",
   "dnsLookupBtn",
+  "passwordHashBtn",
 ];
 
 buttonIds.forEach((buttonId) => {

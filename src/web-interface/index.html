@@ -28,6 +28,7 @@
       <button id="dnsLookupBtn" class="nav-btn">DNS Lookup</button>
       <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
       <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
+      <button id="passwordHashBtn" class="nav-btn">Password Hashing</button>
       <button id="portScanBtn" class="nav-btn">Port Scanner</button>
       <button id="networkTestBtn" class="nav-btn">Network Tests</button>
       <button id="removeWhitespaceBtn" class="nav-btn">Whitespace Remover</button>
@@ -196,6 +197,37 @@
         <p>- All keys are 4096 bit RSA.</p>
       </div>
     </div>
+    <div id="passwordHashView" class="content-view hidden">
+      <div id="hashCreationSection">
+        <h3>Create Hash</h3>
+        <select id="createAlgorithmInput" style="width: 75px; height: 42px;">
+          <option value="md5">MD5</option>
+          <option value="sha1">SHA-1</option>
+          <option value="sha256">SHA-256</option>
+          <option value="sha512">SHA-512</option>
+        </select>
+        <input type="text" id="textInput" placeholder="Enter text" style="width: 200px;" />
+        <button id="performHashCreationBtn" class="nav-btn">Create Hash</button>
+        <div id="hashCreationResults"></div>
+      </div>
+      <br>  
+      <hr>
+      <br>
+      <div id="hashValidationSection">
+        <h3>Validate Hash</h3>
+        <select id="algorithmInput" style="width: 75px; height: 42px;">
+          <option value="md5">MD5</option>
+          <option value="sha1">SHA-1</option>
+          <option value="sha256">SHA-256</option>
+          <option value="sha512">SHA-512</option>
+        </select>
+        <input type="text" id="passwordInput" placeholder="Enter password" style="width: 200px;" />
+        <input type="text" id="hashInput" placeholder="Enter hash" style="width: 200px;" />
+        <button id="performHashValidationBtn" class="nav-btn">Validate Hash</button>
+        <div id="hashValidationResults"></div>
+      </div>
+    </div>
+       
     <div id="portScanView" class="content-view hidden">
       <h2>Port Scan</h2>
       <input type="text" id="hostInput" placeholder="Enter hostname or IP" style="width: 200px;" />

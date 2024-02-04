@@ -258,6 +258,14 @@ Perform a DNS lookup for a specific host and record type:
 curl "http://localhost:3011/api/lookup?host=example.com&type=A"
 ```
 
+### Hash Validation API
+
+Validate a password against a hash using a specific algorithm:
+
+```bash
+curl -X POST http://localhost:3011/api/validate-hash -H "Content-Type: application/json" -d '{"algorithm":"md5", "password":"hello", "hash":"5d41402abc4b2a76b9719d911017c592"
+```
+
 ### Notes and Reminders
 
 - Replace `/path/to/your/file.txt` and `/path/to/your/encrypted_file.pgp` with the actual paths to your files for file encryption and decryption commands.
