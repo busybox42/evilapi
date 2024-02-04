@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.5",
+    "basic-ftp": "^5.0.4",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
@@ -26,8 +27,10 @@
     "memcached": "^2.2.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "node-pop3": "^0.9.0",
     "nodemailer": "^6.9.9",
     "openpgp": "^5.11.0",
+    "ssh2-sftp-client": "^10.0.3",
     "uuid": "^9.0.1",
     "whois-json": "^2.0.4"
   }
