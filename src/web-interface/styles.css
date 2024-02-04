@@ -70,7 +70,7 @@ select {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   background-color: #2C2C2C;
-  border: 1px solid #3B82F6;
+  border: 1px solid #0c425e;
   border-radius: 0.25rem;
   color: white;
   appearance: none;
@@ -93,7 +93,7 @@ textarea {
   padding: 0.5rem;
   margin-bottom: 0.5rem; /* Margin below inputs and text areas */
   background-color: #2C2C2C; /* Even darker shade for input backgrounds */
-  border: 1px solid #3B82F6; /* Blue border for a bit of color */
+  border: 1px solid #0c425e; /* Blue border for a bit of color */
   border-radius: 0.25rem;
   color: white; /* White text color */
 }
@@ -116,7 +116,7 @@ pre {
   background-color: #2C2C2C;
   border-radius: 0.25rem;
   color: #ffffff;
-  border: 1px solid #3B82F6;
+  border: 1px solid #0c425e;
 }
 
 /* PGP Encryption View styles */
@@ -131,7 +131,7 @@ pre {
   padding: 0.5rem;
   margin-bottom: 0.5rem; /* Consistent spacing */
   background-color: #2C2C2C;
-  border: 1px solid #3B82F6;
+  border: 1px solid #0c425e;
   border-radius: 0.25rem;
   color: white;
 }
@@ -142,7 +142,7 @@ input[type="file"] {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
   background-color: #2C2C2C;
-  border: 1px solid #3B82F6;
+  border: 1px solid #0c425e;
   border-radius: 0.25rem;
   color: white;
 }
@@ -150,7 +150,7 @@ input[type="file"] {
 /* Output styles */
 #output {
   background-color: #2C2C2C;
-  border: 1px solid #3B82F6;
+  border: 1px solid #0c425e;
   padding: 0.5rem;
   margin-top: 1rem;
   border-radius: 0.25rem;
