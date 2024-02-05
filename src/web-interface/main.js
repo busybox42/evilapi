@@ -17,6 +17,7 @@ import { initAuthValidator } from "./authValidator.js";
 import { initDnsLookup } from "./dnsLookup.js";
 import { initHashValidation } from "./hashValidation.js";
 import { initTimeTools } from "./timeTools.js";
+import { initUrlEncoder } from "./urlEncoder.js";
 
 // Function to toggle visibility of content views
 export function toggleView(viewId) {
@@ -64,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initDnsLookup();
   initHashValidation();
   initTimeTools();
+  initUrlEncoder();
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -86,6 +88,7 @@ const buttonIds = [
   "dnsLookupBtn",
   "passwordHashBtn",
   "timeToolsBtn",
+  "urlEncoderBtn",
 ];
 
 buttonIds.forEach((buttonId) => {
