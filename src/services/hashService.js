@@ -1,5 +1,3 @@
-// src/services/hashService.js
-
 const crypto = require("crypto");
 
 async function createHash(algorithm, text) {
