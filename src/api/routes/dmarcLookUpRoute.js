@@ -24,6 +24,26 @@ const tagDescriptions = {
     description:
       "Policy to apply to email that fails the DMARC check. Valid values can be 'none', 'quarantine', or 'reject'.",
   },
+  fo: {
+    name: "Forensic Reporting",
+    description:
+      "Provides requested options for generation of failure reports. Valid values are any combination of characters '01ds' seperated by ':'.",
+  },
+  sp: {
+    name: "Subdomain Policy",
+    description:
+      "Policy to apply to email from the domain's subdomains that fails the DMARC check. Valid values can be 'none', 'quarantine', or 'reject'.",
+  },
+  rf: {
+    name: "Report Format",
+    description:
+      "Format in which to request message-specific failure reports. 'afrf' is the default and typically the only format used.",
+  },
+  ri: {
+    name: "Report Interval",
+    description:
+      "Interval for how often you want to receive aggregate reports, in seconds. The default is 86400 seconds (24 hours).",
+  },
   adkim: {
     name: "Alignment Mode DKIM",
     description:
