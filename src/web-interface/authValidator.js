@@ -1,6 +1,16 @@
 import { API_URL } from "./config.js";
 
+function showLoadingIndicator(show) {
+  const loadingIndicator = document.getElementById("loadingIndicator");
+  if (show) {
+    loadingIndicator.classList.remove("hidden");
+  } else {
+    loadingIndicator.classList.add("hidden");
+  }
+}
+
 async function authenticateProtocol() {
+  showLoadingIndicator(true);
   const form = document.getElementById("authForm");
   const username = form.elements.authUsername.value;
   const password = form.elements.authPassword.value;
@@ -19,6 +29,8 @@ async function authenticateProtocol() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // Add this line if your API requires a token or API key
+        Authorization: "Bearer YOUR_API_KEY",
       },
       body: JSON.stringify(requestData),
     });
@@ -38,6 +50,8 @@ async function authenticateProtocol() {
   } catch (error) {
     console.error("There has been a problem with your fetch operation:", error);
     return { success: false, message: "Error occurred during authentication" };
+  } finally {
+    showLoadingIndicator(false);
   }
 }
 
