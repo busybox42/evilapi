@@ -43,6 +43,14 @@ router.get("/email-info/:domain", async (req, res) => {
       // No DMARC records found
     }
 
+    // Retrieve BIMI records
+    try {
+      const bimiRecords = await dns.resolveTxt(`default._bimi.${domain}`);
+      emailInfo.bimiRecord = bimiRecords.map((record) => record.join(""));
+    } catch (error) {
+      // No BIMI records found
+    }
+
     // Retrieve A records
     try {
       emailInfo.aRecord = await dns.resolve(domain);
