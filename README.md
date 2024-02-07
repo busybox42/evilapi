@@ -47,30 +47,24 @@ npm start
 
 ## Docker Usage
 
-Before building the Docker image, ensure to set up the configuration:
+If you wish to run EvilAPI using Docker, make sure to set up your configuration before building your Docker image. This ensures that your custom settings are included in the Docker container:
 
-1. If you haven't already created a configuration file, ensure that the `src/config/config.js.example` file exists. If not, you can create it by copying the example configuration:
+1. Create or modify the `config.js` file based on `src/config/config.js.example` to suit your environment and requirements.
 
-```bash
-cp src/config/config.js.example src/config/config.js
-```
-
-2. Modify `src/config/config.js` as needed to suit your environment and requirements.
-
-To build and run EvilAPI using Docker:
+2. Build and run the Docker container:
 
 ```bash
 docker build -t evilapi .
-docker run -p 3011:3011 -p 8080:8080 -e PORT=3011 -e WEB_SERVER_HOST=http://localhost -e WEB_SERVER_PORT=8080 evilapi
+docker run -p 3011:3011 -p 8080:8080 evilapi
 ```
 
-If no `config.js` file is supplied during the build process, the `start.sh` script will automatically copy the example configuration file (`config.js.example`) to `config.js` before starting the Node.js server.
+The start.sh script within the container will ensure that if no config.js file is present, the config.js.example will be copied and renamed to config.js automatically.
 
 ## Web Interface
 
 EvilAPI also provides an optional prototype web interface designed to give users a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts.
 
-<img src="eviltools.png" alt="Evil Tools Web Interface" style="width: 50%;">
+<img src="eviltools.png" alt="Evil Tools Web Interface">
 
 ### Features Accessible via the Web Interface:
 
