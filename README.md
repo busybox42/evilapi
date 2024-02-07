@@ -45,9 +45,7 @@ To run EvilAPI locally using Node.js:
 npm start
 ```
 
-## Docker Instructions:
-
-## Usage
+## Docker Usage
 
 Before building the Docker image, ensure to set up the configuration:
 
