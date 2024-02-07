@@ -8,7 +8,7 @@ EvilAPI is a versatile collection of utilities designed for email and security r
 
 1. [Installation](#installation)
 2. [Usage](#usage)
-3. [Features](#features)
+3. [Web Interface](#Web%20Interface)
 4. [Dependencies](#dependencies)
 5. [Configuration](#configuration)
 6. [Documentation](#documentation)
@@ -66,26 +66,36 @@ docker run -p 3011:3011 -p 8080:8080 -e PORT=3011 -e WEB_SERVER_HOST=http://loca
 
 If no `config.js` file is supplied during the build process, the `start.sh` script will automatically copy the example configuration file (`config.js.example`) to `config.js` before starting the Node.js server.
 
-## Features
+## Web Interface
 
-EvilAPI offers a range of features with a focus on unconventional and educational purposes:
+EvilAPI also provides a prototype web interface designed to give users a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts.
 
-- **Blacklist Check**: Determines if a domain is on various email blacklists.
-- **Email Header Analysis**: Analyzes email headers for spam indicators, sender authenticity, and more.
-- **PGP Encryption/Decryption**: Offers endpoints for encrypting and decrypting messages using PGP, including file encryption and decryption.
-- **SMTP Server Testing**: Tests SMTP servers for connection reliability, TLS support, and open relay vulnerabilities.
-- **Customizable PGP Key Generation**: Generates temporary PGP keys for testing encryption and decryption.
-- **Email Info Lookup**: Retrieves MX, SPF, DMARC records, A records, and client settings for a given domain.
-- **Whoami Information**: Provides details about the client's IP, browser info, OS, PTR record, geo location, and ISP info, and also supports querying information for a specified IP or hostname.
-- **SSL Validation**: Validates SSL certificates for specified hostnames or URLs, detailing certificate validity, issuer information, validity period, and more.
-- **Whitespace Removal API**: Provides a utility to remove unnecessary whitespace from text data, improving efficiency in data transmission and storage.
-- **Base64 Encoder/Decoder API**: Offers a versatile tool for encoding and decoding data in Base64 format, useful in various encoding scenarios and data handling.
-- **Optional Web Server**: Features an optional integrated web server for the API, enhancing usability and accessibility for users preferring web interfaces. This server can be enabled or disabled as per the configuration.
-- **Password Hashing**: Provides functionality to hash passwords securely, ensuring confidentiality and integrity in user authentication systems.
-- **Port Scanner**: Scans for open ports on specified hosts, useful for network diagnostics and security assessments.
-- **Network Tests**: Conducts various network tests, including ping and traceroute, to analyze network connectivity and performance.
-- **URL Encoder**: Encodes URLs to ensure proper transmission and interpretation of special characters in web requests.
-- **Epoch Converter**: Converts timestamps between epoch time and human-readable date/time formats, facilitating time-related calculations and data analysis.
+<img src="eviltools.png" alt="Evil Tools Web Interface" style="width: 25%;">
+
+### Features Accessible via the Web Interface:
+
+- **Email Information**: Retrieve server configurations and records for email domains.
+- **SMTP Testing**: Connect to SMTP servers to check for configurations and vulnerabilities.
+- **Blacklist Checking**: Verify if an email domain is listed on known blacklists.
+- **Email Header Analysis**: Deep dive into email headers to identify potential red flags or validate authenticity.
+- **DMARC Validation**: Check if the DMARC policy is correctly established for a domain.
+- **DKIM Tools**: Test and verify DKIM records for a domain.
+- **Authentication Validation**: Analyze the authentication mechanisms of email domains.
+- **Who Am I**: Get detailed information about the client's IP, device, and network.
+- **DNS Lookup**: Perform DNS lookups for various record types.
+- **SSL Certificate Validation**: Validate the SSL/TLS certificates of web domains.
+- **PGP Encryption**: Utilize PGP tools for encryption and decryption tasks.
+- **Password Hashing**: Hash passwords using robust algorithms.
+- **Port Scanning**: Scan network ports for open services and potential vulnerabilities.
+- **Network Diagnostics**: Run tests such as ping and traceroute from the web interface.
+- **Whitespace Removal**: Clean up text input by removing unnecessary whitespaces.
+- **Base64 Encoding/Decoding**: Encode and decode data in Base64 format.
+- **URL Encoding**: Encode URLs to ensure they are web-safe.
+- **Epoch Time Conversion**: Convert between epoch time and human-readable dates.
+
+To use the web interface, navigate to the deployed application URL and select the desired functionality from the navigation bar. Each feature page provides a form to input the necessary information and submit requests to the API. Responses are displayed directly within the interface.
+
+Note: EvilAPI has aggressive rate limits to prevent abuse; you may need to whitelist or make limit adjustments in the config.js.
 
 ### Known Issues
 
