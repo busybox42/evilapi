@@ -8,7 +8,7 @@ EvilAPI is a versatile collection of utilities designed for email and security r
 
 1. [Installation](#installation)
 2. [Usage](#usage)
-3. [Webpage](#Webpage)
+3. [Web Interface](#web-interface)
 4. [Dependencies](#dependencies)
 5. [Configuration](#configuration)
 6. [Documentation](#documentation)
@@ -66,7 +66,7 @@ docker run -p 3011:3011 -p 8080:8080 -e PORT=3011 -e WEB_SERVER_HOST=http://loca
 
 If no `config.js` file is supplied during the build process, the `start.sh` script will automatically copy the example configuration file (`config.js.example`) to `config.js` before starting the Node.js server.
 
-## Webpage
+## Web Interface
 
 EvilAPI also provides an optional prototype web interface designed to give users a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts.
 
