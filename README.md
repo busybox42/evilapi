@@ -32,16 +32,41 @@ npm install
 Before running EvilAPI, set up the configuration:
 
 1. Copy the example configuration file:
-   ```bash
-   cp src/config/config.js.example src/config/config.js
-   ```
+
+```bash
+cp src/config/config.js.example src/config/config.js
+```
+
 2. Modify `src/config/config.js` as needed to suit your environment and requirements.
 
-To run EvilAPI, use the following command:
+To run EvilAPI locally using Node.js:
 
 ```bash
 npm start
 ```
+
+## Docker Instructions:
+
+## Usage
+
+Before building the Docker image, ensure to set up the configuration:
+
+1. If you haven't already created a configuration file, ensure that the `src/config/config.js.example` file exists. If not, you can create it by copying the example configuration:
+
+```bash
+cp src/config/config.js.example src/config/config.js
+```
+
+2. Modify `src/config/config.js` as needed to suit your environment and requirements.
+
+To build and run EvilAPI using Docker:
+
+```bash
+docker build -t evilapi .
+docker run -p 3011:3011 -p 8080:8080 -e PORT=3011 -e WEB_SERVER_HOST=http://localhost -e WEB_SERVER_PORT=8080 evilapi
+```
+
+If no `config.js` file is supplied during the build process, the `start.sh` script will automatically copy the example configuration file (`config.js.example`) to `config.js` before starting the Node.js server.
 
 ## Features
 
@@ -58,6 +83,11 @@ EvilAPI offers a range of features with a focus on unconventional and educationa
 - **Whitespace Removal API**: Provides a utility to remove unnecessary whitespace from text data, improving efficiency in data transmission and storage.
 - **Base64 Encoder/Decoder API**: Offers a versatile tool for encoding and decoding data in Base64 format, useful in various encoding scenarios and data handling.
 - **Optional Web Server**: Features an optional integrated web server for the API, enhancing usability and accessibility for users preferring web interfaces. This server can be enabled or disabled as per the configuration.
+- **Password Hashing**: Provides functionality to hash passwords securely, ensuring confidentiality and integrity in user authentication systems.
+- **Port Scanner**: Scans for open ports on specified hosts, useful for network diagnostics and security assessments.
+- **Network Tests**: Conducts various network tests, including ping and traceroute, to analyze network connectivity and performance.
+- **URL Encoder**: Encodes URLs to ensure proper transmission and interpretation of special characters in web requests.
+- **Epoch Converter**: Converts timestamps between epoch time and human-readable date/time formats, facilitating time-related calculations and data analysis.
 
 ### Known Issues
 
@@ -89,6 +119,19 @@ EvilAPI leverages a range of Node.js packages for its core and specific function
 - **nodemailer** (v6.9.8): A module for sending emails, supporting various transports and features.
 - **whois-json** (v2.0.4): For fetching WHOIS data, offering insights into domain registrations and associated details.
 - **mailparser** (v3.6.6): A robust module for parsing raw emails into a more readable format.
+- **argon2** (v0.31.2): A secure password hashing algorithm, useful for securely storing and verifying passwords.
+- **bcrypt** (v5.1.1): Another password hashing algorithm commonly used for securing user passwords.
+- **basic-ftp** (v5.0.4): A simple FTP client library, helpful for interacting with FTP servers.
+- **dns-socket** (v4.2.2): A DNS client and server implementation for Node.js, allowing DNS resolution and querying.
+- **express-ip-access-control** (v1.1.3): Middleware for IP-based access control in Express applications, useful for restricting access based on IP addresses.
+- **express-rate-limit** (v7.1.5): Middleware for rate limiting HTTP requests in Express applications, preventing abuse and improving security.
+- **imap-simple** (v1.6.3): A simple IMAP client library for Node.js, facilitating interaction with IMAP servers.
+- **moment** (v2.30.1): A lightweight JavaScript date library for parsing, manipulating, and formatting dates and times.
+- **moment-timezone** (v0.5.45): An extension of the Moment.js library for handling time zone data.
+- **node-dns** (v0.1.0): A DNS resolver library for Node.js, providing DNS lookup capabilities.
+- **node-pop3** (v0.9.0): A POP3 client library for Node.js, allowing interaction with POP3 servers.
+- **ssh2-sftp-client** (v10.0.3): An SFTP (SSH File Transfer Protocol) client library for Node.js, facilitating secure file transfers over SSH.
+- **uuid** (v9.0.1): A universally unique identifier (UUID) library for generating unique identifiers.
 
 These dependencies form the backbone of EvilAPI, enabling a wide array of features from basic web server setup to complex security and email-related functionalities.
 
