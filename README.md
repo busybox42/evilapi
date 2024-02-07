@@ -68,9 +68,9 @@ If no `config.js` file is supplied during the build process, the `start.sh` scri
 
 ## Webpage
 
-EvilAPI also provides a prototype web interface designed to give users a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts.
+EvilAPI also provides an optional prototype web interface designed to give users a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts.
 
-<img src="eviltools.png" alt="Evil Tools Web Interface" style="width: 25%;">
+<img src="eviltools.png" alt="Evil Tools Web Interface" style="width: 50%;">
 
 ### Features Accessible via the Web Interface:
 
