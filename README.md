@@ -86,6 +86,7 @@ EvilAPI also provides an optional prototype web interface designed to give users
 - **Base64 Encoding/Decoding**: Encode and decode data in Base64 format.
 - **URL Encoding**: Encode URLs to ensure they are web-safe.
 - **Epoch Time Conversion**: Convert between epoch time and human-readable dates.
+- **SpamAssassin Scanner**: Scan email messages with SpamAssassin. 
 
 To use the web interface, navigate to the deployed application URL and select the desired functionality from the navigation bar. Each feature page provides a form to input the necessary information and submit requests to the API. Responses are displayed directly within the interface.
 
