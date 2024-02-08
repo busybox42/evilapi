@@ -17,7 +17,7 @@ const webApp = express();
 // IP access control for logging blacklisted IPs
 app.use((req, res, next) => {
   // Normalize the IP address format for comparison
-  let { ip } = req;
+  let ip = req.ip;
 
   // Attempt to normalize IPv6 representations of IPv4 addresses
   if (ip.substr(0, 7) === "::ffff:") {
@@ -84,13 +84,8 @@ function pruneUploads() {
 
       if (age > 86400000) {
         // If the file is older than 24 hours (86400000 ms)
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error(`Failed to delete old file: ${file}`, err);
-          } else {
-            console.log(`Deleted old file: ${file}`);
-          }
-        });
+        fs.unlinkSync(filePath);
+        console.log(`Deleted old file: ${file}`);
       }
     });
   }
@@ -129,24 +124,15 @@ function pruneUploads() {
         res.sendFile(path.join(__dirname, "web-interface", "index.html"));
       });
 
-      app.use(webApp);
-      http.createServer(app).listen(config.webServer.webPort, () => {
+      http.createServer(webApp).listen(config.webServer.webPort, () => {
         console.log(`Web Server running on port ${config.webServer.webPort}`);
       });
     }
 
     // Global error handler
-    app.use((req, res, next) => {
-      const error = new Error("Not Found");
-      error.status = 404;
-      next(error);
-    });
-
     app.use((err, req, res, next) => {
       console.error(`Error in ${req.method} ${req.path}:`, err);
-      res
-        .status(err.status || 500)
-        .send(err.message || "Internal Server Error");
+      res.status(500).send("Internal Server Error");
     });
 
     // Start the server
