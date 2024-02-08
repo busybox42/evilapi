@@ -35,15 +35,3 @@ EXPOSE 3011 8080
 
 # Start the application using the script
 CMD ["./start.sh"]
-
-# Note on SSL:
-# If you're using SSL, it's recommended to mount the SSL certificates and keys
-# as volumes from the host machine to avoid including them in the Docker image.
-# This can be done using the Docker run command and not in the Dockerfile.
-# Example:
-# docker run -p 3011:3011 -p 8080:8080 \
-#   -e PORT=3011 \
-#   -e WEB_SERVER_HOST=http://localhost \
-#   -e WEB_SERVER_PORT=8080 \
-#   -v /path/to/your/ssl:/opt/evilcrypt/ssl \
-#   my-nodejs-api
