@@ -20,6 +20,7 @@
       <button id="smtpTestBtn" class="nav-btn">SMTP Test</button>
       <button id="blacklistCheckBtn" class="nav-btn">Email Blacklist Check</button>
       <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
+      <button id="spamScanBtn" class="nav-btn">Spam Scan</button>
       <button id="validateDmarcBtn" class="nav-btn">Validate DMARC</button>
       <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>
       <button id="testEmailDeliveryBtn" class="nav-btn">Test Email Delivery</button>
@@ -71,6 +72,12 @@
       <textarea id="emailHeaderInput" placeholder="Paste email header here" rows="6"></textarea>
       <button id="analyzeHeaderBtn" class="nav-btn">Analyze Header</button>
       <div id="headerAnalysisResults"></div>
+    </div>
+    <div id="spamScanView" class="content-view hidden">
+      <h2>SpamAssassin Scan</h2>
+      <textarea id="spamScanInput" placeholder="Paste email content here" rows="6"></textarea>
+      <button id="scanSpamBtn" class="nav-btn">Scan for Spam</button>
+      <div id="spamScanResults"></div>
     </div>
     <div id="validateDmarcView" class="content-view hidden">
       <h2>DMARC Validation</h2>

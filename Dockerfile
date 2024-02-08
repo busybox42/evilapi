@@ -5,10 +5,12 @@ FROM node:current-alpine
 WORKDIR /usr/src/app
 
 # Install system dependencies
-RUN apk update && apk add --no-cache iputils bind-tools memcached libcap traceroute
+RUN apk update && apk add --no-cache iputils bind-tools memcached libcap traceroute spamassassin spamassassin-client
 
 # Set capabilities on traceroute to allow it to run without full root privileges
 RUN setcap cap_net_raw+ep /usr/bin/traceroute
+
+RUN /usr/bin/sa-update -D
 
 # Before copying package.json and installing dependencies,
 # create the non-root user and change ownership of the work directory.
