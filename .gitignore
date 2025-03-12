@@ -5,6 +5,9 @@ apiTest/node_modules/
 # Environment variables
 .env
 
+# Coverage dir
+coverage/
+
 # Uploads dir
 uploads/
 
