@@ -18,6 +18,12 @@ async function validateDkim() {
 
   try {
     const response = await fetch(url);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+    
     const data = await response.json();
     displayDkimResults(data);
   } catch (error) {
@@ -43,6 +49,12 @@ async function generateDkim() {
 
   try {
     const response = await fetch(url);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+    
     const data = await response.json();
     displayDkimGenResults(data);
   } catch (error) {
@@ -60,6 +72,9 @@ function displayDkimGenResults(data) {
   const resultsElement = document.getElementById("dkimResults");
   
   if (data.dkimRecord) {
+    // Store the data in a safe way for copying
+    window.currentDkimData = data;
+    
     resultsElement.innerHTML = `
       <div class="dkim-generation">
         <div class="status-section">
@@ -70,7 +85,7 @@ function displayDkimGenResults(data) {
         <div class="dkim-dns-record">
           <h4>🌐 DNS Record (Add to your DNS zone):</h4>
           <div class="record-content">${data.dkimRecord}</div>
-          <button class="copy-btn" onclick="copyToClipboard('${data.dkimRecord.replace(/'/g, "\\'")}')">📋 Copy DNS Record</button>
+          <button class="copy-btn" onclick="copyToClipboard(window.currentDkimData.dkimRecord)">📋 Copy DNS Record</button>
         </div>
         
         <div class="dkim-private-key">
@@ -79,12 +94,12 @@ function displayDkimGenResults(data) {
             <strong>⚠️ Security Warning:</strong> ${data.privateKeyWarning || 'Keep this private key secure and never share it publicly!'}
           </div>
           <div class="key-content"><pre>${data.privateKey}</pre></div>
-          <button class="copy-btn" onclick="copyToClipboard('${data.privateKey.replace(/'/g, "\\'")}')">📋 Copy Private Key</button>
+          <button class="copy-btn" onclick="copyToClipboard(window.currentDkimData.privateKey)">📋 Copy Private Key</button>
         </div>
       </div>
     `;
   } else {
-    resultsElement.innerHTML = `<div class="error">Error: Unknown DKIM generation response format</div>`;
+    resultsElement.innerHTML = `<div class="error">Error: Unknown DKIM generation response format. Received: ${JSON.stringify(data)}</div>`;
   }
 }
 
