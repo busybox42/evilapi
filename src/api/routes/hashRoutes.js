@@ -1,6 +1,8 @@
 const express = require("express");
 const crypto = require("crypto");
 const hashService = require("../../services/hashService");
+const { validateHash } = require("../../middleware/inputValidation");
+const { asyncHandler, createSuccessResponse } = require("../../middleware/errorHandler");
 const router = express.Router();
 
 // Set JSON spaces for pretty printing and add a new line at the end
@@ -16,51 +18,27 @@ router.use((req, res, next) => {
 });
 
 // POST endpoint for creating a hash
-router.post("/create-hash", async (req, res) => {
-  try {
-    const { algorithm, text } = req.body;
-    if (!algorithm || !text) {
-      return res
-        .status(400)
-        .send({ error: "Algorithm and text are required." });
-    }
-
-    const hash = await hashService.createHash(algorithm, text);
-    res.json({ hash });
-  } catch (error) {
-    console.error("Hash creation failed:", error);
-    res.status(500).send({ error: "Failed to create hash." });
-  }
-});
+router.post("/create-hash", validateHash, asyncHandler(async (req, res) => {
+  const { algorithm, text } = req.body;
+  const hash = await hashService.createHash(algorithm, text);
+  res.json(createSuccessResponse({ hash }, "Hash created successfully"));
+}));
 
 // Post route for validating password hashes
-router.post("/validate-hash", (req, res) => {
+router.post("/validate-hash", validateHash, asyncHandler(async (req, res) => {
   const { algorithm, password, hash } = req.body;
 
-  if (!algorithm || !password || !hash) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
+  const generatedHash = crypto
+    .createHash(algorithm)
+    .update(password)
+    .digest("hex");
+  const isValid = generatedHash === hash;
 
-  if (!crypto.getHashes().includes(algorithm)) {
-    return res.status(400).json({ error: "Unsupported hash algorithm" });
-  }
-
-  try {
-    const generatedHash = crypto
-      .createHash(algorithm)
-      .update(password)
-      .digest("hex");
-    const isValid = generatedHash === hash;
-    res.json({
-      isValid,
-      algorithm,
-      hash,
-      generatedHash,
-    });
-  } catch (error) {
-    console.error("Error validating hash:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+  res.json(createSuccessResponse({
+    isValid,
+    algorithm,
+    // Note: Don't return the original hash in production for security
+  }, isValid ? "Hash validation successful" : "Hash validation failed"));
+}));
 
 module.exports = router;
