@@ -345,89 +345,103 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       <button id="urlDecodeBtn" class="nav-btn">URL Decode</button>
     </div>
     <div id="timeToolsView" class="content-view hidden">
-      <div id="convertToEpochSection">
+      <div id="realTimeClock"></div>
+      
+      <div id="convertToEpochSection" class="time-tools-section">
         <h3>Convert to Epoch Time</h3>
-        <input type="text" id="dateInput" placeholder="YYYY-MM-DD HH:mm:ss" style="width: 200px; height: 42px;" />
-        <select id="timeZoneSelectToEpoch" style="width: 150px; height: 42px;">
-          <option value="UTC">UTC</option>
-          <option value="Europe/London">Europe/London</option>
-          <option value="Europe/Berlin">Europe/Berlin</option>
-          <option value="Europe/Moscow">Europe/Moscow</option>
-          <option value="Asia/Dubai">Asia/Dubai</option>
-          <option value="Asia/Karachi">Asia/Karachi</option>
-          <option value="Asia/Kolkata">Asia/Kolkata</option>
-          <option value="Asia/Dhaka">Asia/Dhaka</option>
-          <option value="Asia/Kathmandu">Asia/Kathmandu</option>
-          <option value="Asia/Yangon">Asia/Yangon</option>
-          <option value="Asia/Bangkok">Asia/Bangkok</option>
-          <option value="Asia/Hong_Kong">Asia/Hong_Kong</option>
-          <option value="Asia/Tokyo">Asia/Tokyo</option>
-          <option value="Australia/Adelaide">Australia/Adelaide</option>
-          <option value="Australia/Sydney">Australia/Sydney</option>
-          <option value="Pacific/Noumea">Pacific/Noumea</option>
-          <option value="Pacific/Auckland">Pacific/Auckland</option>
-          <option value="Pacific/Chatham">Pacific/Chatham</option>
-          <option value="Pacific/Honolulu">Pacific/Honolulu</option>
-          <option value="America/Anchorage">America/Anchorage</option>
-          <option value="America/Los_Angeles">America/Los_Angeles</option>
-          <option value="America/Denver">America/Denver</option>
-          <option value="America/Chicago">America/Chicago</option>
-          <option value="America/New_York">America/New_York</option>
-          <option value="America/Caracas">America/Caracas</option>
-          <option value="America/Sao_Paulo">America/Sao_Paulo</option>
-          <option value="Atlantic/Azores">Atlantic/Azores</option>
-          <option value="Atlantic/Cape_Verde">Atlantic/Cape_Verde</option>
-          <option value="Africa/Cairo">Africa/Cairo</option>
-          <option value="Asia/Tehran">Asia/Tehran</option>
-          <option value="Australia/Darwin">Australia/Darwin</option>
-          <option value="Australia/Lord_Howe">Australia/Lord_Howe</option>
-          <option value="Asia/Kabul">Asia/Kabul</option>  
-        </select>
-        <button id="dateToEpochBtn" class="nav-btn">Convert</button>
+        <div class="time-input-group">
+          <div class="time-input-row">
+            <input type="text" id="dateInput" placeholder="YYYY-MM-DD HH:mm:ss" style="width: 200px; height: 42px;" />
+            <select id="timeZoneSelectToEpoch" style="width: 150px; height: 42px;">
+              <option value="UTC">UTC</option>
+              <option value="Europe/London">Europe/London</option>
+              <option value="Europe/Berlin">Europe/Berlin</option>
+              <option value="Europe/Moscow">Europe/Moscow</option>
+              <option value="Asia/Dubai">Asia/Dubai</option>
+              <option value="Asia/Karachi">Asia/Karachi</option>
+              <option value="Asia/Kolkata">Asia/Kolkata</option>
+              <option value="Asia/Dhaka">Asia/Dhaka</option>
+              <option value="Asia/Kathmandu">Asia/Kathmandu</option>
+              <option value="Asia/Yangon">Asia/Yangon</option>
+              <option value="Asia/Bangkok">Asia/Bangkok</option>
+              <option value="Asia/Hong_Kong">Asia/Hong_Kong</option>
+              <option value="Asia/Tokyo">Asia/Tokyo</option>
+              <option value="Australia/Adelaide">Australia/Adelaide</option>
+              <option value="Australia/Sydney">Australia/Sydney</option>
+              <option value="Pacific/Noumea">Pacific/Noumea</option>
+              <option value="Pacific/Auckland">Pacific/Auckland</option>
+              <option value="Pacific/Chatham">Pacific/Chatham</option>
+              <option value="Pacific/Honolulu">Pacific/Honolulu</option>
+              <option value="America/Anchorage">America/Anchorage</option>
+              <option value="America/Los_Angeles">America/Los_Angeles</option>
+              <option value="America/Denver">America/Denver</option>
+              <option value="America/Chicago">America/Chicago</option>
+              <option value="America/New_York">America/New_York</option>
+              <option value="America/Caracas">America/Caracas</option>
+              <option value="America/Sao_Paulo">America/Sao_Paulo</option>
+              <option value="Atlantic/Azores">Atlantic/Azores</option>
+              <option value="Atlantic/Cape_Verde">Atlantic/Cape_Verde</option>
+              <option value="Africa/Cairo">Africa/Cairo</option>
+              <option value="Asia/Tehran">Asia/Tehran</option>
+              <option value="Australia/Darwin">Australia/Darwin</option>
+              <option value="Australia/Lord_Howe">Australia/Lord_Howe</option>
+              <option value="Asia/Kabul">Asia/Kabul</option>  
+            </select>
+            <button id="dateToEpochBtn" class="nav-btn">Convert</button>
+          </div>
+          <div class="time-input-helper">
+            <button id="useCurrentForDate" class="use-current-btn">Use Current Time</button>
+          </div>
+        </div>
         <div id="epochResult"></div>
       </div>
-      <br>
-      <hr>
-      <br>
-      <div id="convertFromDateSection">
+      
+      <div id="convertFromDateSection" class="time-tools-section">
         <h3>Convert from Epoch Time</h3>
-        <input type="text" id="epochInput" placeholder="Epoch time in milliseconds" style="width: 200px; height: 42px;" />
-        <select id="timeZoneSelectFromDate" style="width: 150px; height: 42px;">
-          <option value="UTC">UTC</option>
-          <option value="Europe/London">Europe/London</option>
-          <option value="Europe/Berlin">Europe/Berlin</option>
-          <option value="Europe/Moscow">Europe/Moscow</option>
-          <option value="Asia/Dubai">Asia/Dubai</option>
-          <option value="Asia/Karachi">Asia/Karachi</option>
-          <option value="Asia/Kolkata">Asia/Kolkata</option>
-          <option value="Asia/Dhaka">Asia/Dhaka</option>
-          <option value="Asia/Kathmandu">Asia/Kathmandu</option>
-          <option value="Asia/Yangon">Asia/Yangon</option>
-          <option value="Asia/Bangkok">Asia/Bangkok</option>
-          <option value="Asia/Hong_Kong">Asia/Hong_Kong</option>
-          <option value="Asia/Tokyo">Asia/Tokyo</option>
-          <option value="Australia/Adelaide">Australia/Adelaide</option>
-          <option value="Australia/Sydney">Australia/Sydney</option>
-          <option value="Pacific/Noumea">Pacific/Noumea</option>
-          <option value="Pacific/Auckland">Pacific/Auckland</option>
-          <option value="Pacific/Chatham">Pacific/Chatham</option>
-          <option value="Pacific/Honolulu">Pacific/Honolulu</option>
-          <option value="America/Anchorage">America/Anchorage</option>
-          <option value="America/Los_Angeles">America/Los_Angeles</option>
-          <option value="America/Denver">America/Denver</option>
-          <option value="America/Chicago">America/Chicago</option>
-          <option value="America/New_York">America/New_York</option>
-          <option value="America/Caracas">America/Caracas</option>
-          <option value="America/Sao_Paulo">America/Sao_Paulo</option>
-          <option value="Atlantic/Azores">Atlantic/Azores</option>
-          <option value="Atlantic/Cape_Verde">Atlantic/Cape_Verde</option>
-          <option value="Africa/Cairo">Africa/Cairo</option>
-          <option value="Asia/Tehran">Asia/Tehran</option>
-          <option value="Australia/Darwin">Australia/Darwin</option>
-          <option value="Australia/Lord_Howe">Australia/Lord_Howe</option>
-          <option value="Asia/Kabul">Asia/Kabul</option>       
-        </select>
-        <button id="epochToDateBtn" class="nav-btn">Convert</button>
+        <div class="time-input-group">
+          <div class="time-input-row">
+            <input type="text" id="epochInput" placeholder="Epoch time in seconds" style="width: 200px; height: 42px;" />
+            <select id="timeZoneSelectFromDate" style="width: 150px; height: 42px;">
+              <option value="UTC">UTC</option>
+              <option value="Europe/London">Europe/London</option>
+              <option value="Europe/Berlin">Europe/Berlin</option>
+              <option value="Europe/Moscow">Europe/Moscow</option>
+              <option value="Asia/Dubai">Asia/Dubai</option>
+              <option value="Asia/Karachi">Asia/Karachi</option>
+              <option value="Asia/Kolkata">Asia/Kolkata</option>
+              <option value="Asia/Dhaka">Asia/Dhaka</option>
+              <option value="Asia/Kathmandu">Asia/Kathmandu</option>
+              <option value="Asia/Yangon">Asia/Yangon</option>
+              <option value="Asia/Bangkok">Asia/Bangkok</option>
+              <option value="Asia/Hong_Kong">Asia/Hong_Kong</option>
+              <option value="Asia/Tokyo">Asia/Tokyo</option>
+              <option value="Australia/Adelaide">Australia/Adelaide</option>
+              <option value="Australia/Sydney">Australia/Sydney</option>
+              <option value="Pacific/Noumea">Pacific/Noumea</option>
+              <option value="Pacific/Auckland">Pacific/Auckland</option>
+              <option value="Pacific/Chatham">Pacific/Chatham</option>
+              <option value="Pacific/Honolulu">Pacific/Honolulu</option>
+              <option value="America/Anchorage">America/Anchorage</option>
+              <option value="America/Los_Angeles">America/Los_Angeles</option>
+              <option value="America/Denver">America/Denver</option>
+              <option value="America/Chicago">America/Chicago</option>
+              <option value="America/New_York">America/New_York</option>
+              <option value="America/Caracas">America/Caracas</option>
+              <option value="America/Sao_Paulo">America/Sao_Paulo</option>
+              <option value="Atlantic/Azores">Atlantic/Azores</option>
+              <option value="Atlantic/Cape_Verde">Atlantic/Cape_Verde</option>
+              <option value="Africa/Cairo">Africa/Cairo</option>
+              <option value="Asia/Tehran">Asia/Tehran</option>
+              <option value="Australia/Darwin">Australia/Darwin</option>
+              <option value="Australia/Lord_Howe">Australia/Lord_Howe</option>
+              <option value="Asia/Kabul">Asia/Kabul</option>       
+            </select>
+            <button id="epochToDateBtn" class="nav-btn">Convert</button>
+          </div>
+          <div class="time-input-helper">
+            <button id="useCurrentForEpoch" class="use-current-btn">Use Current Time</button>
+          </div>
+        </div>
         <div id="dateResult"></div>
       </div>
     </div>    

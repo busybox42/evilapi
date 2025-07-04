@@ -631,37 +631,63 @@ export const formatSpamScan = (data) => {
   let threshold = 5;
   let scoreDisplay = 'N/A';
   
-  if (data.score) {
+  if (data.score && data.score !== 'N/A') {
     const scoreParts = data.score.split('/');
     if (scoreParts.length >= 2) {
       score = parseFloat(scoreParts[0]);
       threshold = parseFloat(scoreParts[1]);
       scoreDisplay = data.score;
+    } else {
+      scoreDisplay = data.score;
     }
   }
   
-  const isSpam = score >= threshold;
-  const status = isSpam ? 'error' : 'success';
-  const statusText = isSpam ? '⚠️ SPAM DETECTED' : '✅ NOT SPAM';
+  // Determine status based on decision and score
+  let status, statusText;
+  if (data.decision && (data.decision.includes('Error') || data.decision.includes('Unavailable'))) {
+    status = 'error';
+    statusText = '❌ SCAN ERROR';
+  } else if (data.decision && (data.decision.includes('Timeout') || data.decision.includes('Too Large'))) {
+    status = 'warning';
+    statusText = '⚠️ SCAN LIMITED';
+  } else if (data.decision === 'Scan Complete (No Rules)') {
+    status = 'info';
+    statusText = '✅ SCAN COMPLETE';
+  } else if (data.decision === 'Spam Detected') {
+    status = 'error';
+    statusText = '🚨 SPAM DETECTED';
+  } else if (data.decision === 'Suspicious Content') {
+    status = 'warning';
+    statusText = '⚠️ SUSPICIOUS CONTENT';
+  } else if (data.decision === 'Clean') {
+    status = 'success';
+    statusText = '✅ CLEAN';
+  } else {
+    // Fallback to score-based detection for compatibility
+    const isSpam = score >= threshold && threshold > 0;
+    status = isSpam ? 'error' : 'success';
+    statusText = isSpam ? '🚨 SPAM DETECTED' : '✅ CLEAN';
+  }
   
   // Overall result
   sections.push(createSection('🛡️ Spam Scan Result', `
     ${createStatusBadge(statusText, status)}
     ${createKeyValue('Score', scoreDisplay, true)}
-    ${data.decision ? createKeyValue('Decision', data.decision) : ''}
+    ${data.decision ? createKeyValue('Status', data.decision) : ''}
   `));
 
   // Detailed analysis
   if (data.details && Array.isArray(data.details) && data.details.length > 0) {
     const detailItems = data.details.map(detail => {
-      const points = parseFloat(detail.points) || 0;
-      const pointsClass = points > 0 ? 'spam-positive' : 'spam-negative';
-      const pointsPrefix = points > 0 ? '+' : '';
+      // Handle both numeric and N/A points
+      const points = detail.points === 'N/A' ? 'N/A' : parseFloat(detail.points) || 0;
+      const pointsClass = points === 'N/A' ? 'spam-info' : points > 0 ? 'spam-positive' : 'spam-negative';
+      const pointsPrefix = (points !== 'N/A' && points > 0) ? '+' : '';
       
       return `
         <div class="spam-rule">
           <div class="rule-points ${pointsClass}">
-            ${pointsPrefix}${detail.points}
+            ${pointsPrefix}${points}
           </div>
           <div class="rule-details">
             <strong>${detail.ruleName}</strong>
@@ -743,9 +769,9 @@ export const formatEmailDeliveryTest = (data) => {
     ];
     
     sections.push(createSection('🔧 Troubleshooting Tips', 
-      createList(troubleshootingTips.map(tip => `💡 ${tip}`))
+      createList(troubleshootingTips.map(tip => `�� ${tip}`))
     ));
   }
 
   return sections.join('');
-}; 
+};

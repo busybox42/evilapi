@@ -5,8 +5,14 @@ const {
   scanEmailWithSpamAssassin,
 } = require("../../services/spamAssassinService");
 
-// Set up multer to store files in memory
-const upload = multer({ storage: multer.memoryStorage() });
+// Set up multer to store files in memory with increased file size limit
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fieldSize: 10 * 1024 * 1024  // 10MB field size limit
+  }
+});
 
 router.post("/scan-email", upload.single("emailFile"), async (req, res) => {
   try {

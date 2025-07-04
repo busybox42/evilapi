@@ -557,40 +557,110 @@ input[type="file"] {
 .spam-rule {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 10px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 4px;
-  border-left: 3px solid #333;
+  margin: 8px 0;
+  padding: 10px;
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  border-radius: 6px;
+  border-left: 4px solid #4a5568;
 }
 
 .rule-points {
-  min-width: 60px;
-  padding: 4px 8px;
-  border-radius: 3px;
   font-weight: bold;
-  text-align: center;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  padding: 4px 8px;
+  border-radius: 4px;
   margin-right: 12px;
+  min-width: 50px;
+  text-align: center;
+  font-size: 13px;
 }
 
 .rule-points.spam-positive {
-  background: #dc3545;
+  background: linear-gradient(135deg, #e53e3e, #c53030);
   color: white;
+  border: 1px solid #c53030;
 }
 
 .rule-points.spam-negative {
-  background: #28a745;
+  background: linear-gradient(135deg, #38a169, #2f855a);
   color: white;
+  border: 1px solid #2f855a;
+}
+
+.rule-points.spam-info {
+  background: linear-gradient(135deg, #3182ce, #2c5282);
+  color: white;
+  border: 1px solid #2c5282;
 }
 
 .rule-details {
   flex: 1;
 }
 
+.rule-details strong {
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
 .rule-description {
-  font-size: 0.9em;
-  color: #bbb;
-  margin-top: 4px;
+  color: #cbd5e0;
+  font-size: 12px;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* Enhanced message styles */
+.warning-message {
+  background: linear-gradient(135deg, #d69e2e, #b7791f);
+  color: #1a1a1a;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 4px solid #ed8936;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.technical-info {
+  background: linear-gradient(135deg, #4a5568, #2d3748);
+  color: #e2e8f0;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 4px solid #718096;
+  font-size: 13px;
+}
+
+.technical-info code {
+  background: #1a1a1a;
+  color: #fbb6ce;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+}
+
+.help-message {
+  background: linear-gradient(135deg, #2b6cb0, #2c5282);
+  color: #e2e8f0;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #3182ce;
+}
+
+.help-message h4 {
+  margin: 0 0 12px 0;
+  color: #90cdf4;
+  font-size: 15px;
+}
+
+.help-message ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.help-message li {
+  margin: 6px 0;
+  line-height: 1.4;
+  font-size: 13px;
 }
 
 /* DKIM generation styles */
@@ -798,4 +868,671 @@ input[type="file"] {
 
 .troubleshooting strong {
   color: #f39c12;
+}
+
+/* Network test specific styles */
+.network-result {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 10px 0;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.network-result::-webkit-scrollbar {
+  height: 8px;
+}
+
+.network-result::-webkit-scrollbar-track {
+  background: #2c2c2c;
+}
+
+.network-result::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.network-result::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Streaming network test styles */
+.network-result.streaming {
+  border-left: 4px solid #2ea4c0;
+  background: linear-gradient(90deg, #1a1a1a 0%, #1e3a4a 100%);
+  position: relative;
+}
+
+.network-result.streaming::after {
+  content: "● LIVE";
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #2ea4c0;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+  z-index: 1;
+}
+
+.network-result.completed {
+  border-left: 4px solid #4CAF50;
+  background: #1a1a1a;
+  position: relative;
+}
+
+.network-result.completed::after {
+  content: "✓ COMPLETE";
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #4CAF50;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Time Tools specific styles */
+.time-result-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 15px 0;
+}
+
+/* Enhanced time result container */
+.time-result-container.enhanced {
+  background: linear-gradient(135deg, rgba(46, 164, 192, 0.1), rgba(52, 152, 219, 0.05));
+  border: 2px solid #2ea4c0;
+  border-radius: 12px;
+  padding: 0;
+  margin: 20px 0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(46, 164, 192, 0.2);
+}
+
+.time-section {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.time-section:last-child {
+  border-bottom: none;
+}
+
+.time-section.primary-section {
+  background: linear-gradient(135deg, rgba(46, 164, 192, 0.15), rgba(52, 152, 219, 0.1));
+  border-bottom: 2px solid rgba(46, 164, 192, 0.3);
+}
+
+.section-header {
+  color: #3498db;
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.time-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.time-value.large {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.time-value.monospace {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+/* Timezone comparison styles */
+.timezone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.timezone-comparison {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+}
+
+.tz-name {
+  font-weight: bold;
+  color: #3498db;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.tz-time {
+  font-family: 'Courier New', monospace;
+  color: #ecf0f1;
+  font-size: 14px;
+}
+
+/* Responsive adjustments for enhanced time tools */
+@media (max-width: 768px) {
+  .time-grid.compact {
+    grid-template-columns: 1fr;
+  }
+  
+  .timezone-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .time-value.large {
+    font-size: 14px;
+  }
+  
+  .section-header {
+    font-size: 14px;
+  }
+}
+
+/* SMTP Test Enhanced Styles */
+.smtp-result-container.enhanced {
+  background: linear-gradient(135deg, rgba(46, 164, 192, 0.1), rgba(52, 152, 219, 0.05));
+  border: 2px solid #2ea4c0;
+  border-radius: 12px;
+  padding: 0;
+  margin: 20px 0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(46, 164, 192, 0.2);
+}
+
+.smtp-section {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.smtp-section:last-child {
+  border-bottom: none;
+}
+
+.smtp-section.primary-section {
+  background: linear-gradient(135deg, rgba(46, 164, 192, 0.15), rgba(52, 152, 219, 0.1));
+  border-bottom: 2px solid rgba(46, 164, 192, 0.3);
+}
+
+.smtp-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.smtp-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 12px;
+}
+
+.smtp-value-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.smtp-label {
+  font-weight: bold;
+  color: #2ea4c0;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.smtp-value-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
+
+.smtp-value {
+  font-size: 14px;
+  color: #ffffff;
+  flex: 1;
+  word-break: break-word;
+}
+
+.smtp-value.large {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+.smtp-value.monospace {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  background: #1a1a1a;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #3a3a3a;
+}
+
+/* Security Analysis Styles */
+.security-overview {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.security-score {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.score-label {
+  color: #3498db;
+  font-weight: bold;
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+/* Recommendation Styles */
+.recommendation-group {
+  margin-bottom: 20px;
+}
+
+.recommendation-title {
+  color: #3498db;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recommendation-list {
+  margin: 0;
+  padding-left: 20px;
+  color: #ffffff;
+}
+
+.recommendation-list.issues li {
+  color: #e74c3c;
+  margin-bottom: 5px;
+}
+
+.recommendation-list.recommendations li {
+  color: #27ae60;
+  margin-bottom: 5px;
+}
+
+.port-recommendation {
+  color: #ffffff;
+  background: rgba(52, 152, 219, 0.1);
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #3498db;
+  margin: 0;
+  font-style: italic;
+}
+
+/* Status Badge Styles (enhanced) */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.badge-success {
+  background-color: #27ae60;
+  color: white;
+}
+
+.badge-error {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #f39c12;
+  color: white;
+}
+
+.badge-info {
+  background-color: #3498db;
+  color: white;
+}
+
+/* SMTP Responsive Design */
+@media (max-width: 768px) {
+  .smtp-grid.compact {
+    grid-template-columns: 1fr;
+  }
+  
+  .smtp-value.large {
+    font-size: 14px;
+  }
+  
+  .security-score {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .score-value {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+  
+  .smtp-section {
+    padding: 15px;
+  }
+}
+
+.time-result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.time-value-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.time-label {
+  font-weight: bold;
+  color: #2ea4c0;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.time-value-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+}
+
+.time-value {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #ffffff;
+  flex: 1;
+  word-break: break-all;
+}
+
+.time-value.selectable {
+  user-select: all;
+  cursor: text;
+}
+
+.time-past {
+  color: #e74c3c !important;
+}
+
+.time-future {
+  color: #27ae60 !important;
+}
+
+/* Real-time clock styles */
+.real-time-display {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  border: 2px solid #3498db;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.clock-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.clock-section:last-child {
+  margin-bottom: 0;
+}
+
+.clock-label {
+  font-weight: bold;
+  color: #3498db;
+  font-size: 14px;
+}
+
+.clock-value-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #34495e;
+  border-radius: 6px;
+}
+
+.clock-value {
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #ecf0f1;
+  font-weight: bold;
+  flex: 1;
+}
+
+.clock-value.selectable {
+  user-select: all;
+  cursor: text;
+  background: rgba(52, 152, 219, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Time input helper buttons */
+.time-input-helper {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+  align-items: center;
+}
+
+.use-current-btn {
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.use-current-btn:hover {
+  background: #2ecc71;
+}
+
+/* Enhanced copy button for time tools */
+.time-result-container .copy-btn,
+.real-time-display .copy-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 35px;
+}
+
+.time-result-container .copy-btn:hover,
+.real-time-display .copy-btn:hover {
+  background: #2980b9;
+  transform: scale(1.05);
+}
+
+/* Time conversion input improvements */
+.time-tools-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.time-tools-section h3 {
+  color: #3498db;
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.time-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.time-input-row input {
+  flex: 1;
+  min-width: 200px;
+}
+
+.time-input-row select {
+  min-width: 200px;
+}
+
+.time-input-row button {
+  white-space: nowrap;
+}
+
+/* Responsive improvements for time tools */
+@media (max-width: 768px) {
+  .time-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .time-input-row input,
+  .time-input-row select,
+  .time-input-row button {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .time-value-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .clock-value-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .real-time-display {
+    padding: 15px;
+  }
+}
+
+/* SMTP Capabilities and Auth Methods */
+.capabilities-container,
+.auth-methods-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.capability-item,
+.auth-method {
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  color: #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  border: 1px solid #4a5568;
+  transition: all 0.2s ease;
+}
+
+.capability-item:hover,
+.auth-method:hover {
+  background: linear-gradient(135deg, #4a5568, #718096);
+  border-color: #718096;
+  transform: translateY(-1px);
+}
+
+.auth-method.none {
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  color: #a0aec0;
+  font-style: italic;
+}
+
+.capabilities-note,
+.auth-methods-note {
+  font-size: 12px;
+  color: #a0aec0;
+  margin-top: 8px;
+  font-style: italic;
 }

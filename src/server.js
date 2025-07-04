@@ -128,8 +128,8 @@ function pruneUploads() {
 
     app.use(cors(corsOptions));
     app.use(morgan("combined"));
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json({ limit: '10mb' }));
+    app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
     // Dynamically load route files
     loadRoutes(path.join(__dirname, "api", "routes"), app);

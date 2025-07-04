@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const headerAnalysisService = require("../../services/headerAnalysisService");
 
-// Middleware to parse text/plain request body
-router.use(express.text({ type: "text/plain" }));
+// Middleware to parse text/plain request body with increased limit
+router.use(express.text({ type: "text/plain", limit: "10mb" }));
 
 router.post("/analyze-headers", async (req, res) => {
   try {
