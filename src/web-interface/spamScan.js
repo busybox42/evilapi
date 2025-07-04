@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatSpamScan } from "./formatters.js";
 
 // Function to scan email content for spam
 async function scanEmailForSpam(emailContent) {
@@ -11,7 +12,7 @@ async function scanEmailForSpam(emailContent) {
   formData.append("emailFile", blob, "email.eml");
 
   // Display a loading message
-  resultsDiv.innerHTML = `<div>Loading... Please wait.</div>`;
+  resultsDiv.innerHTML = `<div class="loading">Loading... Please wait.</div>`;
 
   try {
     const response = await fetch(url, {
@@ -27,14 +28,14 @@ async function scanEmailForSpam(emailContent) {
     displaySpamScanResults(data);
   } catch (error) {
     console.error("Scan error:", error);
-    resultsDiv.textContent = error.message || "Failed to scan email for spam.";
+    resultsDiv.innerHTML = `<div class="error">Error: ${error.message || "Failed to scan email for spam."}</div>`;
   }
 }
 
 // Function to display spam scan results
 function displaySpamScanResults(data) {
   const resultsDiv = document.getElementById("spamScanResults");
-  resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+  resultsDiv.innerHTML = formatSpamScan(data);
 }
 
 // Initialization function for spam scan functionality

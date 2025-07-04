@@ -411,4 +411,65 @@ window.copyToClipboard = (text) => {
   }).catch(err => {
     console.error('Failed to copy text: ', err);
   });
+};
+
+// Format Spam Scan results
+export const formatSpamScan = (data) => {
+  if (!data || (!data.score && !data.decision)) {
+    return createSection('❌ Spam Scan Error', 
+      '<div class="error-message">No scan results available or invalid data format</div>'
+    );
+  }
+
+  let sections = [];
+  
+  // Parse score
+  let score = 0;
+  let threshold = 5;
+  let scoreDisplay = 'N/A';
+  
+  if (data.score) {
+    const scoreParts = data.score.split('/');
+    if (scoreParts.length >= 2) {
+      score = parseFloat(scoreParts[0]);
+      threshold = parseFloat(scoreParts[1]);
+      scoreDisplay = data.score;
+    }
+  }
+  
+  const isSpam = score >= threshold;
+  const status = isSpam ? 'error' : 'success';
+  const statusText = isSpam ? '⚠️ SPAM DETECTED' : '✅ NOT SPAM';
+  
+  // Overall result
+  sections.push(createSection('🛡️ Spam Scan Result', `
+    ${createStatusBadge(statusText, status)}
+    ${createKeyValue('Score', scoreDisplay, true)}
+    ${data.decision ? createKeyValue('Decision', data.decision) : ''}
+  `));
+
+  // Detailed analysis
+  if (data.details && Array.isArray(data.details) && data.details.length > 0) {
+    const detailItems = data.details.map(detail => {
+      const points = parseFloat(detail.points) || 0;
+      const pointsClass = points > 0 ? 'spam-positive' : 'spam-negative';
+      const pointsPrefix = points > 0 ? '+' : '';
+      
+      return `
+        <div class="spam-rule">
+          <div class="rule-points ${pointsClass}">
+            ${pointsPrefix}${detail.points}
+          </div>
+          <div class="rule-details">
+            <strong>${detail.ruleName}</strong>
+            <div class="rule-description">${detail.description}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+    sections.push(createSection('📊 Analysis Details', detailItems));
+  }
+
+  return sections.join('');
 }; 

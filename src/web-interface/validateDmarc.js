@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatDNSRecordResult } from "./formatters.js";
 
 async function validateDmarc() {
   const domainInput = document.getElementById("dmarcDomainInput");
@@ -8,6 +9,10 @@ async function validateDmarc() {
     return; // Prevent the function from proceeding further
   }
   const url = `${API_URL}/validate-dmarc?domain=${encodeURIComponent(domain)}`;
+  const resultsElement = document.getElementById("dmarcResults");
+
+  // Show loading state
+  resultsElement.innerHTML = `<div class="loading">Loading DMARC record for ${domain}...</div>`;
 
   try {
     const response = await fetch(url);
@@ -18,42 +23,13 @@ async function validateDmarc() {
     displayDmarcResults(data);
   } catch (error) {
     console.error("There was a problem with your fetch operation:", error);
-    // Optionally update your UI to show the error
+    resultsElement.innerHTML = `<div class="error">Error: ${error.message || "Failed to validate DMARC record"}</div>`;
   }
 }
 
 function displayDmarcResults(data) {
   const resultsElement = document.getElementById("dmarcResults");
-  resultsElement.innerHTML = `<h3>DMARC Record for ${data.dmarc}</h3>
-                              <p><strong>Record:</strong> ${data.record}</p>
-                              <div><strong>Report:</strong> ${renderReport(
-                                data.report
-                              )}</div>
-                              <div><strong>Tests:</strong> ${renderTests(
-                                data.tests
-                              )}</div>`;
-
-  function renderReport(reports) {
-    return reports
-      .map(
-        (report) => `<div>
-                                      <p><strong>${report.Name}:</strong> ${report.TagValue}</p>
-                                      <p>${report.Description}</p>
-                                    </div>`
-      )
-      .join("");
-  }
-
-  function renderTests(tests) {
-    return tests
-      .map(
-        (test) => `<div>
-                                  <p><strong>${test.Test}:</strong> ${test.Result}</p>
-                                  <p>${test.Description}</p>
-                                </div>`
-      )
-      .join("");
-  }
+  resultsElement.innerHTML = formatDNSRecordResult(data, 'DMARC');
 }
 
 export function initValidateDmarc() {
