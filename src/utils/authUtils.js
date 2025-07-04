@@ -1,4 +1,4 @@
-const imaps = require("imap-simple");
+const { ImapFlow } = require("imapflow");
 const nodemailer = require("nodemailer");
 const Client = require("basic-ftp");
 const SFTPClient = require("ssh2-sftp-client");
@@ -66,23 +66,23 @@ const authImap = async (username, password, hostname, protocol) => {
     throw new Error(`Unsupported protocol: ${protocol}`);
   }
 
-  const config = {
-    imap: {
+  const client = new ImapFlow({
+    host: hostname,
+    port: port,
+    secure: secure,
+    auth: {
       user: username,
-      password: password,
-      host: hostname,
-      port: port,
-      tls: secure,
-      authTimeout: 3000,
+      pass: password,
     },
-  };
+    logger: false, // Disable ImapFlow's internal logging
+  });
 
   try {
-    const connection = await imaps.connect(config);
+    await client.connect();
     logWithTimestamp(
       `Authenticated ${username} with ${protocol.toUpperCase()} at ${hostname}`
     );
-    connection.end();
+    await client.logout();
     return { protocol: protocol.toUpperCase(), success: true };
   } catch (error) {
     errorWithTimestamp(

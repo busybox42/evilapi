@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const imaps = require("imap-simple");
+const { ImapFlow } = require("imapflow");
 const { v4: uuidv4 } = require("uuid"); // Import UUID generator
 
 function logWithTimestamp(message) {
@@ -34,64 +34,63 @@ const testEmailDelivery = async ({ smtpConfig, imapConfig, timeout }) => {
 
     logWithTimestamp("Test email sent, proceeding to check inbox...");
 
-    const config = {
-      imap: {
+    const client = new ImapFlow({
+      host: imapConfig.host,
+      port: imapConfig.port,
+      secure: imapConfig.tls,
+      auth: {
         user: imapConfig.user,
-        password: imapConfig.password,
-        host: imapConfig.host,
-        port: imapConfig.port,
-        tls: imapConfig.tls,
-        authTimeout: imapConfig.authTimeout || 3000,
+        pass: imapConfig.password,
       },
-    };
+      logger: false, // Disable ImapFlow's internal logging
+    });
 
-    const connection = await imaps.connect(config);
-    await connection.openBox("INBOX");
+    await client.connect();
+    const lock = await client.getMailboxLock('INBOX');
     logWithTimestamp("Connected to IMAP and opened INBOX.");
-
-    const searchCriteria = [
-      "UNSEEN",
-      ["SUBJECT", `Email Delivery Test - ${uniqueId}`],
-    ];
-    const fetchOptions = {
-      bodies: ["HEADER.FIELDS (FROM SUBJECT DATE)"],
-      struct: true,
-    };
 
     let emailDetails = null;
     let receivedTimestamp;
 
-    while (!emailDetails && Date.now() - sendTimestamp < timeout) {
-      const messages = await connection.search(searchCriteria, fetchOptions);
+    try {
+      while (!emailDetails && Date.now() - sendTimestamp < timeout) {
+        // Search for unread emails with our unique subject
+        const searchResults = await client.search({
+          unseen: true,
+          subject: `Email Delivery Test - ${uniqueId}`,
+        });
 
-      for (const message of messages) {
-        const headerPart = message.parts.find(
-          (part) => part.which === "HEADER.FIELDS (FROM SUBJECT DATE)"
-        );
-        if (headerPart) {
-          const header = headerPart.body;
-          const subject = header.subject ? header.subject[0] : "";
-          if (subject.includes(uniqueId)) {
-            receivedTimestamp = Date.now(); // Capture received timestamp
-            emailDetails = {
-              from: header.from[0],
-              subject,
-              date: header.date[0],
-            };
-            logWithTimestamp(
-              `Email with Unique ID: ${uniqueId} successfully received.`
-            );
-            break; // Exit the loop
+        for (const uid of searchResults) {
+          const messageData = await client.fetchOne(uid, {
+            envelope: true,
+            headers: ['from', 'subject', 'date'],
+          });
+
+          if (messageData && messageData.envelope && messageData.envelope.subject) {
+            const subject = messageData.envelope.subject;
+            if (subject.includes(uniqueId)) {
+              receivedTimestamp = Date.now(); // Capture received timestamp
+              emailDetails = {
+                from: messageData.envelope.from[0]?.address || 'unknown',
+                subject,
+                date: messageData.envelope.date || new Date().toISOString(),
+              };
+              logWithTimestamp(
+                `Email with Unique ID: ${uniqueId} successfully received.`
+              );
+              break; // Exit the loop
+            }
           }
         }
-      }
 
-      if (!emailDetails) {
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Check more frequently
+        if (!emailDetails) {
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Check more frequently
+        }
       }
+    } finally {
+      lock.release();
+      await client.logout();
     }
-
-    await connection.end();
 
     if (emailDetails && receivedTimestamp) {
       const latency = receivedTimestamp - sendTimestamp; // Calculate latency
