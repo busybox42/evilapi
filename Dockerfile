@@ -10,7 +10,7 @@ RUN apk update && apk add --no-cache iputils bind-tools memcached libcap tracero
 # Set capabilities on traceroute to allow it to run without full root privileges
 RUN setcap cap_net_raw+ep /usr/bin/traceroute
 
-RUN /usr/bin/sa-update -D
+RUN /usr/bin/sa-update -D || true
 
 # Before copying package.json and installing dependencies,
 # create the non-root user and change ownership of the work directory.

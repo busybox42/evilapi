@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Evil Tools</title>
+  <title>Evil Admin Tools</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -13,7 +13,32 @@
 <body>
   <header id="navbar" class="header">
     <a id="defaultViewLink" style="text-decoration: none; color: inherit; cursor: pointer;">
-      <img src="evilhead.jpg" alt="Evil Tools" style="width: 20%; display: block; margin-left: auto; margin-right: auto;" />
+      <div style="width: 80%; max-width: 800px; height: 50px; display: block; margin: 15px auto; background: transparent; position: relative; font-family: 'Orbitron', 'Exo 2', 'Rajdhani', monospace;">
+        <!-- Background tech elements -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(0,212,255,0.05) 0%, rgba(0,212,255,0.1) 50%, rgba(0,212,255,0.05) 100%); border: 1px solid rgba(0,212,255,0.2); clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);"></div>
+        
+        <!-- Corner brackets -->
+        <div style="position: absolute; top: -2px; left: -2px; width: 15px; height: 15px; border-left: 2px solid #00d4ff; border-top: 2px solid #00d4ff;"></div>
+        <div style="position: absolute; top: -2px; right: -2px; width: 15px; height: 15px; border-right: 2px solid #00d4ff; border-top: 2px solid #00d4ff;"></div>
+        <div style="position: absolute; bottom: -2px; left: -2px; width: 15px; height: 15px; border-left: 2px solid #00d4ff; border-bottom: 2px solid #00d4ff;"></div>
+        <div style="position: absolute; bottom: -2px; right: -2px; width: 15px; height: 15px; border-right: 2px solid #00d4ff; border-bottom: 2px solid #00d4ff;"></div>
+        
+        <!-- Main text -->
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; line-height: 1; white-space: nowrap;">
+                     <div style="font-size: 24px; font-weight: 900; color: #00d4ff; text-shadow: 0 0 15px rgba(0, 212, 255, 0.8), 0 0 30px rgba(0, 212, 255, 0.4); letter-spacing: 6px; text-transform: uppercase; font-variant: small-caps;">
+            <span style="color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);">[</span>
+            EVIL
+            <span style="color: #ff4444; text-shadow: 0 0 10px rgba(255, 68, 68, 0.6);">:</span>
+            ADMIN
+            <span style="color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);">]</span>
+            <span style="font-size: 10px; color: #4a9eff; letter-spacing: 2px; margin-left: 8px; opacity: 0.8;">v2.0</span>
+          </div>
+        </div>
+        
+                 <!-- Side accent lines -->
+         <div style="position: absolute; left: 0; top: 50%; width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #00d4ff); transform: translateY(-50%);"></div>
+         <div style="position: absolute; right: 0; top: 50%; width: 60px; height: 1px; background: linear-gradient(90deg, #00d4ff, transparent); transform: translateY(-50%);"></div>
+      </div>
     </a>    
     <nav class="nav">
       <button id="emailInfoBtn" class="nav-btn">Email Info</button>
@@ -41,10 +66,29 @@
   <main id="mainContent" class="main">
     <div id="defaultView" class="content-view hidden" />
       <div class="center-text">
-        <h2>Welcome to Evil Tools</h2>
-        <p>Select a tool from the navigation bar to get started.</p>
-        <img src="experiments.jpg" style="width: 28%; display: block; margin-left: auto; margin-right: auto;" alt="Evil Experiments">
-        <p>Note: EvilAPI has agressive rate limits to prevent abuse.</p>
+        <h2>Welcome to Evil Admin Tools</h2>
+        <p style="font-size: 1.1em; margin: 20px 0; max-width: 800px; margin-left: auto; margin-right: auto;">
+          A comprehensive email system administration toolkit designed for email infrastructure research, 
+          troubleshooting, and analysis. Built for email administrators, system administrators, 
+          and IT professionals managing email systems.
+        </p>
+        
+
+        
+        <img src="experiments.jpg" style="width: 28%; display: block; margin: 30px auto;" alt="Evil Experiments">
+        
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 20px auto; max-width: 600px;">
+          <p style="margin: 0; color: #856404;"><strong>⚠️ Important Notes:</strong></p>
+          <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #856404;">
+            <li>EvilAPI enforces rate limits to ensure system stability</li>
+            <li>All tools are intended for legitimate email system administration and research</li>
+            <li>Use responsibly and only on email systems you own or have permission to administer</li>
+          </ul>
+        </div>
+        
+        <p style="font-style: italic; margin-top: 30px; color: #666;">
+          Select a tool from the navigation bar above to get started with your email system administration tasks.
+        </p>
       </div>
     </div>
     <div id="emailInfoView" class="content-view hidden">

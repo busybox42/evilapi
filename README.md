@@ -2,7 +2,7 @@
 
 ## Introduction
 
-EvilAPI is a versatile collection of utilities designed for email and security research. This project is intended for educational and demonstration purposes only.
+EvilAPI is a versatile collection of utilities designed for email system administration, troubleshooting, and research. This project is intended for email administrators, system administrators, and IT professionals managing email infrastructure.
 
 ## Table of Contents
 
@@ -62,31 +62,31 @@ The start.sh script within the container will ensure that if no config.js file i
 
 ## Web Interface
 
-EvilAPI also provides an optional prototype web interface designed to give users a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts.
+EvilAPI also provides an optional prototype web interface designed to give email administrators and IT professionals a graphical means to access and interact with the API's capabilities. This interface simplifies the usage of EvilAPI's features through a browser, making it accessible to those who prefer not to use command-line tools or scripts for email system administration.
 
-<img src="eviltools.png" alt="Evil Tools Web Interface">
+<img src="eviltools.png" alt="Evil Admin Tools Web Interface">
 
 ### Features Accessible via the Web Interface:
 
 - **Email Information**: Retrieve server configurations and records for email domains.
-- **SMTP Testing**: Connect to SMTP servers to check for configurations and vulnerabilities.
-- **Blacklist Checking**: Verify if an email domain is listed on known blacklists.
-- **Email Header Analysis**: Deep dive into email headers to identify potential red flags or validate authenticity.
+- **SMTP Testing**: Connect to SMTP servers to check configurations and diagnose delivery issues.
+- **Blacklist Checking**: Verify if an email domain is listed on known blacklists affecting deliverability.
+- **Email Header Analysis**: Deep dive into email headers to troubleshoot delivery issues and validate authenticity.
 - **DMARC Validation**: Check if the DMARC policy is correctly established for a domain.
-- **DKIM Tools**: Test and verify DKIM records for a domain.
-- **Authentication Validation**: Analyze the authentication mechanisms of email domains.
-- **Who Am I**: Get detailed information about the client's IP, device, and network.
-- **DNS Lookup**: Perform DNS lookups for various record types.
-- **SSL Certificate Validation**: Validate the SSL/TLS certificates of web domains.
-- **PGP Encryption**: Utilize PGP tools for encryption and decryption tasks.
-- **Password Hashing**: Hash passwords using robust algorithms.
-- **Port Scanning**: Scan network ports for open services and potential vulnerabilities.
-- **Network Diagnostics**: Run tests such as ping and traceroute from the web interface.
-- **Whitespace Removal**: Clean up text input by removing unnecessary whitespaces.
-- **Base64 Encoding/Decoding**: Encode and decode data in Base64 format.
-- **URL Encoding**: Encode URLs to ensure they are web-safe.
-- **Epoch Time Conversion**: Convert between epoch time and human-readable dates.
-- **SpamAssassin Scanner**: Scan email messages with SpamAssassin. 
+- **DKIM Tools**: Test and verify DKIM records for a domain to ensure proper email authentication.
+- **Authentication Validation**: Test the authentication mechanisms of email servers.
+- **Who Am I**: Get detailed information about the client's IP, device, and network for troubleshooting.
+- **DNS Lookup**: Perform DNS lookups for various record types including MX, SPF, and DKIM records.
+- **SSL Certificate Validation**: Validate the SSL/TLS certificates of mail servers.
+- **PGP Encryption**: Utilize PGP tools for encryption and decryption tasks in email workflows.
+- **Password Hashing**: Hash passwords using robust algorithms for email account management.
+- **Port Scanning**: Check mail server ports and services for connectivity diagnostics.
+- **Network Diagnostics**: Run tests such as ping and traceroute from the web interface for connectivity troubleshooting.
+- **Whitespace Removal**: Clean up text input by removing unnecessary whitespaces from email content.
+- **Base64 Encoding/Decoding**: Encode and decode data in Base64 format for email content processing.
+- **URL Encoding**: Encode URLs to ensure they are web-safe in email content.
+- **Epoch Time Conversion**: Convert between epoch time and human-readable dates for email log analysis.
+- **SpamAssassin Scanner**: Scan email messages with SpamAssassin for content analysis and rule testing. 
 
 To use the web interface, navigate to the deployed application URL and select the desired functionality from the navigation bar. Each feature page provides a form to input the necessary information and submit requests to the API. Responses are displayed directly within the interface.
 
