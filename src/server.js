@@ -10,6 +10,7 @@ const fs = require("fs");
 const path = require("path");
 const config = require("./config/config");
 const { initializeStaticKeys } = require("./utils/pgpUtils");
+const { globalErrorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 const webApp = express();
@@ -57,8 +58,8 @@ const limiter = rateLimit({
 
 app.use("/api", limiter);
 
-// Function to dynamically load route and service files
-const loadFiles = (directoryPath, appInstance) => {
+// Function to dynamically load route files
+const loadRoutes = (directoryPath, appInstance) => {
   fs.readdirSync(directoryPath).forEach((file) => {
     if (file.endsWith(".js")) {
       const filePath = path.join(directoryPath, file);
@@ -68,6 +69,19 @@ const loadFiles = (directoryPath, appInstance) => {
       }
     }
   });
+};
+
+// Function to initialize services (not load as routes)
+const initializeServices = (directoryPath) => {
+  const services = {};
+  fs.readdirSync(directoryPath).forEach((file) => {
+    if (file.endsWith(".js")) {
+      const filePath = path.join(directoryPath, file);
+      const serviceName = file.replace(".js", "");
+      services[serviceName] = require(filePath);
+    }
+  });
+  return services;
 };
 
 // Function to prune uploads directory
@@ -117,9 +131,11 @@ function pruneUploads() {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
 
-    // Dynamically load route and service files
-    loadFiles(path.join(__dirname, "api", "routes"), app);
-    loadFiles(path.join(__dirname, "services"), app);
+    // Dynamically load route files
+    loadRoutes(path.join(__dirname, "api", "routes"), app);
+
+    // Initialize services
+    const services = initializeServices(path.join(__dirname, "services"));
 
     // Optional Web Server Configuration
     if (config.webServer.enabled) {
@@ -142,12 +158,7 @@ function pruneUploads() {
       next(error);
     });
 
-    app.use((err, req, res, next) => {
-      console.error(`Error in ${req.method} ${req.path}:`, err);
-      res
-        .status(err.status || 500)
-        .send(err.message || "Internal Server Error");
-    });
+    app.use(globalErrorHandler);
 
     // Start the server
     if (config.ssl.enabled) {

@@ -1,22 +1,21 @@
-import { API_URL } from "./config.js"; // Import the API URL from the config file
+import apiClient from "./apiClient.js";
 
 // Function to fetch email information from the API
 async function fetchEmailInfo(domain) {
-  const url = `${API_URL}/email-info/${domain}`;
-  console.log(`Making a request to: ${url}`); // Log the request URL
   try {
-    const response = await fetch(url);
-    console.log(`Received response with status: ${response.status}`); // Log the response status
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const response = await apiClient.getEmailInfo(domain);
+    console.log('Email info response:', response);
+    
+    if (response.success) {
+      displayEmailInfo(response.data);
+    } else {
+      document.getElementById("emailInfoResults").textContent =
+        response.error?.message || "Failed to retrieve data.";
     }
-    const data = await response.json();
-    console.log(data); // Log the response data
-    displayEmailInfo(data);
   } catch (error) {
-    console.error("Fetch error:", error);
+    console.error("API error:", error);
     document.getElementById("emailInfoResults").textContent =
-      "Failed to retrieve data.";
+      error.message || "Failed to retrieve data.";
   }
 }
 
