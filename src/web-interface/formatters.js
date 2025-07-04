@@ -104,7 +104,7 @@ export const formatBlacklistCheck = (data) => {
       return `
         <div class="blacklist-item">
           <div class="blacklist-header">
-            <strong>${result.blacklist}</strong> ${status}
+            <strong>${result.rbl || result.blacklist || 'Unknown RBL'}</strong> ${status}
           </div>
           ${result.listed ? `<div class="blacklist-details">⚠️ This IP is listed on this blacklist</div>` : ''}
           ${result.error ? `<div class="blacklist-error">❌ Error: ${result.error}</div>` : ''}
