@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatDnsLookup } from "./formatters.js";
 
 async function performDnsLookup() {
   const hostInput = document.getElementById("dnsHostInput");
@@ -6,9 +7,17 @@ async function performDnsLookup() {
   const dnsServerInput = document.getElementById("dnsServerInput");
   const resultsContainer = document.getElementById("dnsLookupResults");
 
-  const host = hostInput.value;
+  const host = hostInput.value.trim();
   const type = typeSelect.value;
-  const dnsServer = dnsServerInput.value;
+  const dnsServer = dnsServerInput.value.trim();
+
+  if (!host) {
+    resultsContainer.innerHTML = `<div class="error-message">Please enter a hostname or IP address.</div>`;
+    return;
+  }
+
+  // Show loading indicator
+  resultsContainer.innerHTML = `<div class="loading">🔍 Performing DNS lookup...</div>`;
 
   try {
     const queryParams = new URLSearchParams({ host, type });
@@ -23,15 +32,28 @@ async function performDnsLookup() {
     }
 
     const resultData = await response.json();
-    // Wrap the JSON string in a <pre> tag to apply existing styles
-    resultsContainer.innerHTML = `<pre>${JSON.stringify(
-      resultData,
-      null,
-      2
-    )}</pre>`;
+    
+    // Check if the response contains an error
+    if (resultData.error) {
+      resultsContainer.innerHTML = `<div class="error-message">DNS Lookup Error: ${resultData.error}</div>`;
+      return;
+    }
+
+    // Use the formatter to display results
+    resultsContainer.innerHTML = formatDnsLookup(resultData);
   } catch (error) {
     console.error("There has been a problem with your fetch operation:", error);
-    resultsContainer.innerHTML = `<p style="color: red;">Failed to perform DNS lookup.</p>`;
+    resultsContainer.innerHTML = `<div class="error-message">
+      Failed to perform DNS lookup: ${error.message}
+      <br><br>
+      <div class="troubleshooting">
+        <strong>Troubleshooting:</strong><br>
+        • Check if the hostname is valid<br>
+        • Verify network connectivity<br>
+        • Try a different DNS server (e.g., 8.8.8.8)<br>
+        • Some record types may not be available for all domains
+      </div>
+    </div>`;
   }
 }
 

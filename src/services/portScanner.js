@@ -29,17 +29,18 @@ const checkPort = (host, port, timeout = 1000) => {
 };
 
 const scanPorts = async (host, specificPort) => {
+  // Convert port to number if provided, otherwise use default ports
   const ports = specificPort
-    ? [specificPort]
+    ? [parseInt(specificPort)]
     : [80, 443, 21, 22, 25, 587, 465, 110, 143, 995, 993];
   let results = [];
 
   for (const port of ports) {
     try {
       const isOpen = await checkPort(host, port);
-      results.push({ port, status: isOpen ? "open" : "closed" });
+      results.push({ port: port, status: isOpen ? "open" : "closed" });
     } catch (error) {
-      results.push({ port, status: "closed" });
+      results.push({ port: port, status: "closed" });
     }
   }
 
@@ -48,7 +49,11 @@ const scanPorts = async (host, specificPort) => {
     a.status === "closed" && b.status === "open" ? 1 : -1
   );
 
-  return results;
+  return {
+    host: host,
+    totalPorts: results.length,
+    results: results
+  };
 };
 
 module.exports = { scanPorts };

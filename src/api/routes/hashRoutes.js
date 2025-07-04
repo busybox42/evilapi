@@ -20,17 +20,20 @@ router.use((req, res, next) => {
 // POST endpoint for creating a hash
 router.post("/create-hash", validateHash, asyncHandler(async (req, res) => {
   const { algorithm, text } = req.body;
-  const hash = await hashService.createHash(algorithm, text);
-  res.json(createSuccessResponse({ hash }, "Hash created successfully"));
+  const result = await hashService.createHash(algorithm, text);
+  res.json(createSuccessResponse(result, "Hash created successfully"));
 }));
 
 // Post route for validating password hashes
 router.post("/validate-hash", validateHash, asyncHandler(async (req, res) => {
-  const { algorithm, password, hash } = req.body;
+  const { algorithm, text, hash, password } = req.body;
+  
+  // Use password if provided, otherwise use text
+  const inputText = password || text;
 
   const generatedHash = crypto
     .createHash(algorithm)
-    .update(password)
+    .update(inputText)
     .digest("hex");
   const isValid = generatedHash === hash;
 

@@ -1,5 +1,5 @@
 const express = require("express");
-const dnsLookup = require("../../utils/dnsUtils");
+const { dnsLookup } = require("../../utils/dnsUtils");
 const router = express.Router();
 
 router.get("/lookup", async (req, res) => {

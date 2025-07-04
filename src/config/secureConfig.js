@@ -1,3 +1,6 @@
+// Load environment variables from .env file
+require('dotenv').config();
+
 const fs = require("fs");
 const { ConfigValidator, getEnvVar, parseEnvJson, parseEnvList } = require("./configValidator");
 

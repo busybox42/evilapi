@@ -122,11 +122,36 @@ const validateText = (field = 'text', maxLength = 10485760) => { // 10MB default
 const validateHash = (req, res, next) => {
   const { algorithm, text, hash, password } = req.body;
 
-  if (!algorithm || !text) {
+  if (!algorithm) {
     return res.status(400).json(createErrorResponse(
-      'Algorithm and text are required',
+      'Algorithm is required',
       400
     ));
+  }
+
+  // For hash validation requests, we need either text or password
+  if (hash !== undefined) {
+    if (!password && !text) {
+      return res.status(400).json(createErrorResponse(
+        'Password or text is required for hash validation',
+        400
+      ));
+    }
+    
+    if (typeof hash !== 'string' || hash.length === 0 || hash.length > 1000) {
+      return res.status(400).json(createErrorResponse(
+        'Invalid hash format',
+        400
+      ));
+    }
+  } else {
+    // For hash creation, we need text
+    if (!text) {
+      return res.status(400).json(createErrorResponse(
+        'Text is required for hash creation',
+        400
+      ));
+    }
   }
 
   // Sanitize algorithm
@@ -138,23 +163,6 @@ const validateHash = (req, res, next) => {
       'Unsupported hash algorithm',
       400
     ));
-  }
-
-  // For hash validation requests
-  if (hash !== undefined) {
-    if (!password) {
-      return res.status(400).json(createErrorResponse(
-        'Password is required for hash validation',
-        400
-      ));
-    }
-    
-    if (typeof hash !== 'string' || hash.length === 0 || hash.length > 1000) {
-      return res.status(400).json(createErrorResponse(
-        'Invalid hash format',
-        400
-      ));
-    }
   }
 
   next();

@@ -214,7 +214,78 @@ const checkBlacklist = async (identifier, blacklistHosts) => {
   return results;
 };
 
+// Main DNS lookup function for different record types
+const dnsLookup = async (host, type = 'A', dnsServer = null) => {
+  try {
+    // Set custom DNS server if provided
+    if (dnsServer) {
+      dns.setServers([dnsServer]);
+    }
+
+    const recordType = type.toUpperCase();
+    let results;
+
+    switch (recordType) {
+      case 'A':
+        results = await dns.resolve4(host);
+        break;
+      case 'AAAA':
+        results = await dns.resolve6(host);
+        break;
+      case 'MX':
+        results = await dns.resolveMx(host);
+        break;
+      case 'TXT':
+        results = await dns.resolveTxt(host);
+        break;
+      case 'CNAME':
+        results = await dns.resolveCname(host);
+        break;
+      case 'NS':
+        results = await dns.resolveNs(host);
+        break;
+      case 'PTR':
+        results = await dns.resolvePtr(host);
+        break;
+      case 'SRV':
+        results = await dns.resolveSrv(host);
+        break;
+      case 'SOA':
+        results = await dns.resolveSoa(host);
+        break;
+      case 'LOC':
+        // LOC records are not directly supported, use ANY and filter
+        try {
+          results = await dns.resolveAny(host);
+          results = results.filter(record => record.type === 'LOC');
+        } catch (error) {
+          throw new Error(`LOC records not found for ${host}`);
+        }
+        break;
+      default:
+        throw new Error(`Unsupported DNS record type: ${type}`);
+    }
+
+    return {
+      host,
+      type: recordType,
+      records: results,
+      timestamp: new Date().toISOString()
+    };
+
+  } catch (error) {
+    logger.error(`DNS lookup failed for ${host} (${type}): ${error.message}`);
+    throw new Error(`DNS lookup failed: ${error.message}`);
+  } finally {
+    // Reset to default DNS servers
+    if (dnsServer) {
+      dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+    }
+  }
+};
+
 module.exports = {
+  dnsLookup,
   checkHostname,
   resolveMx,
   resolveTxt,

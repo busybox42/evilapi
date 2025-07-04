@@ -43,12 +43,12 @@ app.use((req, res, next) => {
 
 // Apply the rate limiter to /api routes
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
-  message: "Too many requests, please try again later.",
+  windowMs: config.rateLimitConfig.windowMs,
+  max: config.rateLimitConfig.max,
+  message: config.rateLimitConfig.message,
   handler: (req, res) => {
     console.log(`Rate Limit Exceeded for ${req.ip}`);
-    res.status(429).send("Too many requests, please try again later.");
+    res.status(429).send(config.rateLimitConfig.message);
   },
   skip: (req) => {
     // Skip rate limiting for whitelisted IPs

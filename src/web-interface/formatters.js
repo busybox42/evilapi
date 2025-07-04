@@ -31,6 +31,72 @@ const createKeyValue = (key, value, highlight = false) => {
   return `<div class="${className}"><span class="key">${key}:</span> <span class="value">${value}</span></div>`;
 };
 
+// Format DNS lookup results
+export const formatDnsLookup = (data) => {
+  if (!data || typeof data !== 'object') {
+    return `<div class="error-message">Invalid DNS lookup data</div>`;
+  }
+
+  if (data.error) {
+    return `<div class="error-message">DNS Lookup Error: ${data.error}</div>`;
+  }
+
+  let sections = [];
+
+  // Header with basic info
+  sections.push(createSection('🔍 DNS Lookup Query', `
+    ${createKeyValue('Host', data.host, true)}
+    ${createKeyValue('Record Type', data.type, true)}
+    ${createKeyValue('Timestamp', new Date(data.timestamp).toLocaleString())}
+  `));
+
+  // Records section
+  if (data.records && data.records.length > 0) {
+    const recordItems = data.records.map((record, index) => 
+      `<div class="record-item">
+        <span class="record-number">${index + 1}.</span>
+        <span class="record-value">${formatDnsRecord(record, data.type)}</span>
+      </div>`
+    );
+    
+    sections.push(createSection(`📋 DNS Records (${data.records.length})`, recordItems.join('')));
+  } else {
+    sections.push(createSection('❌ No Records Found', 
+      `<div class="no-records">No ${data.type} records found for ${data.host}</div>`
+    ));
+  }
+
+  return sections.join('');
+};
+
+// Helper function to format different DNS record types
+function formatDnsRecord(record, type) {
+  if (typeof record === 'string') {
+    return `<code class="dns-record">${record}</code>`;
+  }
+
+  if (Array.isArray(record)) {
+    return `<code class="dns-record">${record.join(' ')}</code>`;
+  }
+
+  if (typeof record === 'object' && record !== null) {
+    switch (type) {
+      case 'MX':
+        return `<code class="dns-record">${record.exchange}</code> <span class="mx-priority">(priority: ${record.priority})</span>`;
+      case 'SRV':
+        return `<code class="dns-record">${record.name}</code> <span class="srv-details">port ${record.port} priority ${record.priority} weight ${record.weight}</span>`;
+      case 'SOA':
+        return `<code class="dns-record">${record.nsname} ${record.hostmaster}</code> <span class="soa-details">(serial: ${record.serial})</span>`;
+      case 'TXT':
+        return `<code class="dns-record">${JSON.stringify(record)}</code>`;
+      default:
+        return `<code class="dns-record">${JSON.stringify(record)}</code>`;
+    }
+  }
+
+  return `<code class="dns-record">${String(record)}</code>`;
+}
+
 // Format Email Info results
 export const formatEmailInfo = (data) => {
   let sections = [];
@@ -195,24 +261,28 @@ export const formatHeaderAnalysis = (data) => {
 // Format Hash results
 export const formatHashResult = (data, isValidation = false) => {
   if (isValidation) {
-    const status = data.isValid ? 'success' : 'error';
-    const statusText = data.isValid ? 'Valid' : 'Invalid';
+    const validationData = data.data || data;
+    const status = validationData.isValid ? 'success' : 'error';
+    const statusText = validationData.isValid ? 'Valid' : 'Invalid';
     
     return createSection('🔒 Hash Validation Result', `
-      ${createKeyValue('Algorithm', data.algorithm, true)}
+      ${createKeyValue('Algorithm', validationData.algorithm, true)}
       ${createKeyValue('Result', createStatusBadge(statusText, status), true)}
-      ${data.isValid ? 
+      ${validationData.isValid ? 
         '<div class="validation-success">✅ The password matches the provided hash</div>' :
         '<div class="validation-error">❌ The password does not match the provided hash</div>'
       }
     `);
   } else {
+    const hashData = data.data || data;
+    const hash = hashData.hash;
+    
     return createSection('🔒 Hash Generation Result', `
-      ${createKeyValue('Algorithm', data.algorithm || 'Unknown', true)}
+      ${createKeyValue('Algorithm', hashData.algorithm || 'Unknown', true)}
       <div class="hash-result">
         <label class="hash-label">Generated Hash:</label>
-        <code class="hash-value selectable">${data.hash}</code>
-        <button class="copy-btn" onclick="copyToClipboard('${data.hash}')">📋 Copy</button>
+        <code class="hash-value selectable">${hash}</code>
+        <button class="copy-btn" onclick="copyToClipboard('${hash}')">📋 Copy</button>
       </div>
     `);
   }
@@ -231,15 +301,45 @@ export const formatSSLValidation = (data) => {
   ));
 
   // Certificate details
-  if (data.certificate) {
-    const cert = data.certificate;
+  if (data.details || data.certificate) {
+    const cert = data.details || data.certificate;
+    
+    // Helper function to format certificate subject/issuer objects
+    const formatCertificateInfo = (obj) => {
+      if (typeof obj === 'string') return obj;
+      if (typeof obj === 'object' && obj !== null) {
+        // Handle certificate subject/issuer objects
+        const parts = [];
+        if (obj.CN) parts.push(`CN=${obj.CN}`);
+        if (obj.O) parts.push(`O=${obj.O}`);
+        if (obj.C) parts.push(`C=${obj.C}`);
+        if (obj.ST) parts.push(`ST=${obj.ST}`);
+        if (obj.L) parts.push(`L=${obj.L}`);
+        if (obj.OU) parts.push(`OU=${obj.OU}`);
+        return parts.length > 0 ? parts.join(', ') : JSON.stringify(obj);
+      }
+      return String(obj);
+    };
+
+    // Calculate days until expiry
+    const calculateDaysUntilExpiry = (validTo) => {
+      if (!validTo) return 'Unknown';
+      const expiryDate = new Date(validTo);
+      const today = new Date();
+      const diffTime = expiryDate - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? `${diffDays} days` : `Expired ${Math.abs(diffDays)} days ago`;
+    };
+
     const certContent = `
-      ${createKeyValue('Subject', cert.subject)}
-      ${createKeyValue('Issuer', cert.issuer)}
-      ${createKeyValue('Valid From', cert.valid_from)}
-      ${createKeyValue('Valid To', cert.valid_to)}
-      ${createKeyValue('Days Until Expiry', cert.daysUntilExpiry)}
-      ${cert.subjectAltNames ? createKeyValue('Alternative Names', cert.subjectAltNames.join(', ')) : ''}
+      ${cert.subject ? createKeyValue('Subject', formatCertificateInfo(cert.subject)) : ''}
+      ${cert.issuer ? createKeyValue('Issuer', formatCertificateInfo(cert.issuer)) : ''}
+      ${cert.validFrom ? createKeyValue('Valid From', new Date(cert.validFrom).toLocaleString()) : ''}
+      ${cert.validTo ? createKeyValue('Valid To', new Date(cert.validTo).toLocaleString()) : ''}
+      ${cert.validTo ? createKeyValue('Days Until Expiry', calculateDaysUntilExpiry(cert.validTo)) : ''}
+      ${cert.serialNumber ? createKeyValue('Serial Number', cert.serialNumber) : ''}
+      ${cert.algorithm ? createKeyValue('Algorithm', cert.algorithm) : ''}
+      ${cert.alternativeHostnames ? createKeyValue('Alternative Names', cert.alternativeHostnames.join(', ')) : ''}
     `;
     sections.push(createSection('📋 Certificate Details', certContent));
   }
@@ -301,29 +401,68 @@ export const formatDNSRecordResult = (data, type = 'DKIM') => {
 export const formatPortScan = (data) => {
   let sections = [];
 
-  if (data.host) {
+  // Handle both old array format and new object format
+  let results = [];
+  let host = null;
+  
+  if (Array.isArray(data)) {
+    // Old format: direct array
+    results = data;
+  } else if (data && data.results && Array.isArray(data.results)) {
+    // New format: object with results array
+    results = data.results;
+    host = data.host;
+  } else {
+    return createSection('❌ Port Scan Error', 
+      '<div class="error-message">Invalid port scan data format</div>'
+    );
+  }
+
+  // Separate open and closed ports
+  const openPorts = results.filter(item => item.status === 'open');
+  const closedPorts = results.filter(item => item.status === 'closed');
+
+  // Header with target host
+  sections.push(createSection('🔍 Port Scan Results', 
+    createStatusBadge('Scan Completed', 'success')
+  ));
+
+  // Show target host if available
+  if (host) {
     sections.push(createSection('🌐 Scan Target', 
-      createKeyValue('Host', data.host, true)
+      createKeyValue('Host', host, true)
     ));
   }
 
-  if (data.openPorts && Array.isArray(data.openPorts)) {
-    const portItems = data.openPorts.map(port => 
-      `${createStatusBadge('OPEN', 'success')} Port ${port}`
+  // Open ports
+  if (openPorts.length > 0) {
+    const portItems = openPorts.map(item => 
+      `${createStatusBadge('OPEN', 'success')} Port ${item.port}`
     );
     sections.push(createSection('🔓 Open Ports', createList(portItems)));
   }
 
-  if (data.closedPorts && Array.isArray(data.closedPorts)) {
-    const portItems = data.closedPorts.map(port => 
-      `${createStatusBadge('CLOSED', 'error')} Port ${port}`
+  // Closed ports (only show if there are some, to avoid cluttering)
+  if (closedPorts.length > 0 && closedPorts.length <= 10) {
+    const portItems = closedPorts.map(item => 
+      `${createStatusBadge('CLOSED', 'error')} Port ${item.port}`
     );
     sections.push(createSection('🔒 Closed Ports', createList(portItems)));
   }
 
-  if (data.errors && Array.isArray(data.errors)) {
-    const errorItems = data.errors.map(error => `❌ ${error}`);
-    sections.push(createSection('⚠️ Scan Errors', createList(errorItems)));
+  // Summary
+  const summaryContent = `
+    ${createKeyValue('Total Ports Scanned', results.length, true)}
+    ${createKeyValue('Open Ports', openPorts.length, true)}
+    ${createKeyValue('Closed Ports', closedPorts.length, true)}
+  `;
+  sections.push(createSection('📊 Scan Summary', summaryContent));
+
+  // If there are too many closed ports, show a note
+  if (closedPorts.length > 10) {
+    sections.push(createSection('ℹ️ Note', 
+      '<div class="info-message">Closed ports list is hidden to reduce clutter. See summary above for counts.</div>'
+    ));
   }
 
   return sections.join('');

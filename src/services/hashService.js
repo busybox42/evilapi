@@ -5,7 +5,10 @@ async function createHash(algorithm, text) {
     throw new Error(`The specified algorithm "${algorithm}" is not supported.`);
   }
 
-  return crypto.createHash(algorithm).update(text).digest("hex");
+  return {
+    hash: crypto.createHash(algorithm).update(text).digest("hex"),
+    algorithm: algorithm
+  };
 }
 
 module.exports = {
