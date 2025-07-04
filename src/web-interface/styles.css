@@ -381,6 +381,22 @@ input[type="file"] {
   border-radius: 4px;
 }
 
+.hop-delay {
+  color: #2ea4c0;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.total-time {
+  margin: 15px 0;
+  padding: 10px;
+  background-color: #0c425e;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
 .report-item {
   margin: 10px 0;
   padding: 10px;

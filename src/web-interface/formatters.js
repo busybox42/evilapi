@@ -134,57 +134,59 @@ export const formatBlacklistCheck = (data) => {
 export const formatHeaderAnalysis = (data) => {
   let sections = [];
 
-  // Summary
-  if (data.summary) {
-    const summaryContent = Object.entries(data.summary)
-      .map(([key, value]) => createKeyValue(
-        key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
-        value
-      ))
-      .join('');
-    sections.push(createSection('📊 Analysis Summary', summaryContent));
+  // Basic Email Information
+  if (data.subject || data.from || data.to || data.date) {
+    const basicContent = `
+      ${data.subject ? createKeyValue('Subject', data.subject, true) : ''}
+      ${data.from ? createKeyValue('From', data.from, true) : ''}
+      ${data.to ? createKeyValue('To', data.to, true) : ''}
+      ${data.date ? createKeyValue('Date', new Date(data.date).toLocaleString(), true) : ''}
+    `;
+    sections.push(createSection('📧 Email Information', basicContent));
   }
 
   // Authentication Results
-  if (data.authentication) {
-    const authContent = Object.entries(data.authentication)
-      .map(([key, value]) => {
-        const status = value === 'pass' ? 'success' : value === 'fail' ? 'error' : 'warning';
-        return createKeyValue(key.toUpperCase(), createStatusBadge(value, status));
-      })
-      .join('');
+  if (data.spf || data.dkim || data.dmarc) {
+    const authContent = `
+      ${data.spf ? createKeyValue('SPF', data.spf.includes('No') ? createStatusBadge(data.spf, 'warning') : createStatusBadge(data.spf, 'success')) : ''}
+      ${data.dkim ? createKeyValue('DKIM', data.dkim.includes('No') ? createStatusBadge(data.dkim, 'warning') : createStatusBadge(data.dkim, 'success')) : ''}
+      ${data.dmarc ? createKeyValue('DMARC', data.dmarc.includes('No') ? createStatusBadge(data.dmarc, 'warning') : createStatusBadge(data.dmarc, 'success')) : ''}
+    `;
     sections.push(createSection('🔐 Authentication Results', authContent));
   }
 
-  // Received Path
-  if (data.receivedPath && Array.isArray(data.receivedPath)) {
-    const pathItems = data.receivedPath.map((hop, index) => 
-      `<div class="hop-item"><strong>Hop ${index + 1}:</strong> ${hop}</div>`
+  // Email Path Analysis
+  if (data.receivedDelays && Array.isArray(data.receivedDelays)) {
+    const pathItems = data.receivedDelays.map((hop, index) => 
+      `<div class="hop-item">
+        <strong>Hop ${hop.hop}:</strong> ${hop.host} 
+        <span class="hop-delay">(${hop.delay})</span>
+      </div>`
     );
-    sections.push(createSection('📍 Email Path (Received Headers)', pathItems.join('')));
+    const pathContent = pathItems.join('') + 
+      (data.totalTime ? `<div class="total-time"><strong>Total Transit Time:</strong> ${data.totalTime}</div>` : '');
+    sections.push(createSection('📍 Email Path Analysis', pathContent));
   }
 
-  // Headers
-  if (data.headers) {
-    const headerContent = Object.entries(data.headers)
-      .map(([key, value]) => createKeyValue(key, Array.isArray(value) ? value.join(', ') : value))
+  // All Headers
+  if (data.headersFound && Array.isArray(data.headersFound)) {
+    const headerContent = data.headersFound
+      .map(header => createKeyValue(
+        header.headerName.toUpperCase(), 
+        header.headerValue.length > 100 ? 
+          header.headerValue.substring(0, 100) + '...' : 
+          header.headerValue
+      ))
       .join('');
-    sections.push(createSection('📧 Parsed Headers', headerContent));
+    sections.push(createSection('📋 All Headers', headerContent));
   }
 
-  // Security Analysis
-  if (data.security) {
-    const securityItems = Object.entries(data.security)
-      .map(([key, value]) => {
-        if (typeof value === 'boolean') {
-          const status = value ? 'success' : 'warning';
-          const badge = value ? 'Yes' : 'No';
-          return createKeyValue(key, createStatusBadge(badge, status));
-        }
-        return createKeyValue(key, value);
-      })
+  // If no structured data is available, show raw data
+  if (sections.length === 0) {
+    const rawContent = Object.entries(data)
+      .map(([key, value]) => createKeyValue(key, typeof value === 'object' ? JSON.stringify(value, null, 2) : value))
       .join('');
-    sections.push(createSection('🛡️ Security Analysis', securityItems));
+    sections.push(createSection('📊 Raw Analysis Data', rawContent));
   }
 
   return sections.join('');
