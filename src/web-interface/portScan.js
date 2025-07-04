@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatPortScan } from "./formatters.js";
 
 function initPortScan() {
   const portScanBtn = document.getElementById("portScanBtn");
@@ -12,7 +13,7 @@ function initPortScan() {
     const host = hostInput.value;
     const port = portInput.value;
 
-    portScanResults.innerText = ""; // Clear previous results
+    portScanResults.innerHTML = ""; // Clear previous results
     portScanLoading.classList.remove("hidden"); // Show loading indicator
 
     try {
@@ -20,9 +21,9 @@ function initPortScan() {
         params: { host, port },
       });
 
-      portScanResults.innerText = JSON.stringify(response.data, null, 2);
+      portScanResults.innerHTML = formatPortScan(response.data);
     } catch (error) {
-      portScanResults.innerText = `Error: ${error.message}`;
+      portScanResults.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
     } finally {
       portScanLoading.classList.add("hidden"); // Hide loading indicator
     }

@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatAuthResult } from "./formatters.js";
 
 function showLoadingIndicator(show) {
   const loadingIndicator = document.getElementById("loadingIndicator");
@@ -68,7 +69,5 @@ export function initAuthValidator() {
 function updateUI(data) {
   console.log(data);
   const messageElement = document.getElementById("authResults");
-  messageElement.textContent = data.success
-    ? `Authentication successful for ${data.username} using ${data.protocol} on ${data.hostname}`
-    : "Authentication failed!";
+  messageElement.innerHTML = formatAuthResult(data);
 }

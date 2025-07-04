@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatHashResult } from "./formatters.js";
 
 async function validateHash() {
   const algorithmSelect = document.getElementById("algorithmInput");
@@ -26,18 +27,10 @@ async function validateHash() {
     }
 
     const resultData = await response.json();
-
-    let resultText = `Validation Result: ${
-      resultData.isValid ? "Valid" : "Invalid"
-    }
-Algorithm: ${resultData.algorithm}
-Hash: ${resultData.hash}
-Generated Hash: ${resultData.generatedHash}`;
-
-    resultsDiv.innerText = resultText;
+    resultsDiv.innerHTML = formatHashResult(resultData, true); // true = validation mode
   } catch (error) {
     console.error("There has been a problem with your fetch operation:", error);
-    resultsDiv.innerText = "Error validating hash. Please try again.";
+    resultsDiv.innerHTML = `<div class="error-message">Error validating hash: ${error.message}</div>`;
   }
 }
 
@@ -65,11 +58,10 @@ async function createHash() {
     }
 
     const resultData = await response.json();
-
-    resultsDiv.innerText = `Generated Hash: ${resultData.hash}\n`;
+    resultsDiv.innerHTML = formatHashResult(resultData, false); // false = creation mode
   } catch (error) {
     console.error("There has been a problem with your fetch operation:", error);
-    resultsDiv.innerText = "Error creating hash. Please try again.\n";
+    resultsDiv.innerHTML = `<div class="error-message">Error creating hash: ${error.message}</div>`;
   }
 }
 

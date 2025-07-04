@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatWhoAmIResult } from "./formatters.js";
 
 // Function to fetch information about the client or a given IP/hostname
 async function fetchWhoAmIInfo(ipAddress) {
@@ -16,15 +17,15 @@ async function fetchWhoAmIInfo(ipAddress) {
     displayWhoAmIInfo(data);
   } catch (error) {
     console.error("Who Am I error:", error);
-    document.getElementById("whoAmIResults").textContent =
-      "Failed to retrieve information.";
+    document.getElementById("whoAmIResults").innerHTML =
+      `<div class="error-message">Failed to retrieve information: ${error.message}</div>`;
   }
 }
 
 // Function to display information from the Who Am I API
 function displayWhoAmIInfo(data) {
   const resultsDiv = document.getElementById("whoAmIResults");
-  resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+  resultsDiv.innerHTML = formatWhoAmIResult(data);
 }
 
 // Function to fetch and display the user's IP address

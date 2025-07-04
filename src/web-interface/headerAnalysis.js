@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatHeaderAnalysis } from "./formatters.js";
 
 // Function to analyze email headers
 async function analyzeEmailHeaders(headerText) {
@@ -19,15 +20,15 @@ async function analyzeEmailHeaders(headerText) {
     displayHeaderAnalysis(data);
   } catch (error) {
     console.error("Analyze error:", error);
-    document.getElementById("headerAnalysisResults").textContent =
-      error.message || "Failed to analyze email headers.";
+    document.getElementById("headerAnalysisResults").innerHTML =
+      `<div class="error-message">${error.message || "Failed to analyze email headers."}</div>`;
   }
 }
 
 // Function to display email header analysis results
 function displayHeaderAnalysis(data) {
   const resultsDiv = document.getElementById("headerAnalysisResults");
-  resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+  resultsDiv.innerHTML = formatHeaderAnalysis(data);
 }
 
 // Initialization function for header analysis functionality

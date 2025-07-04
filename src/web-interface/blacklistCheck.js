@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatBlacklistCheck } from "./formatters.js";
 
 // Function to fetch email blacklist information
 async function fetchBlacklistInfo(domain) {
@@ -18,7 +19,7 @@ async function fetchBlacklistInfo(domain) {
     displayBlacklistInfo(data);
   } catch (error) {
     console.error("Fetch error:", error);
-    resultsDiv.textContent = "Failed to retrieve blacklist data.";
+    resultsDiv.innerHTML = `<div class="error-message">Failed to retrieve blacklist data: ${error.message}</div>`;
   } finally {
     loadingIndicator.classList.add("hidden"); // Hide loading indicator
     resultsDiv.classList.remove("hidden"); // Show results
@@ -28,15 +29,7 @@ async function fetchBlacklistInfo(domain) {
 // Function to display email blacklist information
 function displayBlacklistInfo(data) {
   const resultsDiv = document.getElementById("blacklistCheckResults");
-  resultsDiv.innerHTML = `
-    <div><strong>Hostname Checked:</strong> ${data.identifier}</div>
-    <div><strong>IP Address:</strong> ${data.ip}</div>
-    <div><strong>Blacklist Results:</strong> <pre>${JSON.stringify(
-      data.blacklistResults,
-      null,
-      2
-    )}</pre></div>
-  `;
+  resultsDiv.innerHTML = formatBlacklistCheck(data);
 }
 
 // Initialization function for blacklist check functionality
