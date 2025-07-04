@@ -1,5 +1,5 @@
 const openpgp = require("openpgp");
-const config = require("../config/config");
+const config = require("../config/secureConfig");
 
 async function generateStaticKeys(name, email, passphrase) {
   try {

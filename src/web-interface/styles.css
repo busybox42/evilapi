@@ -508,6 +508,15 @@ input[type="file"] {
   margin: 10px 0;
 }
 
+.success-message {
+  color: #28a745;
+  background-color: #1A1A1A;
+  border: 1px solid #28a745;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
 /* Copy notification */
 .copy-notification {
   position: fixed;

@@ -2,7 +2,7 @@ import { API_URL } from "./config.js";
 import { formatAuthResult } from "./formatters.js";
 
 function showLoadingIndicator(show) {
-  const loadingIndicator = document.getElementById("loadingIndicator");
+  const loadingIndicator = document.getElementById("authLoadingIndicator");
   if (show) {
     loadingIndicator.classList.remove("hidden");
   } else {
@@ -30,39 +30,52 @@ async function authenticateProtocol() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Add this line if your API requires a token or API key
-        Authorization: "Bearer YOUR_API_KEY",
       },
       body: JSON.stringify(requestData),
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
     const resultData = await response.json();
 
-    // Include username, protocol, and hostname in the response data
+    // Include username, protocol, and hostname in the response data for display
     resultData.username = username;
     resultData.protocol = protocol;
     resultData.hostname = hostname;
 
-    return resultData; // Return the result data with additional information
+    return resultData;
   } catch (error) {
-    console.error("There has been a problem with your fetch operation:", error);
-    return { success: false, message: "Error occurred during authentication" };
+    console.error("Authentication error:", error);
+    return { 
+      success: false, 
+      message: error.message || "Error occurred during authentication",
+      protocol: protocol,
+      hostname: hostname
+    };
   } finally {
     showLoadingIndicator(false);
   }
 }
 
 export function initAuthValidator() {
-  // Add an event listener to the form submit button to trigger authentication
-  const form = document.getElementById("authForm");
-  form.addEventListener("submit", async function (event) {
+  // Add an event listener to the auth button to trigger authentication
+  const authButton = document.getElementById("performAuthBtn");
+  authButton.addEventListener("click", async function (event) {
     event.preventDefault(); // Prevent form submission
     const resultData = await authenticateProtocol(); // Call the function and get the result
     updateUI(resultData); // Update the UI with the result
+  });
+
+  // Add Enter key support for form inputs
+  const form = document.getElementById("authForm");
+  form.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      authButton.click();
+    }
   });
 }
 

@@ -1,4 +1,5 @@
 import { API_URL } from "./config.js";
+import { formatEmailDeliveryTest } from "./formatters.js";
 
 // Function to show or hide the loading indicator
 function showLoadingIndicator(show) {
@@ -13,15 +14,7 @@ function showLoadingIndicator(show) {
 // Function to display the results of the email delivery test
 function displayResults(data) {
   const resultDiv = document.getElementById("emailTestResults");
-  if (data.success) {
-    resultDiv.innerHTML = `Success: ${data.message}<br>Latency: ${
-      data.latency
-    }<br>From: ${data.details?.from ?? "N/A"}<br>Subject: ${
-      data.details?.subject ?? "N/A"
-    }<br>Date: ${data.details?.date ?? "N/A"}`;
-  } else {
-    resultDiv.innerHTML = `Failed to test email delivery. Error: ${data.message}`;
-  }
+  resultDiv.innerHTML = formatEmailDeliveryTest(data);
 }
 
 // Main function to perform the email delivery test

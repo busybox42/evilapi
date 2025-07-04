@@ -7,7 +7,7 @@ const upload = multer({
   limits: { fileSize: 100 * 1024 * 1024 },
 });
 const openpgp = require("openpgp");
-const config = require("../../config/config");
+const config = require("../../config/secureConfig");
 const { logError } = require("../../utils/logger");
 const {
   getKeyFromMemcached,

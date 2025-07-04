@@ -8,7 +8,7 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
-const config = require("./config/config");
+const config = require("./config/secureConfig");
 const { initializeStaticKeys } = require("./utils/pgpUtils");
 const { globalErrorHandler } = require("./middleware/errorHandler");
 

@@ -472,4 +472,77 @@ export const formatSpamScan = (data) => {
   }
 
   return sections.join('');
+};
+
+// Format Email Delivery Test results
+export const formatEmailDeliveryTest = (data) => {
+  let sections = [];
+
+  if (data.success) {
+    // Successful delivery
+    sections.push(createSection('✅ Email Delivery Test - Success', 
+      createStatusBadge('Email Successfully Delivered', 'success')
+    ));
+
+    // Performance metrics
+    if (data.latency) {
+      const latencyMs = parseInt(data.latency.replace('ms', ''));
+      const latencyStatus = latencyMs < 1000 ? 'success' : latencyMs < 5000 ? 'warning' : 'error';
+      const performanceContent = `
+        ${createKeyValue('Delivery Latency', data.latency, true)}
+        ${createStatusBadge(
+          latencyMs < 1000 ? 'Excellent Performance' : 
+          latencyMs < 5000 ? 'Good Performance' : 'Slow Delivery', 
+          latencyStatus
+        )}
+      `;
+      sections.push(createSection('⚡ Performance Metrics', performanceContent));
+    }
+
+    // Email details
+    if (data.details) {
+      const detailsContent = `
+        ${data.details.from ? createKeyValue('From', data.details.from) : ''}
+        ${data.details.subject ? createKeyValue('Subject', data.details.subject) : ''}
+        ${data.details.date ? createKeyValue('Date Received', new Date(data.details.date).toLocaleString()) : ''}
+      `;
+      sections.push(createSection('📧 Email Details', detailsContent));
+    }
+
+    // Success message
+    if (data.message) {
+      sections.push(createSection('📋 Test Results', 
+        `<div class="success-message">${data.message}</div>`
+      ));
+    }
+
+  } else {
+    // Failed delivery
+    sections.push(createSection('❌ Email Delivery Test - Failed', 
+      createStatusBadge('Email Delivery Failed', 'error')
+    ));
+
+    // Error details
+    if (data.message) {
+      sections.push(createSection('⚠️ Error Details', 
+        `<div class="error-message">${data.message}</div>`
+      ));
+    }
+
+    // Troubleshooting tips
+    const troubleshootingTips = [
+      'Verify SMTP server settings and credentials',
+      'Check IMAP server settings and authentication',
+      'Ensure firewall allows SMTP/IMAP connections',
+      'Verify email addresses are correct',
+      'Check if emails are going to spam folder',
+      'Increase timeout if network is slow'
+    ];
+    
+    sections.push(createSection('🔧 Troubleshooting Tips', 
+      createList(troubleshootingTips.map(tip => `💡 ${tip}`))
+    ));
+  }
+
+  return sections.join('');
 }; 

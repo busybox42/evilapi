@@ -1,5 +1,5 @@
 const Memcached = require("memcached");
-const config = require("../config/config");
+const config = require("../config/secureConfig");
 const { logError } = require("../utils/logger");
 
 const memcached = new Memcached(
