@@ -1,8 +1,21 @@
 import { API_URL } from "./config.js";
 import { formatWhoAmIResult } from "./formatters.js";
 
+// Function to show or hide the loading indicator
+function showLoadingIndicator(show) {
+  const loadingIndicator = document.getElementById("whoAmILoadingIndicator");
+  if (loadingIndicator) {
+    if (show) {
+      loadingIndicator.classList.remove("hidden");
+    } else {
+      loadingIndicator.classList.add("hidden");
+    }
+  }
+}
+
 // Function to fetch information about the client or a given IP/hostname
 async function fetchWhoAmIInfo(ipAddress) {
+  showLoadingIndicator(true);
   let url = `${API_URL}/whoami`;
   if (ipAddress) {
     url += `?ip=${encodeURIComponent(ipAddress)}`;
@@ -11,14 +24,20 @@ async function fetchWhoAmIInfo(ipAddress) {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
     displayWhoAmIInfo(data);
   } catch (error) {
     console.error("Who Am I error:", error);
-    document.getElementById("whoAmIResults").innerHTML =
-      `<div class="error-message">Failed to retrieve information: ${error.message}</div>`;
+    displayWhoAmIInfo({ 
+      error: true, 
+      message: error.message || "Failed to retrieve information",
+      requestedIp: ipAddress || "auto-detect"
+    });
+  } finally {
+    showLoadingIndicator(false);
   }
 }
 
@@ -44,12 +63,21 @@ async function fetchAndDisplayUserIp() {
 
 // Initialization function for Who Am I functionality
 export function initWhoAmI() {
-  document
-    .getElementById("checkWhoAmIBtn")
-    .addEventListener("click", function () {
-      const ipAddress = document.getElementById("ipInput").value.trim();
-      fetchWhoAmIInfo(ipAddress);
-    });
+  const button = document.getElementById("checkWhoAmIBtn");
+  const input = document.getElementById("ipInput");
+
+  button.addEventListener("click", function () {
+    const ipAddress = input.value.trim();
+    fetchWhoAmIInfo(ipAddress);
+  });
+
+  // Add Enter key support
+  input.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      button.click();
+    }
+  });
 
   // Call fetchAndDisplayUserIp to set the user's IP in the input field on load
   fetchAndDisplayUserIp();

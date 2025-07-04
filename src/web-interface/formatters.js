@@ -345,49 +345,113 @@ export const formatAuthResult = (data) => {
 export const formatWhoAmIResult = (data) => {
   let sections = [];
 
-  // IP Information
-  if (data.ip) {
+  // Handle error cases
+  if (data.error) {
+    sections.push(createSection('❌ Who Am I Lookup Failed', 
+      createStatusBadge('Lookup Failed', 'error')
+    ));
+
+    if (data.message) {
+      sections.push(createSection('⚠️ Error Details', 
+        `<div class="error-message">${data.message}</div>`
+      ));
+    }
+
+    if (data.requestedIp) {
+      sections.push(createSection('🔍 Request Details', 
+        createKeyValue('Requested IP/Hostname', data.requestedIp)
+      ));
+    }
+
+    // Troubleshooting tips
+    const troubleshootingTips = [
+      'Check if the IP address or hostname is valid',
+      'Verify network connectivity',
+      'Try with a different IP address (e.g., 8.8.8.8)',
+      'Rate limiting may be in effect - try again later',
+      'Ensure the IP is publicly routable'
+    ];
+    
+    sections.push(createSection('🔧 Troubleshooting Tips', 
+      createList(troubleshootingTips.map(tip => `💡 ${tip}`))
+    ));
+
+    return sections.join('');
+  }
+
+  // Success header
+  sections.push(createSection('✅ Who Am I Information', 
+    createStatusBadge('Lookup Successful', 'success')
+  ));
+
+  // IP Information (handle different data structures)
+  const ipAddress = data.ip || data.ipAddress || data.query || data.requestedIp;
+  if (ipAddress) {
     sections.push(createSection('🌐 IP Address Information', 
-      createKeyValue('IP Address', data.ip, true)
+      createKeyValue('IP Address', ipAddress, true)
     ));
   }
 
-  // Location Information
-  if (data.city || data.region || data.country) {
+  // Location Information (handle geoInfo nested structure)
+  const geoInfo = data.geoInfo || data;
+  const location = data.location || data;
+  
+  if (geoInfo.city || geoInfo.region || geoInfo.country || location.city || location.region || location.country) {
     const locationContent = `
-      ${data.city ? createKeyValue('City', data.city) : ''}
-      ${data.region ? createKeyValue('Region/State', data.region) : ''}
-      ${data.country ? createKeyValue('Country', data.country) : ''}
-      ${data.country_code ? createKeyValue('Country Code', data.country_code) : ''}
-      ${data.postal ? createKeyValue('Postal Code', data.postal) : ''}
-      ${data.latitude && data.longitude ? createKeyValue('Coordinates', `${data.latitude}, ${data.longitude}`) : ''}
+      ${(geoInfo.city || location.city) ? createKeyValue('City', geoInfo.city || location.city) : ''}
+      ${(geoInfo.region || location.region || location.regionName) ? createKeyValue('Region/State', geoInfo.region || location.region || location.regionName) : ''}
+      ${(geoInfo.country || location.country || location.countryCode) ? createKeyValue('Country', geoInfo.country || location.country || location.countryCode) : ''}
+      ${(geoInfo.ll && Array.isArray(geoInfo.ll)) ? createKeyValue('Coordinates', `${geoInfo.ll[0]}, ${geoInfo.ll[1]}`) : ''}
+      ${(location.lat && location.lon) ? createKeyValue('Coordinates', `${location.lat}, ${location.lon}`) : ''}
+      ${(geoInfo.timezone || location.timezone) ? createKeyValue('Timezone', geoInfo.timezone || location.timezone) : ''}
     `;
     sections.push(createSection('📍 Location Information', locationContent));
   }
 
-  // ISP Information
-  if (data.isp || data.org || data.as) {
+  // ISP Information (handle different structures)
+  const ispInfo = data.ispInfo || data;
+  if (ispInfo.isp || ispInfo.org || ispInfo.as || data.isp || data.org || data.as) {
     const ispContent = `
-      ${data.isp ? createKeyValue('ISP', data.isp) : ''}
-      ${data.org ? createKeyValue('Organization', data.org) : ''}
-      ${data.as ? createKeyValue('AS Number', data.as) : ''}
+      ${(ispInfo.isp || data.isp) ? createKeyValue('ISP', ispInfo.isp || data.isp) : ''}
+      ${(ispInfo.org || data.org) ? createKeyValue('Organization', ispInfo.org || data.org) : ''}
+      ${(ispInfo.as || data.as) ? createKeyValue('AS Number', ispInfo.as || data.as) : ''}
     `;
     sections.push(createSection('🏢 ISP Information', ispContent));
   }
 
+  // PTR Record (reverse DNS)
+  if (data.ptrRecord) {
+    sections.push(createSection('🔄 Reverse DNS', 
+      createKeyValue('PTR Record', data.ptrRecord, true)
+    ));
+  }
+
   // Additional Information
-  if (data.timezone || data.mobile || data.proxy) {
-    const additionalContent = `
-      ${data.timezone ? createKeyValue('Timezone', data.timezone) : ''}
-      ${data.mobile !== undefined ? createKeyValue('Mobile', data.mobile ? 'Yes' : 'No') : ''}
-      ${data.proxy !== undefined ? createKeyValue('Proxy', data.proxy ? 'Yes' : 'No') : ''}
-    `;
-    sections.push(createSection('ℹ️ Additional Information', additionalContent));
+  const additionalInfo = [];
+  if (data.mobile !== undefined) additionalInfo.push(createKeyValue('Mobile Connection', data.mobile ? 'Yes' : 'No'));
+  if (data.proxy !== undefined) additionalInfo.push(createKeyValue('Proxy Detected', data.proxy ? 'Yes' : 'No'));
+  if (data.hosting !== undefined) additionalInfo.push(createKeyValue('Hosting Provider', data.hosting ? 'Yes' : 'No'));
+  
+  if (additionalInfo.length > 0) {
+    sections.push(createSection('ℹ️ Additional Information', additionalInfo.join('')));
+  }
+
+  // If we have raw WHOIS data
+  if (data.ispInfo && typeof data.ispInfo === 'object' && Object.keys(data.ispInfo).length > 0) {
+    const whoisEntries = Object.entries(data.ispInfo)
+      .filter(([key, value]) => value && !['isp', 'org', 'as'].includes(key))
+      .map(([key, value]) => createKeyValue(key.charAt(0).toUpperCase() + key.slice(1), 
+        typeof value === 'object' ? JSON.stringify(value, null, 2) : value));
+    
+    if (whoisEntries.length > 0) {
+      sections.push(createSection('📋 WHOIS Information', whoisEntries.join('')));
+    }
   }
 
   // If no structured data is available, show raw data
-  if (sections.length === 0) {
+  if (sections.length <= 1) { // Only success header
     const rawContent = Object.entries(data)
+      .filter(([key]) => !['error', 'message', 'requestedIp'].includes(key))
       .map(([key, value]) => createKeyValue(key, typeof value === 'object' ? JSON.stringify(value, null, 2) : value))
       .join('');
     sections.push(createSection('📊 Raw Data', rawContent));
