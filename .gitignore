@@ -18,3 +18,18 @@ apiTest/config/config.js
 # Ignore package-lock.json for now.
 package-lock.json
 apiTest/package-lock.json
+
+# Nginx and SSL related files
+nginx/ssl/*.pem
+nginx/ssl/*.crt
+nginx/ssl/*.key
+certbot/conf/
+certbot/www/
+
+# Temporary nginx config files
+nginx/sites-available/*-temp.conf
+nginx/sites-available/*-real.conf
+
+# Docker volumes and logs
+docker-compose.override.yml
+*.log
