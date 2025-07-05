@@ -45,9 +45,9 @@ print_status "Switching to HTTP-only configuration for certificate generation...
 if [ -f nginx/sites-available/evilapi.conf ]; then
     cp nginx/sites-available/evilapi.conf nginx/sites-available/evilapi-backup.conf
 fi
-cp nginx/sites-available/evilapi-acme.conf nginx/sites-available/evilapi.conf
+cp nginx/sites-available/evilapi-http-only.conf nginx/sites-available/evilapi.conf
 
-# Update domain in ACME config
+# Update domain in config
 sed -i "s/evil-admin\.com/$PRIMARY_DOMAIN/g" nginx/sites-available/evilapi.conf
 
 # Restart nginx with HTTP-only config
@@ -68,11 +68,20 @@ for domain in "${DOMAINS[@]}"; do
     fi
 done
 
-# Step 3: Create directories
+# Step 3: Test .well-known endpoint
+print_status "Testing .well-known endpoint..."
+WELLKNOWN_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://${PRIMARY_DOMAIN}/.well-known/acme-challenge/test" || echo "000")
+if [ "$WELLKNOWN_CODE" = "404" ]; then
+    print_status "✓ .well-known endpoint is configured correctly (returns 404)"
+else
+    print_warning "! .well-known endpoint returned code: $WELLKNOWN_CODE (expected 404)"
+fi
+
+# Step 4: Create directories
 print_status "Creating SSL directories..."
 mkdir -p nginx/ssl certbot/conf certbot/www
 
-# Step 4: Request certificate
+# Step 5: Request certificate
 print_status "Requesting Let's Encrypt certificate..."
 CERTBOT_DOMAINS=""
 for domain in "${DOMAINS[@]}"; do
@@ -86,6 +95,7 @@ $DOCKER_COMPOSE run --rm certbot certonly \
     --agree-tos \
     --no-eff-email \
     --non-interactive \
+    --force-renewal \
     $CERTBOT_DOMAINS
 
 CERTBOT_EXIT_CODE=$?
@@ -93,7 +103,7 @@ CERTBOT_EXIT_CODE=$?
 if [ $CERTBOT_EXIT_CODE -eq 0 ]; then
     print_status "✓ Certificate obtained successfully!"
     
-    # Step 5: Switch to SSL configuration
+    # Step 6: Switch to SSL configuration
     print_status "Switching to SSL configuration..."
     cp nginx/sites-available/evilapi-ssl.conf nginx/sites-available/evilapi.conf
     
@@ -107,7 +117,7 @@ if [ $CERTBOT_EXIT_CODE -eq 0 ]; then
     # Wait for nginx to start
     sleep 5
     
-    # Step 6: Test HTTPS
+    # Step 7: Test HTTPS
     print_status "Testing HTTPS access..."
     for domain in "${DOMAINS[@]}"; do
         HTTPS_CODE=$(curl -s -k -o /dev/null -w "%{http_code}" "https://$domain/api/health" || echo "000")
