@@ -59,7 +59,7 @@ const config = {
   // Rate limiting configuration
   rateLimitConfig: {
     windowMs: parseInt(getEnvVar('RATE_LIMIT_WINDOW_MS', '900000'), 10), // 15 minutes
-    max: parseInt(getEnvVar('RATE_LIMIT_MAX', '5'), 10), // 5 requests per IP (more secure)
+    max: parseInt(getEnvVar('RATE_LIMIT_MAX', '200'), 10), // 200 requests per IP
     message: getEnvVar('RATE_LIMIT_MESSAGE', 'Too many requests from this IP, please try again later.'),
   },
 
