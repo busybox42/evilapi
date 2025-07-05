@@ -174,13 +174,9 @@ show_logs() {
 show_status() {
     print_header "Service Status:"
     
-    # Check both compose files
-    echo "Production Services:"
-    $DOCKER_COMPOSE -f docker-compose.yml ps 2>/dev/null || echo "  No production services running"
-    
-    echo ""
-    echo "Development Services:"
-    $DOCKER_COMPOSE -f docker-compose.dev.yml ps 2>/dev/null || echo "  No development services running"
+    # Show all running containers
+    echo "Running Services:"
+    $DOCKER_COMPOSE ps
     
     echo
     print_header "Health Checks:"
@@ -192,25 +188,18 @@ show_status() {
         print_error "✗ EvilAPI is not responding (port 3011)"
     fi
     
-    # Check nginx (development)
-    if curl -s http://localhost:8080 > /dev/null 2>&1; then
-        print_status "✓ Nginx is responding (development port 8080)"
-    else
-        print_warning "! Nginx is not available on development port 8080"
-    fi
-    
-    # Check nginx (production)
+    # Check nginx (production port 80)
     if curl -s http://localhost > /dev/null 2>&1; then
         print_status "✓ Nginx is responding (production port 80)"
     else
-        print_warning "! Nginx is not available on production port 80"
+        print_warning "✗ Nginx is not responding (production port 80)"
     fi
     
     # Check SSL if configured
     if curl -s -k https://localhost > /dev/null 2>&1; then
         print_status "✓ HTTPS is available"
     else
-        print_warning "! HTTPS is not available (SSL may not be configured)"
+        print_warning "! HTTPS is not available (no SSL configured)"
     fi
 }
 

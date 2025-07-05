@@ -127,11 +127,8 @@ dev-status:
 .PHONY: deploy
 deploy:
 	@echo "Starting production HTTP deployment..."
-	@# Use HTTP-only config by default
-	@if [ ! -f nginx/sites-available/evilapi.conf ] || ! grep -q "listen 443" nginx/sites-available/evilapi.conf; then \
-		echo "Using HTTP-only configuration..."; \
-		cp nginx/sites-available/evilapi-http.conf nginx/sites-available/evilapi.conf; \
-	fi
+	@echo "Ensuring HTTP-only configuration..."
+	@cp nginx/sites-available/evilapi-http.conf nginx/sites-available/evilapi.conf
 	./scripts/deploy.sh start
 
 .PHONY: deploy-stop
