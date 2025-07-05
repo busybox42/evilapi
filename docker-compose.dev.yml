@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  evilapi:
+    build: .
+    container_name: evilapi-container-dev
+    ports:
+      - "3011:3011"
+    networks:
+      - evilapi-network
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3011/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy-dev
+    ports:
+      - "8080:80"      # Use port 8080 instead of 80
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/dev-sites:/etc/nginx/dev-sites:ro
+    depends_on:
+      - evilapi
+    networks:
+      - evilapi-network
+    restart: unless-stopped
+
+networks:
+  evilapi-network:
+    driver: bridge 

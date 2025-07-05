@@ -26,15 +26,25 @@ print_error() {
 
 # Check if domain is provided
 if [ -z "$1" ]; then
-    print_error "Usage: $0 <domain> [email]"
-    print_error "Example: $0 evilapi.example.com admin@example.com"
+    print_error "Usage: $0 <primary_domain> [email] [additional_domains...]"
+    print_error "Example: $0 evil-admin.com admin@evil-admin.com www.evil-admin.com"
     exit 1
 fi
 
-DOMAIN="$1"
-EMAIL="${2:-admin@${DOMAIN}}"
+PRIMARY_DOMAIN="$1"
+EMAIL="${2:-admin@${PRIMARY_DOMAIN}}"
 
-print_status "Setting up SSL certificates for domain: $DOMAIN"
+# Build domains list
+DOMAINS=("$PRIMARY_DOMAIN")
+shift 2 2>/dev/null || shift 1  # Remove first two args if they exist, or just first one
+
+# Add additional domains
+for domain in "$@"; do
+    DOMAINS+=("$domain")
+done
+
+print_status "Setting up SSL certificates for domains: ${DOMAINS[*]}"
+print_status "Primary domain: $PRIMARY_DOMAIN"
 print_status "Email: $EMAIL"
 
 # Check if docker-compose is available
@@ -47,16 +57,12 @@ fi
 print_status "Creating directories..."
 mkdir -p nginx/ssl certbot/conf certbot/www
 
-# Update nginx configuration with the domain
-print_status "Updating nginx configuration..."
-sed -i "s/DOMAIN_NAME/$DOMAIN/g" nginx/sites-available/evilapi.conf
-
 # Create temporary nginx config for initial certificate request
 print_status "Creating temporary nginx config..."
 cat > nginx/sites-available/evilapi-temp.conf << EOF
 server {
     listen 80;
-    server_name $DOMAIN;
+    server_name ${DOMAINS[*]};
     
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
@@ -69,7 +75,7 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name $DOMAIN;
+    server_name ${DOMAINS[*]};
     
     # Temporary self-signed certificate
     ssl_certificate /etc/nginx/ssl/temp-cert.pem;
@@ -90,10 +96,12 @@ print_status "Generating temporary self-signed certificate..."
 openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
     -keyout nginx/ssl/temp-key.pem \
     -out nginx/ssl/temp-cert.pem \
-    -subj "/CN=$DOMAIN"
+    -subj "/CN=$PRIMARY_DOMAIN"
 
-# Use temporary config
-mv nginx/sites-available/evilapi.conf nginx/sites-available/evilapi-real.conf
+# Backup original config and use temporary config
+if [ -f nginx/sites-available/evilapi.conf ]; then
+    mv nginx/sites-available/evilapi.conf nginx/sites-available/evilapi-real.conf
+fi
 mv nginx/sites-available/evilapi-temp.conf nginx/sites-available/evilapi.conf
 
 # Start services with temporary config
@@ -104,8 +112,14 @@ docker-compose up -d nginx
 print_status "Waiting for nginx to be ready..."
 sleep 10
 
+# Build certbot domain arguments
+CERTBOT_DOMAINS=""
+for domain in "${DOMAINS[@]}"; do
+    CERTBOT_DOMAINS="$CERTBOT_DOMAINS -d $domain"
+done
+
 # Request Let's Encrypt certificate
-print_status "Requesting Let's Encrypt certificate..."
+print_status "Requesting Let's Encrypt certificate for: ${DOMAINS[*]}"
 docker-compose run --rm certbot certonly \
     --webroot \
     --webroot-path=/var/www/certbot \
@@ -113,7 +127,7 @@ docker-compose run --rm certbot certonly \
     --agree-tos \
     --no-eff-email \
     --force-renewal \
-    -d "$DOMAIN"
+    $CERTBOT_DOMAINS
 
 if [ $? -eq 0 ]; then
     print_status "Certificate obtained successfully!"
@@ -121,7 +135,9 @@ if [ $? -eq 0 ]; then
     # Switch to real configuration
     print_status "Switching to production configuration..."
     mv nginx/sites-available/evilapi.conf nginx/sites-available/evilapi-temp.conf
-    mv nginx/sites-available/evilapi-real.conf nginx/sites-available/evilapi.conf
+    if [ -f nginx/sites-available/evilapi-real.conf ]; then
+        mv nginx/sites-available/evilapi-real.conf nginx/sites-available/evilapi.conf
+    fi
     
     # Remove temporary certificate
     rm -f nginx/ssl/temp-cert.pem nginx/ssl/temp-key.pem
@@ -131,7 +147,10 @@ if [ $? -eq 0 ]; then
     docker-compose restart nginx
     
     print_status "SSL setup completed successfully!"
-    print_status "Your EvilAPI is now available at: https://$DOMAIN"
+    print_status "Your EvilAPI is now available at:"
+    for domain in "${DOMAINS[@]}"; do
+        print_status "  - https://$domain"
+    done
     
 else
     print_error "Certificate request failed!"
@@ -149,4 +168,8 @@ else
     print_warning "Certificate renewal test failed. Please check the configuration."
 fi
 
-print_status "Setup complete! Your EvilAPI is running with SSL at https://$DOMAIN" 
+print_status "Setup complete! Your EvilAPI is running with SSL."
+print_status "Available at:"
+for domain in "${DOMAINS[@]}"; do
+    print_status "  - https://$domain"
+done 

@@ -22,7 +22,14 @@ help:
 	@echo "  clean-all     - Remove container and image"
 	@echo "  rebuild       - Clean and rebuild everything"
 	@echo ""
-	@echo "Nginx Deployment Commands:"
+	@echo "Development Commands (Non-privileged ports):"
+	@echo "  dev           - Start development environment (port 8080)"
+	@echo "  dev-stop      - Stop development environment"
+	@echo "  dev-restart   - Restart development environment"
+	@echo "  dev-logs      - Show development logs"
+	@echo "  dev-status    - Show development status"
+	@echo ""
+	@echo "Production Deployment Commands (Requires sudo for ports 80/443):"
 	@echo "  deploy        - Deploy with nginx proxy"
 	@echo "  deploy-ssl    - Deploy with SSL (requires DOMAIN env var)"
 	@echo "  deploy-stop   - Stop nginx deployment"
@@ -36,15 +43,14 @@ help:
 	@echo "  ssl-renew     - Renew SSL certificates"
 	@echo "  ssl-status    - Check SSL certificate status"
 	@echo ""
-	@echo "Development Commands:"
-	@echo "  dev           - Start development environment"
+	@echo "Other Commands:"
 	@echo "  test          - Run tests"
 	@echo "  test-coverage - Run tests with coverage"
 	@echo ""
 	@echo "Usage Examples:"
-	@echo "  make deploy"
-	@echo "  DOMAIN=example.com make deploy-ssl"
-	@echo "  DOMAIN=example.com EMAIL=admin@example.com make ssl-setup"
+	@echo "  make dev                              # Local development"
+	@echo "  make deploy                           # Production (requires sudo)"
+	@echo "  DOMAIN=example.com make deploy-ssl    # Production with SSL"
 
 # Docker Commands
 .PHONY: build
@@ -92,7 +98,33 @@ clean-all: clean
 .PHONY: rebuild
 rebuild: clean-all build run
 
-# Nginx Deployment Commands
+# Development Commands (Non-privileged ports)
+.PHONY: dev
+dev:
+	@echo "Starting development environment..."
+	./scripts/deploy.sh start-dev
+
+.PHONY: dev-stop
+dev-stop:
+	@echo "Stopping development environment..."
+	./scripts/deploy.sh stop
+
+.PHONY: dev-restart
+dev-restart:
+	@echo "Restarting development environment..."
+	./scripts/deploy.sh restart-dev
+
+.PHONY: dev-logs
+dev-logs:
+	@echo "Showing development logs..."
+	docker-compose -f docker-compose.dev.yml logs -f
+
+.PHONY: dev-status
+dev-status:
+	@echo "Checking development status..."
+	./scripts/deploy.sh status
+
+# Production Deployment Commands
 .PHONY: deploy
 deploy:
 	@echo "Starting nginx deployment..."
@@ -164,11 +196,6 @@ ssl-status:
 	docker-compose run --rm certbot certificates
 
 # Development Commands
-.PHONY: dev
-dev:
-	@echo "Starting development environment..."
-	npm run dev
-
 .PHONY: test
 test:
 	@echo "Running tests..."

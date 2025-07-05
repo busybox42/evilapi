@@ -37,7 +37,8 @@ EvilAPI Deployment Script
 Usage: $0 [COMMAND] [OPTIONS]
 
 Commands:
-    start               Start all services
+    start               Start all services (production mode)
+    start-dev           Start all services (development mode - non-privileged ports)
     stop                Stop all services
     restart             Restart all services
     setup-ssl DOMAIN    Setup SSL certificates for domain
@@ -50,10 +51,11 @@ Options:
     -d, --domain DOMAIN    Domain name for SSL setup
     -e, --email EMAIL      Email for Let's Encrypt (default: admin@domain)
     --no-ssl              Skip SSL setup
-    --dev                 Development mode (HTTP only)
+    --dev                 Development mode (HTTP only, non-privileged ports)
 
 Examples:
-    $0 start
+    $0 start-dev                              # Local development
+    $0 start                                  # Production deployment
     $0 setup-ssl evilapi.example.com
     $0 setup-ssl evilapi.example.com admin@example.com
     $0 restart
@@ -75,9 +77,28 @@ check_dependencies() {
     fi
 }
 
+# Determine which compose file to use
+get_compose_file() {
+    local mode="$1"
+    if [ "$mode" = "dev" ] || [ "$mode" = "development" ]; then
+        echo "docker-compose.dev.yml"
+    else
+        echo "docker-compose.yml"
+    fi
+}
+
 # Start services
 start_services() {
-    print_header "Starting EvilAPI services..."
+    local mode="$1"
+    local compose_file=$(get_compose_file "$mode")
+    
+    if [ "$mode" = "dev" ]; then
+        print_header "Starting EvilAPI services (Development Mode)..."
+        print_status "Using non-privileged ports: HTTP=8080, HTTPS=8443"
+    else
+        print_header "Starting EvilAPI services (Production Mode)..."
+        print_status "Using standard ports: HTTP=80, HTTPS=443"
+    fi
     
     # Create config from example if it doesn't exist
     if [ ! -f "src/config/config.js" ]; then
@@ -86,55 +107,94 @@ start_services() {
     fi
     
     # Start services
-    docker-compose up -d
+    docker-compose -f "$compose_file" up -d
     
     print_status "Services started successfully!"
-    print_status "EvilAPI is available at:"
-    print_status "  - HTTP: http://localhost"
-    print_status "  - HTTPS: https://localhost (if SSL is configured)"
-    print_status "  - Direct API: http://localhost:3011"
+    if [ "$mode" = "dev" ]; then
+        print_status "EvilAPI is available at:"
+        print_status "  - HTTP: http://localhost:8080"
+        print_status "  - Direct API: http://localhost:3011"
+    else
+        print_status "EvilAPI is available at:"
+        print_status "  - HTTP: http://localhost"
+        print_status "  - HTTPS: https://localhost (if SSL is configured)"
+        print_status "  - Direct API: http://localhost:3011"
+    fi
 }
 
 # Stop services
 stop_services() {
+    local mode="$1"
+    local compose_file=$(get_compose_file "$mode")
+    
     print_header "Stopping EvilAPI services..."
-    docker-compose down
+    
+    # Try both compose files to ensure cleanup
+    docker-compose -f docker-compose.yml down 2>/dev/null || true
+    docker-compose -f docker-compose.dev.yml down 2>/dev/null || true
+    
     print_status "Services stopped successfully!"
 }
 
 # Restart services
 restart_services() {
+    local mode="$1"
+    local compose_file=$(get_compose_file "$mode")
+    
     print_header "Restarting EvilAPI services..."
-    docker-compose restart
+    docker-compose -f "$compose_file" restart
     print_status "Services restarted successfully!"
 }
 
 # Show logs
 show_logs() {
+    local mode="$1"
+    local compose_file=$(get_compose_file "$mode")
+    
     print_header "Showing service logs..."
-    docker-compose logs -f --tail=100
+    
+    # Try to detect which compose file is currently running
+    if docker-compose -f docker-compose.dev.yml ps | grep -q "Up"; then
+        compose_file="docker-compose.dev.yml"
+    fi
+    
+    docker-compose -f "$compose_file" logs -f --tail=100
 }
 
 # Show service status
 show_status() {
     print_header "Service Status:"
-    docker-compose ps
+    
+    # Check both compose files
+    echo "Production Services:"
+    docker-compose -f docker-compose.yml ps 2>/dev/null || echo "  No production services running"
+    
+    echo ""
+    echo "Development Services:"
+    docker-compose -f docker-compose.dev.yml ps 2>/dev/null || echo "  No development services running"
     
     echo
     print_header "Health Checks:"
     
     # Check EvilAPI
     if curl -s http://localhost:3011/api/health > /dev/null 2>&1; then
-        print_status "✓ EvilAPI is responding"
+        print_status "✓ EvilAPI is responding (port 3011)"
     else
-        print_error "✗ EvilAPI is not responding"
+        print_error "✗ EvilAPI is not responding (port 3011)"
     fi
     
-    # Check nginx
-    if curl -s http://localhost > /dev/null 2>&1; then
-        print_status "✓ Nginx is responding"
+    # Check nginx (development)
+    if curl -s http://localhost:8080 > /dev/null 2>&1; then
+        print_status "✓ Nginx is responding (development port 8080)"
     else
-        print_error "✗ Nginx is not responding"
+        print_warning "! Nginx is not available on development port 8080"
+    fi
+    
+    # Check nginx (production)
+    if curl -s http://localhost > /dev/null 2>&1; then
+        print_status "✓ Nginx is responding (production port 80)"
+    else
+        print_warning "! Nginx is not available on production port 80"
     fi
     
     # Check SSL if configured
@@ -147,6 +207,9 @@ show_status() {
 
 # Update and rebuild
 update_services() {
+    local mode="$1"
+    local compose_file=$(get_compose_file "$mode")
+    
     print_header "Updating EvilAPI..."
     
     # Pull latest code
@@ -155,11 +218,11 @@ update_services() {
     
     # Rebuild containers
     print_status "Rebuilding containers..."
-    docker-compose build --no-cache
+    docker-compose -f "$compose_file" build --no-cache
     
     # Restart services
     print_status "Restarting services..."
-    docker-compose up -d
+    docker-compose -f "$compose_file" up -d
     
     print_status "Update completed successfully!"
 }
@@ -202,7 +265,11 @@ main() {
     case "$command" in
         start)
             check_dependencies
-            start_services
+            start_services "production"
+            ;;
+        start-dev|dev)
+            check_dependencies
+            start_services "dev"
             ;;
         stop)
             check_dependencies
@@ -210,7 +277,11 @@ main() {
             ;;
         restart)
             check_dependencies
-            restart_services
+            restart_services "production"
+            ;;
+        restart-dev)
+            check_dependencies
+            restart_services "dev"
             ;;
         setup-ssl)
             check_dependencies
@@ -226,7 +297,11 @@ main() {
             ;;
         update)
             check_dependencies
-            update_services
+            update_services "production"
+            ;;
+        update-dev)
+            check_dependencies
+            update_services "dev"
             ;;
         help|--help|-h)
             show_help
