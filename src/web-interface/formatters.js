@@ -775,3 +775,198 @@ export const formatEmailDeliveryTest = (data) => {
 
   return sections.join('');
 };
+
+// Format DNS propagation results
+export const formatDnsPropagation = (data) => {
+  if (!data || typeof data !== 'object') {
+    return `<div class="error-message">Invalid DNS propagation data</div>`;
+  }
+
+  if (data.error) {
+    return `<div class="error-message">DNS Propagation Error: ${data.error}</div>`;
+  }
+
+  let sections = [];
+
+  // Header with basic info
+  sections.push(createSection('🌐 DNS Propagation Check', `
+    ${createKeyValue('Hostname', data.hostname, true)}
+    ${createKeyValue('Record Type', data.recordType, true)}
+    ${createKeyValue('Query Time', new Date(data.timestamp).toLocaleString())}
+    ${createKeyValue('Servers Checked', data.totalServers || 0, true)}
+  `));
+
+  // Summary section
+  const propagationStatus = data.hasInconsistentRecords ? 
+    createStatusBadge('INCONSISTENT', 'warning') : 
+    createStatusBadge('CONSISTENT', 'success');
+  
+  sections.push(createSection('📊 Propagation Summary', `
+    ${createKeyValue('Status', propagationStatus, true)}
+    ${createKeyValue('Successful Queries', `${data.successful || 0}/${data.totalServers || 0}`)}
+    ${createKeyValue('Failed Queries', data.failed || 0)}
+    ${createKeyValue('Average Response Time', data.averageResponseTime ? `${data.averageResponseTime}ms` : 'N/A')}
+    ${data.hasInconsistentRecords ? createKeyValue('Inconsistencies Found', data.uniqueRecordSets || 0, true) : ''}
+  `));
+
+  // Server results
+  if (data.results && data.results.length > 0) {
+    const serverResults = data.results.map(result => {
+      const status = result.success ? 
+        createStatusBadge('SUCCESS', 'success') : 
+        createStatusBadge('FAILED', 'error');
+      
+      const records = result.records ? 
+        result.records.map(record => `<code class="dns-record">${record}</code>`).join('<br>') : 
+        'No records found';
+      
+      return `
+        <div class="dns-server-result">
+          <div class="server-header">
+            <strong>${result.server}</strong> (${result.location}) ${status}
+            ${result.responseTime ? `<span class="response-time">${result.responseTime}ms</span>` : ''}
+          </div>
+          <div class="server-ip">
+            <code>${result.ip}</code>
+          </div>
+          <div class="server-records">
+            ${result.success ? records : `<span class="error">Error: ${result.error}</span>`}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    sections.push(createSection(`🖥️ DNS Server Results (${data.results.length})`, serverResults));
+  }
+
+  // Inconsistencies section
+  if (data.hasInconsistentRecords && data.recordValuesByServer) {
+    const recordList = Object.entries(data.recordValuesByServer).map(([server, records]) =>
+      `<div><strong>${server}:</strong> <code>${records.join(', ')}</code></div>`
+    ).join('');
+    sections.push(createSection('⚠️ Record Values by Server', recordList));
+  }
+
+  return sections.join('');
+};
+
+// Format multi-record propagation results
+export const formatMultiRecordPropagation = (data) => {
+  if (!data || typeof data !== 'object') {
+    return `<div class="error-message">Invalid multi-record propagation data</div>`;
+  }
+
+  if (data.error) {
+    return `<div class="error-message">Multi-Record Propagation Error: ${data.error}</div>`;
+  }
+
+  let sections = [];
+
+  // Header with basic info
+  sections.push(createSection('🌐 Multi-Record DNS Propagation', `
+    ${createKeyValue('Hostname', data.hostname, true)}
+    ${createKeyValue('Record Types Checked', Array.isArray(data.recordTypes) ? data.recordTypes.join(', ') : 'N/A', true)}
+    ${createKeyValue('Query Time', new Date(data.timestamp).toLocaleString())}
+  `));
+
+  // Summary section
+  if (data.summary) {
+    let overallStatus = data.summary?.overallStatus;
+    let statusBadge;
+    if (overallStatus === 'ALL_CONSISTENT') {
+      statusBadge = createStatusBadge('ALL CONSISTENT', 'success');
+    } else if (overallStatus === 'ALL_RECORDS_PROPAGATED') {
+      statusBadge = createStatusBadge('ALL PROPAGATED', 'success');
+    } else if (overallStatus === 'SOME_FAILED') {
+      statusBadge = createStatusBadge('SOME FAILED', 'error');
+    } else if (overallStatus === 'ALL_FAILED') {
+      statusBadge = createStatusBadge('ALL FAILED', 'error');
+    } else {
+      statusBadge = createStatusBadge(overallStatus || 'UNKNOWN', 'info');
+    }
+    sections.push(createSection('📊 Overall Summary', `
+      ${createKeyValue('Status', statusBadge, true)}
+      ${createKeyValue('Successful Record Types', data.summary.successful || 0)}
+      ${createKeyValue('Failed Record Types', data.summary.failed || 0)}
+      ${createKeyValue('Total Server Queries', data.summary.totalServerQueries || 0)}
+    `));
+  }
+
+  // Individual record type results
+  if (data.results && data.results.length > 0) {
+    const recordResults = data.results.map(result => {
+      if (result.success === false) {
+        return `
+          <div class="record-type-result">
+            <h4>${result.recordType} Records ${createStatusBadge('FAILED', 'error')}</h4>
+            <div class="error-message">Error: ${result.error}</div>
+          </div>
+        `;
+      }
+      
+      // Use backend hasInconsistentRecords for status
+      const status = result.hasInconsistentRecords
+        ? createStatusBadge('INCONSISTENT', 'warning')
+        : createStatusBadge('CONSISTENT', 'success');
+      let recordList = '';
+      if (result.hasInconsistentRecords && result.recordValuesByServer) {
+        recordList = Object.entries(result.recordValuesByServer).map(([server, records]) =>
+          `<div><strong>${server}:</strong> <code>${records.join(', ')}</code></div>`
+        ).join('');
+      }
+      // Use result.totalServers or result.results.length for denominator
+      const totalServers = result.totalServers || (result.results ? result.results.length : 0);
+      return `
+        <div class="record-type-result">
+          <h4>${result.recordType} Records ${status}</h4>
+          <div class="record-summary">
+            ${createKeyValue('Successful Queries', `${result.successful || 0}/${totalServers}`)}
+            ${createKeyValue('Failed Queries', result.failed || 0)}
+            ${result.summary?.avgResponseTime ? createKeyValue('Avg Response Time', `${result.summary.avgResponseTime}ms`) : ''}
+          </div>
+          ${recordList}
+        </div>
+      `;
+    }).join('');
+
+    sections.push(createSection('📋 Record Type Results', recordResults));
+  }
+
+  return sections.join('');
+};
+
+// Format DNS server list
+export const formatDnsServerList = (data) => {
+  if (!data || typeof data !== 'object') {
+    return `<div class="error-message">Invalid DNS server list data</div>`;
+  }
+
+  if (data.error) {
+    return `<div class="error-message">DNS Server List Error: ${data.error}</div>`;
+  }
+
+  let sections = [];
+
+  // Header with basic info
+  sections.push(createSection('🖥️ Available DNS Servers', `
+    ${createKeyValue('Total Servers', data.total || 0, true)}
+    ${createKeyValue('Last Updated', new Date(data.timestamp).toLocaleString())}
+  `));
+
+  // Server list
+  if (data.servers && data.servers.length > 0) {
+    const serverList = data.servers.map((server, index) => 
+      `<div class="dns-server-item">
+        <div class="server-info">
+          <strong>${server.name}</strong>
+          <span class="server-ip">${server.ip}</span>
+          <span class="server-location">${server.location}</span>
+        </div>
+      </div>`
+    ).join('');
+
+    sections.push(createSection(`📡 DNS Server List (${data.servers.length})`, serverList));
+  }
+
+  return sections.join('');
+};

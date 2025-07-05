@@ -19,6 +19,7 @@ import { initHashValidation } from "./hashValidation.js";
 import { initTimeTools } from "./timeTools.js";
 import { initUrlEncoder } from "./urlEncoder.js";
 import { initSpamScan } from "./spamScan.js";
+import { initDnsPropagation } from "./dnsPropagation.js";
 
 // Function to toggle visibility of content views
 export function toggleView(viewId) {
@@ -68,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTimeTools();
   initUrlEncoder();
   initSpamScan();
+  initDnsPropagation();
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -88,6 +90,7 @@ const buttonIds = [
   "networkTestBtn",
   "authValidatorBtn",
   "dnsLookupBtn",
+  "dnsPropagationBtn",
   "passwordHashBtn",
   "timeToolsBtn",
   "urlEncoderBtn",
@@ -110,6 +113,7 @@ const inputIds = [
   "blacklistDomainInput",
   "ipInput",
   "hostnameInput",
+  "propagationHostInput",
   "dateInput",
   "epochInput",
   // Consider adding IDs for the new time conversion inputs if they should also trigger on Enter key press
