@@ -64,10 +64,10 @@ Examples:
 EOF
 }
 
-# Check if /usr/local/bin/docker-compose is available
+# Check if docker-compose is available
 check_dependencies() {
-    if ! command -v /usr/local/bin/docker-compose &> /dev/null; then
-        print_error "/usr/local/bin/docker-compose is required but not installed."
+    if ! command -v docker-compose &> /dev/null; then
+        print_error "docker-compose is required but not installed."
         exit 1
     fi
     
@@ -76,23 +76,23 @@ check_dependencies() {
         exit 1
     fi
     
-    # Get the actual /usr/local/bin/docker-compose path
-    DOCKER_COMPOSE=$(which /usr/local/bin/docker-compose)
+    # Get the actual docker-compose path
+    DOCKER_COMPOSE=$(which docker-compose)
     if [ -z "$DOCKER_COMPOSE" ]; then
-        print_error "/usr/local/bin/docker-compose command not found in PATH"
+        print_error "docker-compose command not found in PATH"
         exit 1
     fi
     
-    print_status "Using /usr/local/bin/docker-compose: $DOCKER_COMPOSE"
+    print_status "Using docker-compose: $DOCKER_COMPOSE"
 }
 
 # Determine which compose file to use
 get_compose_file() {
     local mode="$1"
     if [ "$mode" = "dev" ] || [ "$mode" = "development" ]; then
-        echo "/usr/local/bin/docker-compose.dev.yml"
+        echo "docker-compose.dev.yml"
     else
-        echo "/usr/local/bin/docker-compose.yml"
+        echo "docker-compose.yml"
     fi
 }
 
@@ -139,8 +139,8 @@ stop_services() {
     print_header "Stopping EvilAPI services..."
     
     # Try both compose files to ensure cleanup
-    $DOCKER_COMPOSE -f /usr/local/bin/docker-compose.yml down 2>/dev/null || true
-    $DOCKER_COMPOSE -f /usr/local/bin/docker-compose.dev.yml down 2>/dev/null || true
+    $DOCKER_COMPOSE -f docker-compose.yml down 2>/dev/null || true
+    $DOCKER_COMPOSE -f docker-compose.dev.yml down 2>/dev/null || true
     
     print_status "Services stopped successfully!"
 }
@@ -151,7 +151,7 @@ restart_services() {
     local compose_file=$(get_compose_file "$mode")
     
     print_header "Restarting EvilAPI services..."
-    /usr/local/bin/docker-compose -f "$compose_file" restart
+    $DOCKER_COMPOSE -f "$compose_file" restart
     print_status "Services restarted successfully!"
 }
 
@@ -163,11 +163,11 @@ show_logs() {
     print_header "Showing service logs..."
     
     # Try to detect which compose file is currently running
-    if /usr/local/bin/docker-compose -f /usr/local/bin/docker-compose.dev.yml ps | grep -q "Up"; then
-        compose_file="/usr/local/bin/docker-compose.dev.yml"
+    if $DOCKER_COMPOSE -f docker-compose.dev.yml ps | grep -q "Up"; then
+        compose_file="docker-compose.dev.yml"
     fi
     
-    /usr/local/bin/docker-compose -f "$compose_file" logs -f --tail=100
+    $DOCKER_COMPOSE -f "$compose_file" logs -f --tail=100
 }
 
 # Show service status
@@ -176,11 +176,11 @@ show_status() {
     
     # Check both compose files
     echo "Production Services:"
-    /usr/local/bin/docker-compose -f /usr/local/bin/docker-compose.yml ps 2>/dev/null || echo "  No production services running"
+    $DOCKER_COMPOSE -f docker-compose.yml ps 2>/dev/null || echo "  No production services running"
     
     echo ""
     echo "Development Services:"
-    /usr/local/bin/docker-compose -f /usr/local/bin/docker-compose.dev.yml ps 2>/dev/null || echo "  No development services running"
+    $DOCKER_COMPOSE -f docker-compose.dev.yml ps 2>/dev/null || echo "  No development services running"
     
     echo
     print_header "Health Checks:"
@@ -227,11 +227,11 @@ update_services() {
     
     # Rebuild containers
     print_status "Rebuilding containers..."
-    /usr/local/bin/docker-compose -f "$compose_file" build --no-cache
+    $DOCKER_COMPOSE -f "$compose_file" build --no-cache
     
     # Restart services
     print_status "Restarting services..."
-    /usr/local/bin/docker-compose -f "$compose_file" up -d
+    $DOCKER_COMPOSE -f "$compose_file" up -d
     
     print_status "Update completed successfully!"
 }
