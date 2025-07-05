@@ -29,17 +29,16 @@ help:
 	@echo "  dev-logs      - Show development logs"
 	@echo "  dev-status    - Show development status"
 	@echo ""
-	@echo "Production Deployment Commands (Requires sudo for ports 80/443):"
-	@echo "  deploy        - Deploy with nginx proxy"
-	@echo "  deploy-ssl    - Deploy with SSL (requires DOMAIN env var)"
-	@echo "  deploy-stop   - Stop nginx deployment"
-	@echo "  deploy-restart - Restart nginx deployment"
+	@echo "Production Deployment Commands:"
+	@echo "  deploy        - Deploy with HTTP only (recommended first step)"
+	@echo "  deploy-stop   - Stop production deployment"
+	@echo "  deploy-restart - Restart production deployment"
 	@echo "  deploy-logs   - Show deployment logs"
 	@echo "  deploy-status - Show deployment status"
 	@echo "  deploy-update - Update and rebuild deployment"
 	@echo ""
-	@echo "SSL Management:"
-	@echo "  ssl-setup     - Setup SSL certificates (requires DOMAIN env var)"
+	@echo "SSL Management (after HTTP deployment works):"
+	@echo "  enable-ssl    - Enable SSL on existing HTTP deployment (requires DOMAIN env var)"
 	@echo "  ssl-renew     - Renew SSL certificates"
 	@echo "  ssl-status    - Check SSL certificate status"
 	@echo ""
@@ -49,8 +48,8 @@ help:
 	@echo ""
 	@echo "Usage Examples:"
 	@echo "  make dev                              # Local development"
-	@echo "  make deploy                           # Production (requires sudo)"
-	@echo "  DOMAIN=example.com make deploy-ssl    # Production with SSL"
+	@echo "  make deploy                           # Production HTTP deployment"
+	@echo "  DOMAIN=evil-admin.com make enable-ssl # Add SSL to HTTP deployment"
 
 # Docker Commands
 .PHONY: build
@@ -124,35 +123,25 @@ dev-status:
 	@echo "Checking development status..."
 	./scripts/deploy.sh status
 
-# Production Deployment Commands
+# Production Deployment Commands (HTTP-only by default)
 .PHONY: deploy
 deploy:
-	@echo "Starting nginx deployment..."
-	./scripts/deploy.sh start
-
-.PHONY: deploy-ssl
-deploy-ssl:
-	@echo "Starting nginx deployment with SSL..."
-	@if [ -z "$(DOMAIN)" ]; then \
-		echo "Error: DOMAIN environment variable is required"; \
-		echo "Usage: DOMAIN=example.com make deploy-ssl"; \
-		exit 1; \
+	@echo "Starting production HTTP deployment..."
+	@# Use HTTP-only config by default
+	@if [ ! -f nginx/sites-available/evilapi.conf ] || ! grep -q "listen 443" nginx/sites-available/evilapi.conf; then \
+		echo "Using HTTP-only configuration..."; \
+		cp nginx/sites-available/evilapi-http.conf nginx/sites-available/evilapi.conf; \
 	fi
 	./scripts/deploy.sh start
-	@if [ -n "$(EMAIL)" ]; then \
-		./scripts/deploy.sh setup-ssl $(DOMAIN) $(EMAIL); \
-	else \
-		./scripts/deploy.sh setup-ssl $(DOMAIN); \
-	fi
 
 .PHONY: deploy-stop
 deploy-stop:
-	@echo "Stopping nginx deployment..."
+	@echo "Stopping production deployment..."
 	./scripts/deploy.sh stop
 
 .PHONY: deploy-restart
 deploy-restart:
-	@echo "Restarting nginx deployment..."
+	@echo "Restarting production deployment..."
 	./scripts/deploy.sh restart
 
 .PHONY: deploy-logs
@@ -167,22 +156,29 @@ deploy-status:
 
 .PHONY: deploy-update
 deploy-update:
-	@echo "Updating nginx deployment..."
+	@echo "Updating production deployment..."
 	./scripts/deploy.sh update
 
 # SSL Management Commands
-.PHONY: ssl-setup
-ssl-setup:
-	@echo "Setting up SSL certificates..."
+.PHONY: enable-ssl
+enable-ssl:
+	@echo "Enabling SSL on existing deployment..."
 	@if [ -z "$(DOMAIN)" ]; then \
 		echo "Error: DOMAIN environment variable is required"; \
-		echo "Usage: DOMAIN=example.com make ssl-setup"; \
+		echo "Usage: DOMAIN=evil-admin.com make enable-ssl"; \
+		echo "       DOMAIN=evil-admin.com EMAIL=admin@evil-admin.com make enable-ssl"; \
 		exit 1; \
 	fi
+	@# Ensure SSL config exists
+	@if [ ! -f nginx/sites-available/evilapi-ssl.conf ]; then \
+		echo "Copying SSL configuration template..."; \
+		cp nginx/sites-available/evilapi.conf nginx/sites-available/evilapi-ssl.conf; \
+	fi
+	chmod +x scripts/enable-ssl.sh
 	@if [ -n "$(EMAIL)" ]; then \
-		./scripts/setup-ssl.sh $(DOMAIN) $(EMAIL); \
+		./scripts/enable-ssl.sh $(DOMAIN) $(EMAIL) www.$(DOMAIN); \
 	else \
-		./scripts/setup-ssl.sh $(DOMAIN); \
+		./scripts/enable-ssl.sh $(DOMAIN) admin@$(DOMAIN) www.$(DOMAIN); \
 	fi
 
 .PHONY: ssl-renew
