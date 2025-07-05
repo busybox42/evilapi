@@ -769,7 +769,7 @@ export const formatEmailDeliveryTest = (data) => {
     ];
     
     sections.push(createSection('🔧 Troubleshooting Tips', 
-      createList(troubleshootingTips.map(tip => `�� ${tip}`))
+      createList(troubleshootingTips.map(tip => `💡 ${tip}`))
     ));
   }
 
