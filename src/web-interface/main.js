@@ -20,6 +20,7 @@ import { initTimeTools } from "./timeTools.js";
 import { initUrlEncoder } from "./urlEncoder.js";
 import { initSpamScan } from "./spamScan.js";
 import { initDnsPropagation } from "./dnsPropagation.js";
+import { renderSslTlsScanner } from "./sslTlsScanner.js";
 
 // Function to toggle visibility of content views
 export function toggleView(viewId) {
@@ -70,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initUrlEncoder();
   initSpamScan();
   initDnsPropagation();
+  renderSslTlsScanner(document.getElementById("sslTlsScannerView"));
 });
 
 // Event listeners for navigation buttons to toggle views
@@ -95,6 +97,7 @@ const buttonIds = [
   "timeToolsBtn",
   "urlEncoderBtn",
   "spamScanBtn",
+  "sslTlsScannerBtn",
 ];
 
 buttonIds.forEach((buttonId) => {

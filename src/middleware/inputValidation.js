@@ -352,6 +352,61 @@ const validateEmailTest = (req, res, next) => {
   next();
 };
 
+const validateDnsPropagation = (req, res, next) => {
+  const { hostname, recordType } = req.query;
+
+  if (!hostname || typeof hostname !== 'string' || hostname.trim() === '') {
+    return res.status(400).json(createErrorResponse(
+      'Hostname is required and must be a non-empty string',
+      400
+    ));
+  }
+
+  // Sanitize hostname
+  const sanitizedHostname = sanitizeString(hostname.trim(), 255);
+  
+  // Validate hostname format
+  if (!isValidHostname(sanitizedHostname)) {
+    return res.status(400).json(createErrorResponse(
+      'Invalid hostname format',
+      400
+    ));
+  }
+
+  // Validate record type if provided
+  if (recordType) {
+    const validRecordTypes = ['A', 'AAAA', 'MX', 'TXT', 'CNAME', 'NS', 'PTR', 'SRV', 'SOA'];
+    if (!validRecordTypes.includes(recordType.toUpperCase())) {
+      return res.status(400).json(createErrorResponse(
+        `Invalid record type. Supported types: ${validRecordTypes.join(', ')}`,
+        400
+      ));
+    }
+  }
+
+  // Update the query with sanitized hostname
+  req.query.hostname = sanitizedHostname;
+  
+  next();
+};
+
+const validateSslScan = (req, res, next) => {
+  const { host, port } = req.body;
+  if (!host) {
+    return res.status(400).json(createErrorResponse('Host is required', 400));
+  }
+  // Accept hostname or IPv4/IPv6
+  const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$|^([a-fA-F0-9:]+)$/;
+  if (!isValidHostname(host) && !ipRegex.test(host)) {
+    return res.status(400).json(createErrorResponse('Invalid host format', 400));
+  }
+  if (port !== undefined && !isValidPort(port)) {
+    return res.status(400).json(createErrorResponse('Port must be 1-65535', 400));
+  }
+  req.body.host = sanitizeString(host, 255);
+  next();
+};
+
 module.exports = {
   validateAuth,
   validateText,
@@ -360,6 +415,8 @@ module.exports = {
   validatePgp,
   validateEmailHeaders,
   validateEmailTest,
+  validateDnsPropagation,
+  validateSslScan,
   sanitizeString,
   isValidEmail,
   isValidHostname,
