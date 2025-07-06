@@ -869,6 +869,12 @@ export const formatMultiRecordPropagation = (data) => {
     ${createKeyValue('Query Time', new Date(data.timestamp).toLocaleString())}
   `));
 
+  // Calculate total server queries across all record types
+  let totalServerQueries = 0;
+  if (Array.isArray(data.results)) {
+    totalServerQueries = data.results.reduce((sum, r) => sum + (r.totalServers || (r.results ? r.results.length : 0)), 0);
+  }
+
   // Summary section
   if (data.summary) {
     let overallStatus = data.summary?.overallStatus;
@@ -888,7 +894,7 @@ export const formatMultiRecordPropagation = (data) => {
       ${createKeyValue('Status', statusBadge, true)}
       ${createKeyValue('Successful Record Types', data.summary.successful || 0)}
       ${createKeyValue('Failed Record Types', data.summary.failed || 0)}
-      ${createKeyValue('Total Server Queries', data.summary.totalServerQueries || 0)}
+      ${createKeyValue('Total Server Queries', totalServerQueries)}
     `));
   }
 
@@ -903,14 +909,26 @@ export const formatMultiRecordPropagation = (data) => {
           </div>
         `;
       }
-      
       // Use backend hasInconsistentRecords for status
       const status = result.hasInconsistentRecords
         ? createStatusBadge('INCONSISTENT', 'warning')
         : createStatusBadge('CONSISTENT', 'success');
       let recordList = '';
+      // Show all per-server results for this record type
+      if (Array.isArray(result.results) && result.results.length > 0) {
+        recordList = result.results.map(serverResult => {
+          const sStatus = serverResult.success ? createStatusBadge('SUCCESS', 'success') : createStatusBadge('FAILED', 'error');
+          const records = serverResult.records ? serverResult.records.map(r => `<code class="dns-record">${r}</code>`).join('<br>') : 'No records found';
+          return `<div class="dns-server-result" style="margin-bottom:0.5em;">
+            <div class="server-header"><strong>${serverResult.server}</strong> (${serverResult.location}) ${sStatus} ${serverResult.responseTime ? `<span class="response-time">${serverResult.responseTime}ms</span>` : ''}</div>
+            <div class="server-ip"><code>${serverResult.ip}</code></div>
+            <div class="server-records">${serverResult.success ? records : `<span class="error">Error: ${serverResult.error}</span>`}</div>
+          </div>`;
+        }).join('');
+      }
+      // If inconsistent, also show recordValuesByServer
       if (result.hasInconsistentRecords && result.recordValuesByServer) {
-        recordList = Object.entries(result.recordValuesByServer).map(([server, records]) =>
+        recordList += Object.entries(result.recordValuesByServer).map(([server, records]) =>
           `<div><strong>${server}:</strong> <code>${records.join(', ')}</code></div>`
         ).join('');
       }
