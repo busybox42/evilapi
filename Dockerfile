@@ -5,13 +5,22 @@ FROM node:current-alpine
 WORKDIR /usr/src/app
 
 # Install system dependencies
-RUN apk update && apk add --no-cache iputils bind-tools memcached libcap traceroute spamassassin spamassassin-client
+RUN apk update && apk add --no-cache iputils bind-tools memcached libcap traceroute spamassassin spamassassin-client \
+    git bash openssl perl \
+    python3 py3-pip py3-openssl
+
+# Install Python dependencies for SSL scanner
+RUN pip install --break-system-packages requests pyOpenSSL
 
 # Set capabilities on ping and traceroute to allow them to run without full root privileges
 RUN setcap cap_net_raw+ep /usr/bin/traceroute
 RUN setcap cap_net_raw+ep /bin/ping
 
 RUN /usr/bin/sa-update -D || true
+
+# Install testssl.sh
+RUN git clone --depth 1 https://github.com/drwetter/testssl.sh.git /usr/local/bin/testssl.sh && \
+    chmod +x /usr/local/bin/testssl.sh/testssl.sh
 
 # Before copying package.json and installing dependencies,
 # create the non-root user and change ownership of the work directory.
