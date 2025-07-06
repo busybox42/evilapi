@@ -25,6 +25,7 @@ services:
     volumes:
       - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/dev-sites:/etc/nginx/dev-sites:ro
+      - ./docs:/usr/share/nginx/html/docs:ro
     depends_on:
       - evilapi
     networks:

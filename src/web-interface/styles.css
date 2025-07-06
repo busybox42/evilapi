@@ -1536,3 +1536,49 @@ input[type="file"] {
   margin-top: 8px;
   font-style: italic;
 }
+
+/* API Documentation styles */
+.api-endpoint {
+  background-color: #1A1A1A;
+  border: 1px solid #0c425e;
+  border-radius: 0.25rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.api-endpoint h3 {
+  color: #2ea4c0;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.api-endpoint h4 {
+  color: #00d4ff;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.api-endpoint ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.api-endpoint ul li {
+  margin-bottom: 0.5rem;
+}
+
+.api-endpoint ul li strong {
+  color: #D3D3D3;
+}
+
+.api-endpoint code {
+  background-color: #2C2C2C;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.2rem;
+  font-family: 'Courier New', monospace;
+  color: #ffcc00;
+}
+
+

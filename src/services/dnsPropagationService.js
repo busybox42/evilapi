@@ -235,7 +235,6 @@ async function checkMultiRecordPropagation(hostname, recordTypes = ['A', 'MX', '
         const result = await checkDnsPropagation(hostname, recordType);
         // Consider propagation successful only if at least some servers responded successfully
         const success = result.successful > 0;
-        
         // If no servers were successful, extract error from the first failed result
         let error = undefined;
         if (!success && result.failed > 0) {
@@ -244,19 +243,35 @@ async function checkMultiRecordPropagation(hostname, recordTypes = ['A', 'MX', '
             error = firstFailure.error;
           }
         }
-        
+        // Normalize fields for frontend robustness
         return {
-          ...result,
+          recordType: result.recordType || recordType,
+          hostname: result.hostname || hostname,
+          timestamp: result.timestamp,
           success,
-          ...(error && { error })
+          successful: result.successful || 0,
+          failed: result.failed || 0,
+          totalServers: result.totalServers || (result.results ? result.results.length : 0),
+          hasInconsistentRecords: !!result.hasInconsistentRecords,
+          results: Array.isArray(result.results) ? result.results : [],
+          recordValuesByServer: result.recordValuesByServer || {},
+          error,
+          summary: result.summary || {},
         };
       } catch (error) {
         return {
           recordType,
-          error: error.message,
-          success: false,
           hostname,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          success: false,
+          successful: 0,
+          failed: 0,
+          totalServers: 0,
+          hasInconsistentRecords: false,
+          results: [],
+          recordValuesByServer: {},
+          error: error.message,
+          summary: {},
         };
       }
     })

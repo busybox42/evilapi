@@ -33,3 +33,6 @@ nginx/sites-available/*-real.conf
 # Docker volumes and logs
 docker-compose.override.yml
 *.log
+
+GEMINI.md
+NEXT-STEPS.md

@@ -716,12 +716,12 @@ export const formatEmailDeliveryTest = (data) => {
     // Performance metrics
     if (data.latency) {
       const latencyMs = parseInt(data.latency.replace('ms', ''));
-      const latencyStatus = latencyMs < 1000 ? 'success' : latencyMs < 5000 ? 'warning' : 'error';
+      const latencyStatus = latencyMs < 1000 ? 'success' : latencyMs < 30000 ? 'warning' : 'error';
       const performanceContent = `
         ${createKeyValue('Delivery Latency', data.latency, true)}
         ${createStatusBadge(
           latencyMs < 1000 ? 'Excellent Performance' : 
-          latencyMs < 5000 ? 'Good Performance' : 'Slow Delivery', 
+          latencyMs < 30000 ? 'Good Performance' : 'Slow Delivery', 
           latencyStatus
         )}
       `;

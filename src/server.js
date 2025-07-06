@@ -61,7 +61,7 @@ app.use("/api", limiter);
 // Function to dynamically load route files
 const loadRoutes = (directoryPath, appInstance) => {
   fs.readdirSync(directoryPath).forEach((file) => {
-    if (file.endsWith(".js")) {
+    if (file.endsWith(".js") && file !== 'speedTestRoute.js') {
       const filePath = path.join(directoryPath, file);
       const fileModule = require(filePath);
       if (typeof fileModule === "function") {
@@ -133,6 +133,13 @@ function pruneUploads() {
 
     // Dynamically load route files
     loadRoutes(path.join(__dirname, "api", "routes"), app);
+
+    // Manually load and mount the speed test route
+    const speedTestRoute = require(path.join(__dirname, "api", "routes", "speedTestRoute.js"));
+    app.use("/api/speedtest", speedTestRoute);
+
+    // Serve static documentation files
+    app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));
 
     // Initialize services
     const services = initializeServices(path.join(__dirname, "services"));

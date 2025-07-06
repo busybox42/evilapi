@@ -76,7 +76,7 @@
         </p>
         
 
-        
+
         <img src="experiments.jpg" style="width: 28%; display: block; margin: 30px auto;" alt="Evil Experiments">
         
         <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 20px auto; max-width: 600px;">
@@ -473,8 +473,62 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
     </div>    
     <div id="sslTlsScannerView" class="content-view hidden"></div>
+    <div id="apiDocsView" class="content-view hidden">
+      <h2>API Documentation</h2>
+      <p>This page will contain detailed documentation for the EvilAPI endpoints.</p>
+      
+      <h3>Available Endpoints:</h3>
+      <ul>
+          <li><strong>/api/email/info</strong>: Get email configuration information.</li>
+          <li><strong>/api/smtp/test</strong>: Perform SMTP tests.</li>
+          <li><strong>/api/blacklist/check</strong>: Check email blacklists.</li>
+          <li><strong>/api/header/analyze</strong>: Analyze email headers.</li>
+          <li><strong>/api/spam/scan</strong>: Scan email for spam.</li>
+          <li><strong>/api/dmarc/validate</strong>: Validate DMARC records.</li>
+          <li><strong>/api/dkim/validate</strong>: Validate DKIM records.</li>
+          <li><strong>/api/dkim/generate</strong>: Generate DKIM keys.</li>
+          <li><strong>/api/email/delivery</strong>: Test email delivery.</li>
+          <li><strong>/api/auth/validate</strong>: Validate authentication.</li>
+          <li><strong>/api/whoami</strong>: Get client IP and network info.</li>
+          <li><strong>/api/dns/lookup</strong>: Perform DNS lookups.</li>
+          <li><strong>/api/dns/propagation</strong>: Check DNS propagation.</li>
+          <li><strong>/api/ssl/validate</strong>: Validate SSL certificates.</li>
+          <li><strong>/api/pgp/encrypt</strong>: Encrypt PGP messages.</li>
+          <li><strong>/api/pgp/decrypt</strong>: Decrypt PGP messages.</li>
+          <li><strong>/api/pgp/generate-temp-key</strong>: Generate temporary PGP keys.</li>
+          <li><strong>/api/hash/create</strong>: Create password hashes.</li>
+          <li><strong>/api/hash/validate</strong>: Validate password hashes.</li>
+          <li><strong>/api/portscan</strong>: Perform port scans.</li>
+          <li><strong>/api/network/ping</strong>: Perform network ping.</li>
+          <li><strong>/api/network/traceroute</strong>: Perform network traceroute.</li>
+          <li><strong>/api/whitespace/remove</strong>: Remove whitespace from text.</li>
+          <li><strong>/api/base64/encode</strong>: Encode Base64.</li>
+          <li><strong>/api/base64/decode</strong>: Decode Base64.</li>
+          <li><strong>/api/url/encode</strong>: Encode URLs.</li>
+          <li><strong>/api/url/decode</strong>: Decode URLs.</li>
+          <li><strong>/api/time/convert/epoch-to-date</strong>: Convert epoch to date.</li>
+          <li><strong>/api/time/convert/date-to-epoch</strong>: Convert date to epoch.</li>
+          <li><strong>/api/ssl/scan</strong>: Scan SSL/TLS vulnerabilities.</li>
+          <li><strong>/api/speedtest/download</strong>: Perform download speed test.</li>
+          <li><strong>/api/speedtest/upload</strong>: Perform upload speed test.</li>
+      </ul>
+
+      <p>For more detailed information on each endpoint, including request/response formats and examples, please refer to the <code>docs/API_Documentation.md</code> file in the project repository.</p>
+    </div>
   </main>
-  <script type="module" src="main.js"></script>
+    <div id="speedTestView" class="content-view hidden">
+      <h2>Speed Test</h2>
+      <button id="start-speed-test" class="nav-btn">Start Test</button>
+      <div id="countdown" style="font-size: 2em; margin-bottom: 10px;"></div>
+      <div id="speedometer" class="speedometer">
+          <div class="speedometer-gauge" id="speedometer-gauge"></div>
+          <div class="speed-value" id="speed-value">0.00 Mbps</div>
+      </div>
+      <div id="download-speed"></div>
+      <div id="upload-speed"></div>
+    </div>
+  </main>
+  <script type="module" src="main.js?v=1.1"></script>
 </body>
 
 </html>

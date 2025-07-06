@@ -281,9 +281,9 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - A summary of the traceroute operation, including success status, and traceroute results.
 
-## 16. Authentication Endpoint
+### 17. Authentication Endpoint
 
-#### Endpoint: POST /api/auth
+#### Endpoint: `POST /api/auth`
 
 This endpoint allows users to authenticate against various email and file transfer protocols. It supports a range of protocols including `submission`, `pop3`, `pop3s`, `imap`, `imaps`, `smtp`, `smtps`, `ftp`, and `sftp`.
 
@@ -300,7 +300,7 @@ The request body must include the following fields:
 - **hostname** (string): The server's hostname where the authentication should occur.
 - **protocol** (string): The protocol to use for authentication. Supported protocols are `submission`, `pop3`, `pop3s`, `imap`, `imaps`, `smtp`, `smtps`, `ftp`, and `sftp`.
 
-### 17. DNS Lookup Endpoint
+### 18. DNS Lookup Endpoint
 
 #### Endpoint: `/api/lookup`
 
@@ -318,7 +318,7 @@ The request body must include the following fields:
   - On success, returns an object containing the lookup results.
   - On failure, returns an object with an `error` key and a message describing the failure.
 
-### 18. Hash Validation Endpoint
+### 19. Hash Validation Endpoint
 
 #### Endpoint: `/api/validate-hash`
 
@@ -333,6 +333,104 @@ The request body must include the following fields:
   - `algorithm`: The algorithm used for validation.
   - `hash`: The original hash provided in the request.
   - `generatedHash`: The hash generated from the provided password using the specified algorithm.
+
+### 20. DNS Propagation Endpoints
+
+#### Endpoint: `/api/dns/servers`
+
+- **Purpose**: Retrieves a list of global DNS servers used for propagation checks.
+- **Method**: GET
+- **Response**:
+  - `total`: Total number of servers.
+  - `servers`: Array of server objects, each with `name`, `ip`, and `location`.
+  - `timestamp`: Timestamp of the response.
+
+#### Endpoint: `/api/dns/check`
+
+- **Purpose**: Checks DNS propagation for a single record type across multiple DNS servers.
+- **Method**: GET
+- **Query Parameters**:
+  - `hostname`: The hostname to check.
+  - `recordType` (optional): The record type (e.g., `A`, `AAAA`, `MX`, `TXT`). Defaults to `A`.
+  - `customServers` (optional): Comma-separated list of custom DNS server IPs to query.
+- **Response**:
+  - `hostname`: The queried hostname.
+  - `recordType`: The record type checked.
+  - `timestamp`: Timestamp of the response.
+  - `totalServers`: Total number of servers queried.
+  - `successful`: Number of successful queries.
+  - `failed`: Number of failed queries.
+  - `propagationPercentage`: Percentage of successful propagation.
+  - `isFullyPropagated`: Boolean indicating full propagation.
+  - `hasInconsistentRecords`: Boolean indicating inconsistent records.
+  - `uniqueRecordSets`: Number of unique record sets found.
+  - `averageResponseTime`: Average response time of successful queries.
+  - `totalQueryTime`: Total time taken for all queries.
+  - `results`: Array of detailed results from each server.
+  - `recordValuesByServer`: Object mapping server names to their record values.
+  - `summary`: Object with overall status and messages.
+
+#### Endpoint: `/api/dns/check-multi`
+
+- **Purpose**: Checks DNS propagation for multiple record types across multiple DNS servers.
+- **Method**: GET
+- **Query Parameters**:
+  - `hostname`: The hostname to check.
+  - `recordTypes` (optional): Comma-separated list of record types (e.g., `A,MX,TXT`). Defaults to `A,AAAA,MX,TXT`.
+- **Response**:
+  - `hostname`: The queried hostname.
+  - `timestamp`: Timestamp of the response.
+  - `recordTypes`: Array of record types checked.
+  - `results`: Array of detailed results for each record type.
+  - `summary`: Object with overall status and counts.
+
+#### Endpoint: `/api/dns/check-bulk`
+
+- **Purpose**: Performs bulk DNS propagation checks for multiple hostnames.
+- **Method**: POST
+- **Request Body**:
+  - `hostnames`: Array of hostnames to check (max 10).
+  - `recordType` (optional): The record type (e.g., `A`). Defaults to `A`.
+  - `customServers` (optional): Array of custom DNS server IPs.
+- **Response**:
+  - `total`: Total number of hostnames requested.
+  - `successful`: Number of successful checks.
+  - `failed`: Number of failed checks.
+  - `results`: Array of detailed results for each hostname.
+  - `timestamp`: Timestamp of the response.
+
+### 21. SSL/TLS Scanner Endpoint
+
+#### Endpoint: `/api/ssl-scan`
+
+- **Purpose**: Scans the SSL/TLS configuration and identifies potential vulnerabilities for a given host and port.
+- **Method**: POST
+- **Request Body**:
+  - `host`: The hostname or IP address to scan.
+  - `port` (optional): The port to scan (defaults to 443).
+- **Response**:
+  - `host`: The scanned host.
+  - `port`: The scanned port.
+  - `vulnerabilities`: Object containing scan results and identified vulnerabilities.
+  - `timestamp`: Timestamp of the scan.
+
+### 22. Speed Test Endpoints
+
+#### Endpoint: `/api/speedtest/download`
+
+- **Purpose**: Provides a large payload for download speed testing.
+- **Method**: GET
+- **Response**:
+  - A binary payload of 50MB.
+
+#### Endpoint: `/api/speedtest/upload`
+
+- **Purpose**: Receives a payload for upload speed testing.
+- **Method**: POST
+- **Request Body**:
+  - A binary payload to be uploaded.
+- **Response**:
+  - `received`: The size of the received payload in bytes.
 
 ---
 

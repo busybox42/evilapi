@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSpamScan();
   initDnsPropagation();
   renderSslTlsScanner(document.getElementById("sslTlsScannerView"));
-});
+  });
 
 // Event listeners for navigation buttons to toggle views
 const buttonIds = [
@@ -103,9 +103,12 @@ const buttonIds = [
 buttonIds.forEach((buttonId) => {
   document
     .getElementById(buttonId)
-    .addEventListener("click", () =>
-      toggleView(`${buttonId.replace("Btn", "View")}`)
-    );
+    .addEventListener("click", () => {
+      toggleView(`${buttonId.replace("Btn", "View")}`);
+      if (buttonId === "speedTestBtn") {
+        initSpeedTest();
+      }
+    });
 });
 
 // Event listeners for input fields to trigger actions on Enter key press
