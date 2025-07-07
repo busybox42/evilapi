@@ -98,6 +98,7 @@ const buttonIds = [
   "urlEncoderBtn",
   "spamScanBtn",
   "sslTlsScannerBtn",
+  "apiDocsBtn",
 ];
 
 buttonIds.forEach((buttonId) => {

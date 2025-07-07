@@ -63,6 +63,7 @@
       <button id="urlEncoderBtn" class="nav-btn">URL Encoder</button>
       <button id="timeToolsBtn" class="nav-btn">Epoch Converter</button>
       <button id="sslTlsScannerBtn" class="nav-btn">SSL/TLS Scanner</button>
+      <button id="apiDocsBtn" class="nav-btn">API Docs</button>
     </nav>
   </header>
   <main id="mainContent" class="main">
@@ -474,47 +475,723 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
     </div>    
     <div id="sslTlsScannerView" class="content-view hidden"></div>
     <div id="apiDocsView" class="content-view hidden">
-      <h2>API Documentation</h2>
-      <p>This page will contain detailed documentation for the EvilAPI endpoints.</p>
-      
-      <h3>Available Endpoints:</h3>
-      <ul>
-          <li><strong>/api/email/info</strong>: Get email configuration information.</li>
-          <li><strong>/api/smtp/test</strong>: Perform SMTP tests.</li>
-          <li><strong>/api/blacklist/check</strong>: Check email blacklists.</li>
-          <li><strong>/api/header/analyze</strong>: Analyze email headers.</li>
-          <li><strong>/api/spam/scan</strong>: Scan email for spam.</li>
-          <li><strong>/api/dmarc/validate</strong>: Validate DMARC records.</li>
-          <li><strong>/api/dkim/validate</strong>: Validate DKIM records.</li>
-          <li><strong>/api/dkim/generate</strong>: Generate DKIM keys.</li>
-          <li><strong>/api/email/delivery</strong>: Test email delivery.</li>
-          <li><strong>/api/auth/validate</strong>: Validate authentication.</li>
-          <li><strong>/api/whoami</strong>: Get client IP and network info.</li>
-          <li><strong>/api/dns/lookup</strong>: Perform DNS lookups.</li>
-          <li><strong>/api/dns/propagation</strong>: Check DNS propagation.</li>
-          <li><strong>/api/ssl/validate</strong>: Validate SSL certificates.</li>
-          <li><strong>/api/pgp/encrypt</strong>: Encrypt PGP messages.</li>
-          <li><strong>/api/pgp/decrypt</strong>: Decrypt PGP messages.</li>
-          <li><strong>/api/pgp/generate-temp-key</strong>: Generate temporary PGP keys.</li>
-          <li><strong>/api/hash/create</strong>: Create password hashes.</li>
-          <li><strong>/api/hash/validate</strong>: Validate password hashes.</li>
-          <li><strong>/api/portscan</strong>: Perform port scans.</li>
-          <li><strong>/api/network/ping</strong>: Perform network ping.</li>
-          <li><strong>/api/network/traceroute</strong>: Perform network traceroute.</li>
-          <li><strong>/api/whitespace/remove</strong>: Remove whitespace from text.</li>
-          <li><strong>/api/base64/encode</strong>: Encode Base64.</li>
-          <li><strong>/api/base64/decode</strong>: Decode Base64.</li>
-          <li><strong>/api/url/encode</strong>: Encode URLs.</li>
-          <li><strong>/api/url/decode</strong>: Decode URLs.</li>
-          <li><strong>/api/time/convert/epoch-to-date</strong>: Convert epoch to date.</li>
-          <li><strong>/api/time/convert/date-to-epoch</strong>: Convert date to epoch.</li>
-          <li><strong>/api/ssl/scan</strong>: Scan SSL/TLS vulnerabilities.</li>
-          <li><strong>/api/speedtest/download</strong>: Perform download speed test.</li>
-          <li><strong>/api/speedtest/upload</strong>: Perform upload speed test.</li>
-      </ul>
+      <div class="api-endpoint">
+        <h1>EvilAPI Documentation</h1>
 
-      <p>For more detailed information on each endpoint, including request/response formats and examples, please refer to the <code>docs/API_Documentation.md</code> file in the project repository.</p>
+        <h2>Overview</h2>
+        <p>This document provides detailed information about the API endpoints of EvilAPI. Each section below describes a specific endpoint, including its functionality, request format, and response structure.</p>
+
+        <hr>
+
+        <h3>1. Email Information Endpoint</h3>
+        <h4>Endpoint: <code>/api/email-info/{domain}</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Retrieves email configuration information for a specified domain.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>URL Params</strong>:
+            <ul>
+              <li><code>domain</code>: The domain to query.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>mxRecords</code>: Array of MX records for the domain.</li>
+              <li><code>spfRecord</code>: SPF record details.</li>
+              <li><code>dmarcRecord</code>: DMARC policy.</li>
+              <li><code>aRecord</code>: A record details.</li>
+              <li><code>clientSettings</code>: Client-specific settings.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>2. SMTP Test Endpoint</h3>
+        <h4>Endpoint: <code>/api/test-smtp</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Tests an SMTP server's connection and configuration.</li>
+          <li><strong>Method</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>serverAddress</code>: SMTP server address.</li>
+              <li><code>port</code>: SMTP server port.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>connection</code>: Connection status.</li>
+              <li><code>transactionTimeMs</code>: Time taken for the transaction.</li>
+              <li><code>reverseDnsMismatch</code>: Reverse DNS mismatch status.</li>
+              <li><code>tlsSupport</code>: TLS support status.</li>
+              <li><code>openRelay</code>: Open relay status.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>3. Email Blacklist Check Endpoint</h3>
+        <h4>Endpoint: <code>/api/blacklist-check/{domain}</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Checks if a domain is on any email blacklists.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>URL Params</strong>:
+            <ul>
+              <li><code>domain</code>: The domain to check.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>identifier</code>: The domain checked.</li>
+              <li><code>ip</code>: IP address associated with the domain.</li>
+              <li><code>blacklistResults</code>: Blacklist check results.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>4. Email Header Analysis Endpoint</h3>
+        <h4>Endpoint: <code>/api/analyze-headers</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Analyzes email headers for diagnostics.</li>
+          <li><strong>Method</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li>Email header as raw text.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>Analyzed details from the email header.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>5. PGP Encryption and Decryption Endpoints</h3>
+        <h4>Endpoints: <code>/api/encrypt</code>, <code>/api/decrypt</code>, <code>/api/encrypt-file</code>, <code>/api/decrypt-file</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Provides PGP encryption and decryption services.</li>
+          <li><strong>Methods</strong>: POST</li>
+          <li><strong>Request Body for Encryption</strong>:
+            <ul>
+              <li><code>message</code>: The message or file content to encrypt.</li>
+              <li><code>keyType</code>: Type of key to use for encryption.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>Encrypted message or file.</li>
+            </ul>
+          </li>
+          <li><strong>Request Body for Decryption</strong>:
+            <ul>
+              <li><code>message</code>: The encrypted message or file content to decrypt.</li>
+              <li><code>keyType</code>: Type of key to use for decryption.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>Decrypted message or file.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>6. Whoami Information Endpoint</h3>
+        <h4>Endpoint: <code>/api/whoami</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Provides information about the client's IP address, including browser info, OS, PTR record, geo location, and ISP info. It can also accept an IP address or hostname as a query parameter to return information about a specific IP or domain.</li>
+          <li><strong>Methods</strong>: GET</li>
+          <li><strong>Query Parameters</strong>:
+            <ul>
+              <li><code>ip</code> (optional): The IP address or hostname to inquire about. If not provided, the API uses the client's IP.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>ip</code>: The IP address or hostname queried.</li>
+              <li><code>geoInfo</code>: Geographical information about the IP, if available.</li>
+              <li><code>ptrRecord</code>: The PTR record associated with the IP, if available.</li>
+              <li><code>ispInfo</code>: Information about the Internet Service Provider, if available.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>7. SSL Validation Endpoint</h3>
+        <h4>Endpoint: <code>/api/validate-ssl</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Validates SSL certificates for a given hostname or URL, providing details about the certificate's validity, issuer, valid duration, and more.</li>
+          <li><strong>Methods</strong>: GET</li>
+          <li><strong>Query Parameters</strong>:
+            <ul>
+              <li><code>hostname</code>: The hostname or URL for which the SSL certificate will be validated.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>valid</code>: A boolean indicating whether the SSL certificate is valid.</li>
+              <li><code>details</code>: Detailed information about the SSL certificate, if valid. Includes:
+                <ul>
+                  <li><code>subject</code>: Information about whom the SSL certificate is issued to. Contains fields like <code>CN</code> (Common Name).</li>
+                  <li><code>issuer</code>: Information about the issuer of the SSL certificate. Fields include <code>C</code> (Country), <code>O</code> (Organization), and <code>CN</code> (Common Name).</li>
+                  <li><code>validFrom</code>: The start date of the SSL certificate's validity period.</li>
+                  <li><code>validTo</code>: The end date of the SSL certificate's validity period.</li>
+                  <li><code>serialNumber</code>: The serial number of the SSL certificate</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>8. Base64 Encoding and Decoding</h3>
+        <h4>Endpoint: <code>/api/encode</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Encodes a given text string into base64 format.</li>
+          <li><strong>Methods</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>text</code>: The plain text string to be encoded.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>encodedText</code>: The base64 encoded version of the provided text.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4>Endpoint: <code>/api/decode</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Decodes a given base64 encoded string back into plain text.</li>
+          <li><strong>Methods</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>encodedText</code>: The base64 string to be decoded.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>decodedText</code>: The plain text version of the provided base64 string.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>9. Remove Whitespace</h3>
+        <h4>Endpoint: <code>/api/remove-whitespace</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Removes all whitespace from a given text string.</li>
+          <li><strong>Methods</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>text</code>: The text string from which all whitespace will be removed.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>textWithoutWhitespace</code>: The provided text string with all whitespace removed.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>10. Port Scan</h3>
+        <h4>Endpoint: <code>/api/scan</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Scans the specified host (IP address or hostname) for open ports. It can scan either common ports or a specific port if provided.</li>
+          <li><strong>Methods</strong>: GET</li>
+          <li><strong>Request Parameters</strong>:
+            <ul>
+              <li><code>host</code>: The IP address or hostname of the target for the port scan.</li>
+              <li><code>port</code> (optional): A specific port to scan on the target host. If not provided, common ports will be scanned.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>An array of objects, each representing a port and its status. Each object contains:
+                <ul>
+                  <li><code>port</code>: The port number.</li>
+                  <li><code>status</code>: The status of the port, either 'open' or 'closed'.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>11. DKIM Record Lookup</h3>
+        <h4>Endpoint: <code>/api/lookup-dkim</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Looks up DomainKeys Identified Mail (DKIM) records for a specified domain and selector to verify the presence and validity of the records.</li>
+          <li><strong>Methods</strong>: GET</li>
+          <li><strong>URL Parameters</strong>:
+            <ul>
+              <li><code>domain</code>: The domain name for which DKIM records are being requested.</li>
+              <li><code>selector</code>: The selector string used to query specific DKIM records associated with the domain.</li>
+            </ul>
+          </li>
+          <li><strong>Success Response</strong>:
+            <ul>
+              <li><strong>Code</strong>: 200 OK</li>
+              <li><strong>Content</strong>:
+                <ul>
+                  <li><code>message</code>: Descriptive message regarding the lookup result.</li>
+                  <li><code>records</code>: Array of strings representing the found DKIM records.</li>
+                  <li><code>lookedUp</code>: The complete selector record string that was looked up.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>Error Response</strong>:
+            <ul>
+              <li><strong>Code</strong>: 404 Not Found</li>
+              <li><strong>Content</strong>:
+                <ul>
+                  <li><code>error</code>: "DKIM records not found or invalid parameters provided."</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>12. DKIM Key Generation</h3>
+        <h4>Endpoint: <code>/api/generate-dkim-keys</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Generates a new set of DomainKeys Identified Mail (DKIM) keys for a specified domain and selector. This includes both the public DKIM record to be added to the domain's DNS and the private key for signing emails.</li>
+          <li><strong>Methods</strong>: GET</li>
+          <li><strong>URL Parameters</strong>:
+            <ul>
+              <li><code>selector</code>: The selector string that will be used to distinguish the DKIM public key in the DNS records.</li>
+              <li><code>domain</code>: The domain name for which the DKIM keys are being generated.</li>
+            </ul>
+          </li>
+          <li><strong>Success Response</strong>:
+            <ul>
+              <li><strong>Code</strong>: 200 OK</li>
+              <li><strong>Content</strong>:
+                <ul>
+                  <li><code>dkimRecord</code>: The full DKIM TXT record to be added to the domain's DNS. This includes the selector, public key, and other necessary DKIM parameters.</li>
+                  <li><code>privateKeyWarning</code>: A warning message about the handling of the private key.</li>
+                  <li><code>privateKey</code>: The private key in PEM format. This key should be securely stored and used to sign outgoing emails from the domain.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>Error Response</strong>:
+            <ul>
+              <li><strong>Code</strong>: 400 Bad Request</li>
+              <li><strong>Content</strong>:
+                <ul>
+                  <li><code>error</code>: "Invalid request parameters. Please check the selector and domain name."</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>Code</strong>: 500 Internal Server Error</li>
+          <li><strong>Content</strong>:
+            <ul>
+              <li><code>error</code>: "An error occurred during the key generation process."</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>13. DMARC Record Validation</h3>
+        <h4>Endpoint: <code>/api/validate-dmarc</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Validates the Domain-based Message Authentication, Reporting, and Conformance (DMARC) record for a specified domain. The API retrieves the DMARC record, parses it, and provides a detailed report on each tag in the record, along with overall validation tests.</li>
+          <li><strong>Methods</strong>: GET</li>
+          <li><strong>URL Parameters</strong>:
+            <ul>
+              <li><code>domain</code>: The domain name for which the DMARC record is being validated.</li>
+            </ul>
+          </li>
+          <li><strong>Success Response</strong>:
+            <ul>
+              <li><strong>Code</strong>: 200 OK</li>
+              <li><strong>Content</strong>:
+                <ul>
+                  <li><code>dmarc</code>: The domain name the DMARC record belongs to.</li>
+                  <li><code>record</code>: The full DMARC record string as found in the DNS.</li>
+                  <li><code>report</code>: An array of objects, each representing a DMARC tag in the record, including the tag name, value, and a description of what it specifies.</li>
+                  <li><code>tests</code>: An array of test results related to the DMARC record validation, including test name, result, and description.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>Error Response</strong>:
+            <ul>
+              <li><strong>Code</strong>: 404 Not Found</li>
+              <li><strong>Content</strong>:
+                <ul>
+                  <li><code>error</code>: "DMARC record not found for the specified domain."</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><strong>Code</strong>: 400 Bad Request</li>
+          <li><strong>Content</strong>:
+            <ul>
+              <li><code>error</code>: "Invalid domain name provided."</li>
+            </ul>
+          </li>
+          <li><strong>Notes</strong>:
+            <ul>
+              <li>The <code>report</code> section provides a detailed breakdown of the DMARC record, explaining each part of the record for better understanding and validation purposes.</li>
+              <li>The <code>tests</code> section summarizes the validation results, indicating whether the DMARC record is correctly published and syntactically valid.</li>
+              <li>It's crucial to ensure the domain name is correctly specified to retrieve and validate the DMARC record accurately.</li>
+              <li>This API is beneficial for administrators and security teams to verify the DMARC policy's correctness and effectiveness in combating email spoofing and phishing attacks.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>14. Email Delivery Test</h3>
+        <h4>Endpoint: <code>/api/test-email-delivery</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Tests email delivery by sending an email to the specified recipient using SMTP and then verifying its arrival through IMAP.</li>
+          <li><strong>Methods</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>smtpConfig</code>: Configuration for SMTP to send the email.
+                <ul>
+                  <li><code>host</code>: The hostname or IP address of the SMTP server.</li>
+                  <li><code>port</code>: The port on which the SMTP server is listening.</li>
+                  <li><code>user</code>: The username for SMTP authentication.</li>
+                  <li><code>password</code>: The password for SMTP authentication.</li>
+                  <li><code>from</code>: The email address from which the email will be sent.</li>
+                  <li><code>to</code>: The recipient email address.</li>
+                </ul>
+              </li>
+              <li><code>imapConfig</code>: Configuration for IMAP to check the email's arrival.
+                <ul>
+                  <li><code>user</code>: The username for IMAP authentication.</li>
+                  <li><code>password</code>: The password for IMAP authentication.</li>
+                  <li><code>host</code>: The hostname or IP address of the IMAP server.</li>
+                  <li><code>port</code>: The port on which the IMAP server is listening.</li>
+                  <li><code>tls</code>: A boolean indicating if TLS should be used for the IMAP connection.</li>
+                  <li><code>authTimeout</code>: The timeout in milliseconds for IMAP authentication (optional).</li>
+                </ul>
+              </li>
+              <li><code>timeout</code>: The duration in milliseconds to wait for the email to arrive before timing out.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>On success, returns an object with the following properties:
+                <ul>
+                  <li><code>success</code>: A boolean indicating the operation was successful (true).</li>
+                  <li><code>message</code>: A string message, "Email successfully received."</li>
+                  <li><code>details</code>: An object containing information about the received email:
+                    <ul>
+                      <li><code>from</code>: The sender's email address.</li>
+                      <li><code>subject</code>: The subject of the email.</li>
+                      <li><code>date</code>: The date and time the email was received.</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>On failure (email not received within the timeout period or an error occurred), returns an object with:
+                <ul>
+                  <li><code>success</code>: A boolean indicating the operation was unsuccessful (false).</li>
+                  <li><code>message</code>: A string message detailing the failure, such as "Email not received within the timeout period." or the error message.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>15. Ping Endpoint</h3>
+        <h4>Endpoint: <code>/api/ping/{target}</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Performs a ping operation to the specified IP address or hostname.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>URL Params</strong>:
+            <ul>
+              <li><code>target</code>: The IP address or hostname to ping.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>A summary of the ping operation, including success status, and ping results.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>16. Traceroute Endpoint</h3>
+        <h4>Endpoint: <code>/api/traceroute/{target}</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Executes a traceroute to the specified IP address or hostname.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>URL Params</strong>:
+            <ul>
+              <li><code>target</code>: The IP address or hostname for the traceroute.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>A summary of the traceroute operation, including success status, and traceroute results.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>17. Authentication Endpoint</h3>
+        <h4>Endpoint: <code>POST /api/auth</code></h4>
+        <p>This endpoint allows users to authenticate against various email and file transfer protocols. It supports a range of protocols including <code>submission</code>, <code>pop3</code>, <code>pop3s</code>, <code>imap</code>, <code>imaps</code>, <code>smtp</code>, <code>smtps</code>, <code>ftp</code>, and <code>sftp</code>.</p>
+        <h4>Request Headers</h4>
+        <ul>
+          <li><strong>Content-Type</strong>: <code>application/json</code></li>
+        </ul>
+        <h4>Request Body</h4>
+        <p>The request body must include the following fields:</p>
+        <ul>
+          <li><strong>username</strong> (string): The user's email address.</li>
+          <li><strong>password</strong> (string): The user's password.</li>
+          <li><strong>hostname</strong> (string): The server's hostname where the authentication should occur.</li>
+          <li><strong>protocol</strong> (string): The protocol to use for authentication. Supported protocols are <code>submission</code>, <code>pop3</code>, <code>pop3s</code>, <code>imap</code>, <code>imaps</code>, <code>smtp</code>, <code>smtps</code>, <code>ftp</code>, and <code>sftp</code>.</li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>18. DNS Lookup Endpoint</h3>
+        <h4>Endpoint: <code>/api/lookup</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Performs a DNS lookup for the specified host and record type, optionally using a specified DNS server.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>URL Params</strong>:
+            <ul>
+              <li><code>host</code>: The hostname or IP address for the DNS lookup.</li>
+              <li><code>type</code>: The type of DNS record to look up (e.g., <code>A</code>, <code>MX</code>, <code>PTR</code>). Defaults to <code>A</code> for hostnames and <code>PTR</code> for IP addresses if not specified.</li>
+              <li><code>dnsServer</code>: (Optional) The IP address of the DNS server to use for the lookup. If not specified, the system's default DNS server is used.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>host</code>: The queried hostname or IP address.</li>
+              <li><code>type</code>: The type of DNS record looked up.</li>
+              <li><code>addresses</code>: An array of the lookup results, specific to the record type.</li>
+              <li><code>dnsServer</code>: The DNS server used for the lookup, if specified.</li>
+              <li>On success, returns an object containing the lookup results.</li>
+              <li>On failure, returns an object with an <code>error</code> key and a message describing the failure.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>19. Hash Validation Endpoint</h3>
+        <h4>Endpoint: <code>/api/validate-hash</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Validates a given password against a specified hash using the chosen algorithm.</li>
+          <li><strong>Method</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>algorithm</code>: The hash algorithm to use (e.g., <code>md5</code>, <code>sha1</code>, <code>sha256</code>, <code>sha512</code>, <code>bcrypt</code>, <code>argon2</code>).</li>
+              <li><code>password</code>: The plaintext password to validate.</li>
+              <li><code>hash</code>: The hash to compare against.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>isValid</code>: A boolean indicating if the password matches the hash.</li>
+              <li><code>algorithm</code>: The algorithm used for validation.</li>
+              <li><code>hash</code>: The original hash provided in the request.</li>
+              <li><code>generatedHash</code>: The hash generated from the provided password using the specified algorithm.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>20. DNS Propagation Endpoints</h3>
+        <h4>Endpoint: <code>/api/dns/servers</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Retrieves a list of global DNS servers used for propagation checks.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>total</code>: Total number of servers.</li>
+              <li><code>servers</code>: Array of server objects, each with <code>name</code>, <code>ip</code>, and <code>location</code>.</li>
+              <li><code>timestamp</code>: Timestamp of the response.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4>Endpoint: <code>/api/dns/check</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Checks DNS propagation for a single record type across multiple DNS servers.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>Query Parameters</strong>:
+            <ul>
+              <li><code>hostname</code>: The hostname to check.</li>
+              <li><code>recordType</code> (optional): The record type (e.g., <code>A</code>, <code>AAAA</code>, <code>MX</code>, <code>TXT</code>). Defaults to <code>A</code>.</li>
+              <li><code>customServers</code> (optional): Comma-separated list of custom DNS server IPs to query.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>hostname</code>: The queried hostname.</li>
+              <li><code>recordType</code>: The record type checked.</li>
+              <li><code>timestamp</code>: Timestamp of the response.</li>
+              <li><code>totalServers</code>: Total number of servers queried.</li>
+              <li><code>successful</code>: Number of successful queries.</li>
+              <li><code>failed</code>: Number of failed queries.</li>
+              <li><code>propagationPercentage</code>: Percentage of successful propagation.</li>
+              <li><code>isFullyPropagated</code>: Boolean indicating full propagation.</li>
+              <li><code>hasInconsistentRecords</code>: Boolean indicating inconsistent records.</li>
+              <li><code>uniqueRecordSets</code>: Number of unique record sets found.</li>
+              <li><code>averageResponseTime</code>: Average response time of successful queries.</li>
+              <li><code>totalQueryTime</code>: Total time taken for all queries.</li>
+              <li><code>results</code>: Array of detailed results from each server.</li>
+              <li><code>recordValuesByServer</code>: Object mapping server names to their record values.</li>
+              <li><code>summary</code>: Object with overall status and messages.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4>Endpoint: <code>/api/dns/check-multi</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Checks DNS propagation for multiple record types across multiple DNS servers.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>Query Parameters</strong>:
+            <ul>
+              <li><code>hostname</code>: The hostname to check.</li>
+              <li><code>recordTypes</code> (optional): Comma-separated list of record types (e.g., <code>A,MX,TXT</code>). Defaults to <code>A,AAAA,MX,TXT</code>.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>hostname</code>: The queried hostname.</li>
+              <li><code>timestamp</code>: Timestamp of the response.</li>
+              <li><code>recordTypes</code>: Array of record types checked.</li>
+              <li><code>results</code>: Array of detailed results for each record type.</li>
+              <li><code>summary</code>: Object with overall status and counts.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4>Endpoint: <code>/api/dns/check-bulk</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Performs bulk DNS propagation checks for multiple hostnames.</li>
+          <li><strong>Method</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>hostnames</code>: Array of hostnames to check (max 10).</li>
+              <li><code>recordType</code> (optional): The record type (e.g., <code>A</code>). Defaults to <code>A</code>.</li>
+              <li><code>customServers</code> (optional): Array of custom DNS server IPs.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>total</code>: Total number of hostnames requested.</li>
+              <li><code>successful</code>: Number of successful checks.</li>
+              <li><code>failed</code>: Number of failed checks.</li>
+              <li><code>results</code>: Array of detailed results for each hostname.</li>
+              <li><code>timestamp</code>: Timestamp of the response.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>21. SSL/TLS Scanner Endpoint</h3>
+        <h4>Endpoint: <code>/api/ssl-scan</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Scans the SSL/TLS configuration and identifies potential vulnerabilities for a given host and port.</li>
+          <li><strong>Method</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li><code>host</code>: The hostname or IP address to scan.</li>
+              <li><code>port</code> (optional): The port to scan (defaults to 443).</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>host</code>: The scanned host.</li>
+              <li><code>port</code>: The scanned port.</li>
+              <li><code>vulnerabilities</code>: Object containing scan results and identified vulnerabilities.</li>
+              <li><code>timestamp</code>: Timestamp of the scan.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>22. Speed Test Endpoints</h3>
+        <h4>Endpoint: <code>/api/speedtest/download</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Provides a large payload for download speed testing.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li>A binary payload of 50MB.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h4>Endpoint: <code>/api/speedtest/upload</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Receives a payload for upload speed testing.</li>
+          <li><strong>Method</strong>: POST</li>
+          <li><strong>Request Body</strong>:
+            <ul>
+              <li>A binary payload to be uploaded.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>received</code>: The size of the received payload in bytes.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <hr>
+
+      <h2>Additional Notes</h2>
+      <ul>
+        <li>All API requests and responses are in JSON format, except where noted (e.g., raw email headers for analysis).</li>
+        <li>Ensure to replace <code>{domain}</code> in the URL with the actual domain for the relevant endpoints.</li>
+      </ul>
+      <p>For further details or specific examples, refer to the <code>examples</code> directory in the project repository.</p>
     </div>
+    <div id="speedTestView" class="content-view hidden">
+      <h2>Speed Test</h2>
+      <button id="start-speed-test" class="nav-btn">Start Test</button>
+      <div id="countdown" style="font-size: 2em; margin-bottom: 10px;"></div>
+      <div id="speedometer" class="speedometer">
+          <div class="speedometer-gauge" id="speedometer-gauge"></div>
+          <div class="speed-value" id="speed-value">0.00 Mbps</div>
+      </div>
+      <div id="download-speed"></div>
+      <div id="upload-speed"></div>
+    </div>
+  </main>
+  <script type="module" src="main.js?v=1.1"></script>
+</body>
+
+</html>
   </main>
     <div id="speedTestView" class="content-view hidden">
       <h2>Speed Test</h2>
