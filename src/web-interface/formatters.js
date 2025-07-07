@@ -817,7 +817,7 @@ export const formatDnsPropagation = (data) => {
         createStatusBadge('FAILED', 'error');
       
       const records = result.records ? 
-        result.records.map(record => `<code class="dns-record">${record}</code>`).join('<br>') : 
+        result.records.map(record => formatDnsRecord(record, data.recordType)).join('<br>') :
         'No records found';
       
       return `
@@ -830,7 +830,7 @@ export const formatDnsPropagation = (data) => {
             <code>${result.ip}</code>
           </div>
           <div class="server-records">
-            ${result.success ? records : `<span class="error">Error: ${result.error}</span>`}
+            ${result.success ? records : `<div class="server-error">Error: ${result.error}</div>`}
           </div>
         </div>
       `;
@@ -918,19 +918,23 @@ export const formatMultiRecordPropagation = (data) => {
       if (Array.isArray(result.results) && result.results.length > 0) {
         recordList = result.results.map(serverResult => {
           const sStatus = serverResult.success ? createStatusBadge('SUCCESS', 'success') : createStatusBadge('FAILED', 'error');
-          const records = serverResult.records ? serverResult.records.map(r => `<code class="dns-record">${r}</code>`).join('<br>') : 'No records found';
+          // Use formatDnsRecord to correctly display different record types
+          const records = serverResult.records 
+            ? serverResult.records.map(r => formatDnsRecord(r, result.recordType)).join('<br>') 
+            : 'No records found';
           return `<div class="dns-server-result" style="margin-bottom:0.5em;">
             <div class="server-header"><strong>${serverResult.server}</strong> (${serverResult.location}) ${sStatus} ${serverResult.responseTime ? `<span class="response-time">${serverResult.responseTime}ms</span>` : ''}</div>
             <div class="server-ip"><code>${serverResult.ip}</code></div>
-            <div class="server-records">${serverResult.success ? records : `<span class="error">Error: ${serverResult.error}</span>`}</div>
+            <div class="server-records">${serverResult.success ? records : `<div class="server-error">Error: ${serverResult.error}</div>`}</div>
           </div>`;
         }).join('');
       }
       // If inconsistent, also show recordValuesByServer
       if (result.hasInconsistentRecords && result.recordValuesByServer) {
-        recordList += Object.entries(result.recordValuesByServer).map(([server, records]) =>
-          `<div><strong>${server}:</strong> <code>${records.join(', ')}</code></div>`
-        ).join('');
+        recordList += Object.entries(result.recordValuesByServer).map(([server, records]) => {
+          const formattedRecords = records.map(r => formatDnsRecord(r, result.recordType)).join(', ');
+          return `<div><strong>${server}:</strong> ${formattedRecords}</div>`;
+        }).join('');
       }
       // Use result.totalServers or result.results.length for denominator
       const totalServers = result.totalServers || (result.results ? result.results.length : 0);

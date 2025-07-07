@@ -1581,4 +1581,60 @@ input[type="file"] {
   color: #ffcc00;
 }
 
+/* DNS Propagation and Tools */
+.dns-server-result {
+  background-color: #3a3a3a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.dns-server-result:hover {
+  border-color: #555;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.server-header {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.server-header strong {
+  color: #eee;
+}
+
+.response-time {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.server-ip {
+  font-family: 'Courier New', Courier, monospace;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.server-records {
+  padding-left: 15px;
+  border-left: 2px solid #555;
+  color: #ddd;
+}
+
+.server-error {
+  color: #ff6b6b;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}
+
+.record-type-result {
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
 
