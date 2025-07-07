@@ -438,6 +438,6 @@ The request body must include the following fields:
 
 - All API requests and responses are in JSON format, except where noted (e.g., raw email headers for analysis).
 - Ensure to replace `{domain}` in the URL with the actual domain for the relevant endpoints.
-- A secret tool can be accessed by pressing the following sequence of keys on the main page: ↑, ↓, ←, →.
+- A secret tool can be accessed by pressing the following sequence of keys: ↑, ↓, ←, →.
 
 For further details or specific examples, refer to the `examples` directory in the project repository.
