@@ -136,3 +136,44 @@ inputIds.forEach((inputId) => {
       }
     });
 });
+
+const secretCode = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+const userSequence = [];
+
+document.addEventListener('keydown', (event) => {
+    userSequence.push(event.key);
+    if (userSequence.length > secretCode.length) {
+        userSequence.shift();
+    }
+
+    if (JSON.stringify(userSequence) === JSON.stringify(secretCode)) {
+        launchPacman();
+    }
+});
+
+window.addEventListener('message', (event) => {
+    if (event.data === 'hardReset') {
+        closePacman();
+    }
+});
+
+function launchPacman() {
+    const gameContainer = document.getElementById('game-container');
+    if (gameContainer.innerHTML === '') {
+        gameContainer.innerHTML = `
+            <div id="pacman-container" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background-color: black;">
+                <iframe id="pacman-frame" style="width: 100%; height: 100%; border: none;" src="pacman/index.html"></iframe>
+                <div style="position: absolute; top: 10px; right: 10px; color: white; font-family: monospace;">Press BACKSPACE to exit</div>
+            </div>
+        `;
+    }
+    const iframe = document.getElementById('pacman-frame');
+    iframe.focus();
+}
+
+function closePacman() {
+    const gameContainer = document.getElementById('game-container');
+    if (gameContainer) {
+        gameContainer.innerHTML = '';
+    }
+}

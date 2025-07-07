@@ -15,7 +15,8 @@ EvilAPI is a versatile collection of utilities designed for email system adminis
 7. [Examples](#examples)
 8. [API Tests](#api-tests)
 9. [Contributors](#contributors)
-10. [License](#license)
+10. [Credits](#credits)
+11. [License](#license)
 
 ## Installation
 
@@ -176,6 +177,10 @@ API tests are designed to ensure the functionality and integrity of the EvilAPI 
 ## Contributors
 
 - Alan Denniston (author and maintainer)
+
+## Credits
+
+- The Pac-Man easter egg is a modified version of the open-source game available on [GitHub](https://github.com/masonicGIT/pacman).
 
 ## License
 
