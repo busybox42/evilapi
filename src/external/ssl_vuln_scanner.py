@@ -16,6 +16,26 @@ def is_http_port(port):
     http_ports = [80, 443, 8080, 8443]
     return port in http_ports
 
+def check_http_redirect_to_https(host, port):
+    try:
+        import requests
+        # Allow redirects, but set a short timeout
+        response = requests.get(f"http://{host}:{port}", timeout=5, allow_redirects=True)
+        
+        # Check if it redirected to HTTPS
+        if response.url.startswith("https://"):
+            # Optionally, you could add a check here to ensure the HTTPS connection is valid
+            # For now, just checking if it redirected to HTTPS
+            return {"status": "redirects_to_https", "info": f"Redirects to {response.url}"}
+        else:
+            return {"status": "no_https_redirect", "info": "Does not redirect to HTTPS."}
+    except requests.exceptions.Timeout:
+        return {"status": "error", "info": "HTTP connection timed out."}
+    except requests.exceptions.ConnectionError:
+        return {"status": "error", "info": "HTTP connection failed."}
+    except Exception as e:
+        return {"status": "error", "info": f"An unexpected error occurred during HTTP redirect check: {e}"}
+
 def try_starttls_connect(host, port, protocol):
     try:
         sock = socket.create_connection((host, port), timeout=5)
@@ -407,7 +427,7 @@ def get_cert_info(host, port):
         print(f"DEBUG: Traceback: {traceback.format_exc()}")
         return {"error": str(e), "valid": False}
 
-def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
+def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port):
     grade = "A"
     reasons = []
 
@@ -423,6 +443,17 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
     # If protocol_detection is not applicable, don't penalize the grade and mark as not SSL relevant
     if results.get("protocol_detection_status", {}).get("status") == "not_applicable":
         is_ssl_relevant = False
+
+    # Handle HTTP redirect status for port 80
+    if port == 80:
+        http_redirect_status = results.get("http_redirect_status")
+        if http_redirect_status:
+            if http_redirect_status.get("status") == "no_https_redirect":
+                grade = "F"
+                reasons.append("HTTP does not redirect to HTTPS.")
+            elif http_redirect_status.get("status") == "error":
+                grade = "F"
+                reasons.append(f"HTTP redirect check failed: {http_redirect_status.get("info")}")
 
     if is_ssl_relevant:
         # If SSL/TLS is relevant but no protocols were detected and cert info has an error, it's an F
@@ -479,6 +510,12 @@ def main():
     results["ROBOT"] = check_robot(host, port)
     results["SWEET32"] = check_sweet32(host, port)
     results["Ticketbleed"] = check_ticketbleed(host, port)
+
+    # New: HTTP redirect check for port 80
+    if port == 80:
+        http_redirect_status = check_http_redirect_to_https(host, port)
+        results["http_redirect_status"] = http_redirect_status
+
     # New: protocol/cipher/cert info
     try:
         protocol_support, cipher_strength, protocol_detection_status = detect_protocols_and_ciphers(host, port)
@@ -496,7 +533,7 @@ def main():
     except Exception as e:
         cert_info = {"error": str(e), "valid": False}
         results["cert_info_error"] = {"status": "error", "info": f"Certificate information retrieval failed: {e}"}
-    grade_info = compute_ssl_grade(results, cert_info, protocol_support, cipher_strength)
+    grade_info = compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port)
     output = {
         "results": results,
         "protocol_support": protocol_support,
