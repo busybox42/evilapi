@@ -51,6 +51,8 @@ function renderSslScanResult(data) {
         let reasonStyle = '';
         if (reason.includes('TLS 1.0/1.1')) {
           reasonStyle = 'color: #DAA520;'; // Darker yellow
+        } else if (reason.includes('HTTP redirects to HTTPS')) {
+          reasonStyle = 'color: #DAA520;'; // Darker yellow
         }
         html += `<li style="${reasonStyle}">${reason}</li>`;
       }
