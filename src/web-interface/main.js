@@ -116,10 +116,7 @@ buttonIds.forEach((buttonId) => {
     .addEventListener("click", () => {
       const viewName = buttonId.replace("Btn", "");
       window.location.hash = viewName;
-      if (buttonId === "speedTestBtn") {
-        initSpeedTest();
-      }
-    });
+      });
 });
 
 // Event listeners for input fields to trigger actions on Enter key press

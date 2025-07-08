@@ -2,9 +2,11 @@ export function renderSslTlsScanner(container) {
   container.innerHTML = `
     <h2>SSL/TLS Vulnerability Scanner</h2>
     <form id="ssl-scan-form" style="margin-bottom: 1.5em;">
-      <label>Host/IP: <input type="text" id="ssl-host" required placeholder="example.com or 1.2.3.4"></label>
-      <label>Port: <input type="number" id="ssl-port" value="443" min="1" max="65535"></label>
-      <button type="submit" class="nav-btn" style="font-size:1.1em; padding: 0.7em 2em; margin-left: 1em; margin-top: 1em;">Scan</button>
+      <div class="ssl-scan-input-group">
+        <input type="text" id="ssl-host" placeholder="Enter hostname or IP" style="width: 200px;" />
+        <input type="text" id="ssl-port" placeholder="443" style="width: 75px;" />
+        <button type="submit" class="nav-btn">Perform Scan</button>
+      </div>
     </form>
     <div id="ssl-scan-result"></div>
   `;

@@ -225,46 +225,88 @@ def detect_protocols_and_ciphers(host, port):
         ("TLSv1.1", ssl.PROTOCOL_TLSv1_1),
         ("TLSv1.0", ssl.PROTOCOL_TLSv1),
     ]
+    
+    # Common STARTTLS ports and their associated protocols
+    starttls_ports = {
+        25: "smtp",
+        143: "imap",
+        110: "pop3",
+        587: "smtp",
+    }
+
     for name, proto in protocol_versions:
+        ssock = None
         try:
             context = ssl.SSLContext(proto)
-            with socket.create_connection((host, port), timeout=5) as sock:
-                with context.wrap_socket(sock, server_hostname=host) as ssock:
-                    protocols.append(name)
-                    cipher = ssock.cipher()
-                    if cipher:
-                        cipher_strengths.append(cipher[2])
+            if port in starttls_ports:
+                # Attempt STARTTLS
+                ssock = try_starttls_connect(host, port, starttls_ports[port])
+            else:
+                # Direct SSL/TLS connection
+                sock = socket.create_connection((host, port), timeout=5)
+                ssock = context.wrap_socket(sock, server_hostname=host)
+
+            if ssock:
+                protocols.append(name)
+                cipher = ssock.cipher()
+                if cipher:
+                    cipher_strengths.append(cipher[2])
+                ssock.close()
         except Exception:
+            if ssock:
+                ssock.close()
             continue
     return protocols, max(cipher_strengths) if cipher_strengths else 0
 
 def get_cert_info(host, port):
     try:
         context = ssl.create_default_context()
-        with socket.create_connection((host, port), timeout=5) as sock:
-            with context.wrap_socket(sock, server_hostname=host) as ssock:
-                cert = ssock.getpeercert()
-                not_after = cert.get('notAfter')
-                not_before = cert.get('notBefore')
-                subject = cert.get('subject')
-                issuer = cert.get('issuer')
-                now = datetime.datetime.utcnow()
-                valid = True
-                if not_after:
-                    exp = datetime.datetime.strptime(not_after, '%b %d %H:%M:%S %Y %Z')
-                    if exp < now:
-                        valid = False
-                if not_before:
-                    start = datetime.datetime.strptime(not_before, '%b %d %H:%M:%S %Y %Z')
-                    if start > now:
-                        valid = False
-                return {
-                    "subject": subject,
-                    "issuer": issuer,
-                    "not_before": not_before,
-                    "not_after": not_after,
-                    "valid": valid
-                }
+        ssock = None
+        
+        # Common STARTTLS ports
+        starttls_ports = {
+            25: "smtp",
+            143: "imap",
+            110: "pop3",
+            587: "smtp",
+        }
+
+        if port in starttls_ports:
+            try:
+                ssock = try_starttls_connect(host, port, starttls_ports[port])
+            except Exception:
+                pass # Fall through to direct SSL if STARTTLS fails
+
+        if not ssock: # If not connected via STARTTLS, try direct SSL
+            sock = socket.create_connection((host, port), timeout=5)
+            ssock = context.wrap_socket(sock, server_hostname=host)
+
+        if ssock:
+            cert = ssock.getpeercert()
+            not_after = cert.get('notAfter')
+            not_before = cert.get('notBefore')
+            subject = cert.get('subject')
+            issuer = cert.get('issuer')
+            now = datetime.datetime.utcnow()
+            valid = True
+            if not_after:
+                exp = datetime.datetime.strptime(not_after, '%b %d %H:%M:%S %Y %Z')
+                if exp < now:
+                    valid = False
+            if not_before:
+                start = datetime.datetime.strptime(not_before, '%b %d %H:%M:%S %Y %Z')
+                if start > now:
+                    valid = False
+            ssock.close()
+            return {
+                "subject": subject,
+                "issuer": issuer,
+                "not_before": not_before,
+                "not_after": not_after,
+                "valid": valid
+            }
+        else:
+            return {"error": "Could not establish SSL/TLS connection", "valid": False}
     except Exception as e:
         return {"error": str(e), "valid": False}
 

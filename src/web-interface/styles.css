@@ -271,6 +271,7 @@ input[type="file"] {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+  gap: 10px;
 }
 
 .config-column {
@@ -1718,4 +1719,21 @@ input[type="file"] {
   border-radius: 4px;
 }
 
+.ssl-scan-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
+.ssl-scan-input-group input {
+  width: 200px; /* Fixed width for hostname/IP input */
+}
+
+.ssl-scan-input-group input[type="text"][placeholder="443"] {
+  width: 75px; /* Fixed width for port input */
+}
+
+.ssl-scan-input-group button {
+  white-space: nowrap;
+}
