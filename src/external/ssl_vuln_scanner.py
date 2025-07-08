@@ -21,6 +21,8 @@ def check_http_redirect_to_https(host, port):
         import requests
         # Allow redirects, but set a short timeout
         response = requests.get(f"http://{host}:{port}", timeout=5, allow_redirects=True)
+        print(f"DEBUG: HTTP redirect check - Final URL: {response.url}")
+        print(f"DEBUG: HTTP redirect check - History: {response.history}")
         
         # Check if it redirected to HTTPS
         if response.url.startswith("https://"):
@@ -431,18 +433,24 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
     grade = "A"
     reasons = []
 
-    is_ssl_relevant = True
+    # If it's not an SSL/STARTTLS port and not an HTTP port, it's an F by default
+    if not is_ssl_or_starttls_port(port) and not is_http_port(port):
+        grade = "F"
+        reasons.append("Port is not a standard SSL/TLS or HTTP port and does not provide a secure service.")
+        return {"grade": grade, "reasons": reasons}
+
+    is_ssl_relevant = is_ssl_or_starttls_port(port)
 
     # If cert_info is not applicable, don't penalize the grade and mark as not SSL relevant
     if cert_info and cert_info.get("status") == "not_applicable":
-        is_ssl_relevant = False
+        pass
     elif cert_info and not cert_info.get("valid", True):
         grade = "F"
         reasons.append("Certificate invalid/expired")
 
     # If protocol_detection is not applicable, don't penalize the grade and mark as not SSL relevant
     if results.get("protocol_detection_status", {}).get("status") == "not_applicable":
-        is_ssl_relevant = False
+        pass
 
     # Handle HTTP redirect status for port 80
     if port == 80:
