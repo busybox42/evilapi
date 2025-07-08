@@ -425,6 +425,11 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
         is_ssl_relevant = False
 
     if is_ssl_relevant:
+        # If SSL/TLS is relevant but no protocols were detected and cert info has an error, it's an F
+        if not protocol_support and cert_info and cert_info.get("error") and grade != "F":
+            grade = "F"
+            reasons.append("Failed to establish SSL/TLS connection on a relevant port.")
+
         # Protocol support
         if protocol_support:
             if "SSLv3" in protocol_support or "SSLv2" in protocol_support:

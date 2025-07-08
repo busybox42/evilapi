@@ -50,7 +50,7 @@ function renderSslScanResult(data) {
       for (const reason of vdata.grade_breakdown) {
         let reasonStyle = '';
         if (reason.includes('TLS 1.0/1.1')) {
-          reasonStyle = 'color: yellow;';
+          reasonStyle = 'color: #DAA520;'; // Darker yellow
         }
         html += `<li style="${reasonStyle}">${reason}</li>`;
       }
