@@ -48,7 +48,11 @@ function renderSslScanResult(data) {
     if (Array.isArray(vdata.grade_breakdown) && vdata.grade_breakdown.length) {
       html += `<ul style="margin:0 0 1em 0.5em;padding:0 0 0 1.2em;color:#333;">`;
       for (const reason of vdata.grade_breakdown) {
-        html += `<li>${reason}</li>`;
+        let reasonStyle = '';
+        if (reason.includes('TLS 1.0/1.1')) {
+          reasonStyle = 'color: yellow;';
+        }
+        html += `<li style="${reasonStyle}">${reason}</li>`;
       }
       html += `</ul>`;
     }
