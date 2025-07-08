@@ -21,6 +21,7 @@ import { initUrlEncoder } from "./urlEncoder.js";
 import { initSpamScan } from "./spamScan.js";
 import { initDnsPropagation } from "./dnsPropagation.js";
 import { renderSslTlsScanner } from "./sslTlsScanner.js";
+import { initSecretSharing, retrieveAndShowSecret } from './secretSharing.js';
 
 // Function to toggle visibility of content views
 export function toggleView(viewId) {
@@ -39,10 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const defaultViewLink = document.getElementById("defaultViewLink");
   if (defaultViewLink) {
     defaultViewLink.addEventListener("click", function (event) {
-      event.preventDefault(); // Prevent following the link
-      window.location.reload(true); // Deprecated but intended for a hard refresh
-      // Alternatively, for a more consistent hard refresh across browsers:
-      // window.location.href = window.location.href;
+      event.preventDefault();
+      window.location.hash = ''; // Go to root hash
     });
   }
 });
@@ -72,7 +71,16 @@ document.addEventListener("DOMContentLoaded", () => {
   initSpamScan();
   initDnsPropagation();
   renderSslTlsScanner(document.getElementById("sslTlsScannerView"));
-  });
+  initSecretSharing();
+  
+  // Only handle routing through the hashchange event
+  window.addEventListener('hashchange', handleRouting);
+  
+  // If there's an initial hash, handle it
+  if (window.location.hash) {
+    handleRouting();
+  }
+});
 
 // Event listeners for navigation buttons to toggle views
 const buttonIds = [
@@ -98,6 +106,7 @@ const buttonIds = [
   "urlEncoderBtn",
   "spamScanBtn",
   "sslTlsScannerBtn",
+  "secretPushBtn",
   "apiDocsBtn",
 ];
 
@@ -105,7 +114,8 @@ buttonIds.forEach((buttonId) => {
   document
     .getElementById(buttonId)
     .addEventListener("click", () => {
-      toggleView(`${buttonId.replace("Btn", "View")}`);
+      const viewName = buttonId.replace("Btn", "");
+      window.location.hash = viewName;
       if (buttonId === "speedTestBtn") {
         initSpeedTest();
       }
@@ -176,4 +186,26 @@ function closePacman() {
     if (gameContainer) {
         gameContainer.innerHTML = '';
     }
+}
+
+// Handle hash-based routing for secret links
+function handleRouting() {
+  const hash = window.location.hash.substring(1); // Remove the #
+  
+  if (hash.startsWith('secret/')) {
+    const secretId = hash.substring(7); // Remove 'secret/'
+    if (secretId) {
+      retrieveAndShowSecret(secretId);
+      toggleView('secretDisplayView');
+    }
+  } else if (hash) {
+    // Handle regular navigation
+    const viewId = hash + 'View';
+    const targetView = document.getElementById(viewId);
+    if (targetView) {
+      toggleView(viewId);
+    }
+  } else {
+    toggleView('defaultView');
+  }
 }

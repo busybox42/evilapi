@@ -82,6 +82,15 @@ const config = {
     // Maximum request body size
     maxRequestBodySize: getEnvVar('MAX_REQUEST_BODY_SIZE', '10mb'),
   },
+
+  // Secret management config for secretService.js
+  secretManagement: {
+    encryptionKey: getEnvVar('SECRET_ENCRYPTION_KEY', '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'),
+    defaultTtl: parseInt(getEnvVar('SECRET_DEFAULT_TTL', '86400'), 10), // 24 hours
+    maxTtl: parseInt(getEnvVar('SECRET_MAX_TTL', '2592000'), 10), // 30 days
+    defaultMaxViews: parseInt(getEnvVar('SECRET_DEFAULT_MAX_VIEWS', '5'), 10),
+    maxMaxViews: parseInt(getEnvVar('SECRET_MAX_MAX_VIEWS', '100'), 10),
+  },
 };
 
 // Validate configuration
