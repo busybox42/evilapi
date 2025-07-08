@@ -12,6 +12,10 @@ def is_ssl_or_starttls_port(port):
     starttls_ports = [25, 110, 143, 587]
     return port in ssl_ports or port in starttls_ports
 
+def is_http_port(port):
+    http_ports = [80, 443, 8080, 8443]
+    return port in http_ports
+
 def try_starttls_connect(host, port, protocol):
     try:
         sock = socket.create_connection((host, port), timeout=5)
@@ -169,9 +173,13 @@ def check_crime(host, port):
                 else:
                     return {"status": "not vulnerable", "info": "TLS compression not enabled"}
     except Exception as e:
+        if "WRONG_VERSION_NUMBER" in str(e):
+            return {"status": "not_applicable", "info": f"Protocol mismatch: {e}"}
         return {"status": "error", "info": f"Error: {e}"}
 
 def check_breach(host, port):
+    if not is_http_port(port):
+        return {"status": "not_applicable", "info": "BREACH check is only applicable to HTTP/HTTPS ports."}
     try:
         import requests
         url = f"https://{host}:{port}/"
@@ -261,6 +269,8 @@ def check_robot(host, port):
                 else:
                     return {"status": "not vulnerable", "info": f"No RSA key exchange: {cipher}"}
     except Exception as e:
+        if "WRONG_VERSION_NUMBER" in str(e):
+            return {"status": "not_applicable", "info": f"Protocol mismatch: {e}"}
         return {"status": "error", "info": f"Error: {e}"}
 
 def check_ticketbleed(host, port):
@@ -275,6 +285,8 @@ def check_ticketbleed(host, port):
                 else:
                     return {"status": "not vulnerable", "info": "Session tickets not supported"}
     except Exception as e:
+        if "WRONG_VERSION_NUMBER" in str(e):
+            return {"status": "not_applicable", "info": f"Protocol mismatch: {e}"}
         return {"status": "error", "info": f"Error: {e}"}
 
 def detect_protocols_and_ciphers(host, port):
@@ -433,7 +445,7 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
             reasons.append(f"Critical: {vuln}")
     
     # Major issues = C
-    for vuln in ["BEAST", "SWEET32"]:
+    for vuln in ["BEAST", "SWEET32", "CRIME", "BREACH"]:
         if results.get(vuln, {}).get("status") == "vulnerable":
             if grade != "F":
                 grade = "C"
