@@ -7,6 +7,11 @@ import datetime
 import re
 import traceback
 
+def is_ssl_or_starttls_port(port):
+    ssl_ports = [443, 993, 995, 465]
+    starttls_ports = [25, 110, 143, 587]
+    return port in ssl_ports or port in starttls_ports
+
 def try_starttls_connect(host, port, protocol):
     try:
         sock = socket.create_connection((host, port), timeout=5)
@@ -273,6 +278,9 @@ def check_ticketbleed(host, port):
         return {"status": "error", "info": f"Error: {e}"}
 
 def detect_protocols_and_ciphers(host, port):
+    if not is_ssl_or_starttls_port(port):
+        return [], 0, {"status": "not_applicable", "info": "Port is not a standard SSL/TLS or STARTTLS port."}
+
     protocols = []
     cipher_strengths = []
     protocol_versions = [
@@ -333,6 +341,9 @@ def get_cert_info(host, port):
             587: "smtp",
         }
 
+        if not is_ssl_or_starttls_port(port):
+            return {"status": "not_applicable", "info": "Port is not a standard SSL/TLS or STARTTLS port."}
+
         if port in starttls_ports:
             try:
                 ssock = try_starttls_connect(host, port, starttls_ports[port])
@@ -387,35 +398,47 @@ def get_cert_info(host, port):
 def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
     grade = "A"
     reasons = []
+
+    # If cert_info is not applicable, don't penalize the grade
+    if cert_info and cert_info.get("status") == "not_applicable":
+        pass
+    elif cert_info and not cert_info.get("valid", True):
+        grade = "F"
+        reasons.append("Certificate invalid/expired")
+
+    # If protocol_detection is not applicable, don't penalize the grade
+    if results.get("protocol_detection_status", {}).get("status") == "not_applicable":
+        pass
+    else:
+        # Protocol support
+        if protocol_support:
+            if "SSLv3" in protocol_support or "SSLv2" in protocol_support:
+                if grade != "F":
+                    grade = "C"
+                    reasons.append("Supports SSLv2/v3")
+            elif "TLSv1.0" in protocol_support or "TLSv1.1" in protocol_support:
+                if grade == "A":
+                    grade = "B"
+                    reasons.append("Supports TLS 1.0/1.1")
+        # Cipher strength
+        if cipher_strength and cipher_strength < 128:
+            if grade != "F":
+                grade = "C"
+                reasons.append("Weak cipher strength (<128 bits)")
+
     # Critical vulns = F
     for vuln in ["Heartbleed", "DROWN", "POODLE", "FREAK", "LOGJAM", "ROBOT", "Ticketbleed"]:
         if results.get(vuln, {}).get("status") == "vulnerable":
             grade = "F"
             reasons.append(f"Critical: {vuln}")
-    if cert_info and not cert_info.get("valid", True):
-        grade = "F"
-        reasons.append("Certificate invalid/expired")
+    
     # Major issues = C
     for vuln in ["BEAST", "SWEET32"]:
         if results.get(vuln, {}).get("status") == "vulnerable":
             if grade != "F":
                 grade = "C"
                 reasons.append(f"Weak: {vuln}")
-    # Protocol support
-    if protocol_support:
-        if "SSLv3" in protocol_support or "SSLv2" in protocol_support:
-            if grade != "F":
-                grade = "C"
-                reasons.append("Supports SSLv2/v3")
-        elif "TLSv1.0" in protocol_support or "TLSv1.1" in protocol_support:
-            if grade == "A":
-                grade = "B"
-                reasons.append("Supports TLS 1.0/1.1")
-    # Cipher strength
-    if cipher_strength and cipher_strength < 128:
-        if grade != "F":
-            grade = "C"
-            reasons.append("Weak cipher strength (<128 bits)")
+
     return {"grade": grade, "reasons": reasons}
 
 def main():
@@ -438,7 +461,9 @@ def main():
     results["Ticketbleed"] = check_ticketbleed(host, port)
     # New: protocol/cipher/cert info
     try:
-        protocol_support, cipher_strength = detect_protocols_and_ciphers(host, port)
+        protocol_support, cipher_strength, protocol_detection_status = detect_protocols_and_ciphers(host, port)
+        if protocol_detection_status and protocol_detection_status.get("status") == "not_applicable":
+            results["protocol_detection_status"] = protocol_detection_status
     except Exception as e:
         protocol_support = []
         cipher_strength = 0
@@ -446,6 +471,8 @@ def main():
 
     try:
         cert_info = get_cert_info(host, port)
+        if cert_info and cert_info.get("status") == "not_applicable":
+            results["cert_info_status"] = cert_info
     except Exception as e:
         cert_info = {"error": str(e), "valid": False}
         results["cert_info_error"] = {"status": "error", "info": f"Certificate information retrieval failed: {e}"}
