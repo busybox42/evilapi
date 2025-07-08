@@ -21,8 +21,7 @@ def check_http_redirect_to_https(host, port):
         import requests
         # Allow redirects, but set a short timeout
         response = requests.get(f"http://{host}:{port}", timeout=5, allow_redirects=True)
-        print(f"DEBUG: HTTP redirect check - Final URL: {response.url}")
-        print(f"DEBUG: HTTP redirect check - History: {response.history}")
+        
         
         # Check if it redirected to HTTPS
         if response.url.startswith("https://"):
@@ -87,8 +86,7 @@ def try_starttls_connect(host, port, protocol):
         ssock = context.wrap_socket(sock, server_hostname=host)
         return ssock
     except Exception as e:
-        print(f"DEBUG: try_starttls_connect failed for protocol {protocol}: {e}")
-        print(f"DEBUG: Traceback: {traceback.format_exc()}")
+        
         raise
 
 def check_heartbleed(host, port):
@@ -382,8 +380,7 @@ def get_cert_info(host, port):
             try:
                 ssock = try_starttls_connect(host, port, starttls_ports[port])
             except Exception as e:
-                print(f"DEBUG: get_cert_info STARTTLS failed: {e}")
-                print(f"DEBUG: Traceback: {traceback.format_exc()}")
+                
                 return {"error": f"STARTTLS connection failed: {e}", "valid": False}
         else:
             # Direct SSL/TLS connection
@@ -394,8 +391,7 @@ def get_cert_info(host, port):
                 context.verify_mode = ssl.CERT_NONE
                 ssock = context.wrap_socket(sock, server_hostname=host)
             except Exception as e:
-                print(f"DEBUG: get_cert_info direct SSL failed: {e}")
-                print(f"DEBUG: Traceback: {traceback.format_exc()}")
+                
                 return {"error": f"Could not establish SSL/TLS connection: {e}", "valid": False}
 
         if ssock:
@@ -425,8 +421,7 @@ def get_cert_info(host, port):
         else:
             return {"error": "Could not establish SSL/TLS connection", "valid": False}
     except Exception as e:
-        print(f"DEBUG: get_cert_info general error: {e}")
-        print(f"DEBUG: Traceback: {traceback.format_exc()}")
+        
         return {"error": str(e), "valid": False}
 
 def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port):
