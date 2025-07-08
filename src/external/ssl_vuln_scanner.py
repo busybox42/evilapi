@@ -6,6 +6,7 @@ import ssl
 import datetime
 import re
 import traceback
+from urllib.parse import urlparse
 
 def is_ssl_or_starttls_port(port):
     ssl_ports = [443, 993, 995, 465]
@@ -424,7 +425,7 @@ def get_cert_info(host, port):
         
         return {"error": str(e), "valid": False}
 
-def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port):
+def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port, http_redirect_status=None, https_redirect_results=None):
     grade = "A"
     reasons = []
 
@@ -449,9 +450,18 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
 
     # Handle HTTP redirect status for port 80
     if port == 80:
-        http_redirect_status = results.get("http_redirect_status")
         if http_redirect_status:
-            if http_redirect_status.get("status") == "no_https_redirect":
+            if http_redirect_status.get("status") == "redirects_to_https":
+                # If it redirects to HTTPS, grade based on the HTTPS scan results
+                if https_redirect_results:
+                    https_grade_info = compute_ssl_grade(https_redirect_results, https_redirect_results.get("cert_info"), https_redirect_results.get("protocol_support", []), https_redirect_results.get("cipher_strength", 0), 443) # Pass 443 as port for recursive call
+                    grade = https_grade_info["grade"]
+                    reasons.extend(https_grade_info["reasons"])
+                    reasons.append(f"HTTP redirects to HTTPS. Grade based on {http_redirect_status.get("info")}")
+                else:
+                    grade = "F"
+                    reasons.append("HTTP redirects to HTTPS, but secondary HTTPS scan failed.")
+            elif http_redirect_status.get("status") == "no_https_redirect":
                 grade = "F"
                 reasons.append("HTTP does not redirect to HTTPS.")
             elif http_redirect_status.get("status") == "error":
@@ -514,10 +524,45 @@ def main():
     results["SWEET32"] = check_sweet32(host, port)
     results["Ticketbleed"] = check_ticketbleed(host, port)
 
+    http_redirect_status = None
+    https_redirect_results = {}
+
     # New: HTTP redirect check for port 80
     if port == 80:
         http_redirect_status = check_http_redirect_to_https(host, port)
         results["http_redirect_status"] = http_redirect_status
+        if http_redirect_status.get("status") == "redirects_to_https":
+            redirect_url = http_redirect_status.get("info").split("Redirects to ")[1]
+            parsed_url = urlparse(redirect_url)
+            redirect_host = parsed_url.hostname
+            redirect_port = parsed_url.port if parsed_url.port else 443 # Default to 443 for HTTPS
+
+            # Perform a full SSL scan on the redirected HTTPS endpoint
+            https_redirect_results["Heartbleed"] = check_heartbleed(redirect_host, redirect_port)
+            https_redirect_results["POODLE"] = check_poodle(redirect_host, redirect_port)
+            https_redirect_results["BEAST"] = check_beast(redirect_host, redirect_port)
+            https_redirect_results["CRIME"] = check_crime(redirect_host, redirect_port)
+            https_redirect_results["BREACH"] = check_breach(redirect_host, redirect_port)
+            https_redirect_results["FREAK"] = check_freak(redirect_host, redirect_port)
+            https_redirect_results["LOGJAM"] = check_logjam(redirect_host, redirect_port)
+            https_redirect_results["DROWN"] = check_drown(redirect_host, redirect_port)
+            https_redirect_results["ROBOT"] = check_robot(redirect_host, redirect_port)
+            https_redirect_results["SWEET32"] = check_sweet32(redirect_host, redirect_port)
+            https_redirect_results["Ticketbleed"] = check_ticketbleed(redirect_host, redirect_port)
+
+            try:
+                https_protocol_support, https_cipher_strength, https_protocol_detection_status = detect_protocols_and_ciphers(redirect_host, redirect_port)
+                https_redirect_results["protocol_support"] = https_protocol_support
+                https_redirect_results["cipher_strength"] = https_cipher_strength
+                https_redirect_results["protocol_detection_status"] = https_protocol_detection_status
+            except Exception as e:
+                https_redirect_results["protocol_detection_error"] = {"status": "error", "info": f"Protocol detection failed for redirected HTTPS: {e}"}
+
+            try:
+                https_cert_info = get_cert_info(redirect_host, redirect_port)
+                https_redirect_results["cert_info"] = https_cert_info
+            except Exception as e:
+                https_redirect_results["cert_info_error"] = {"error": str(e), "valid": False}
 
     # New: protocol/cipher/cert info
     try:
@@ -536,7 +581,7 @@ def main():
     except Exception as e:
         cert_info = {"error": str(e), "valid": False}
         results["cert_info_error"] = {"status": "error", "info": f"Certificate information retrieval failed: {e}"}
-    grade_info = compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port)
+    grade_info = compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port, http_redirect_status, https_redirect_results)
     output = {
         "results": results,
         "protocol_support": protocol_support,
