@@ -53,6 +53,8 @@ function renderSslScanResult(data) {
           reasonStyle = 'color: #DAA520;'; // Darker yellow
         } else if (reason.includes('HTTP redirects to HTTPS')) {
           reasonStyle = 'color: #DAA520;'; // Darker yellow
+        } else if (reason.includes('Weak: BREACH')) {
+          reasonStyle = 'color: orange;'; // Orange for weak vulnerabilities
         }
         html += `<li style="${reasonStyle}">${reason}</li>`;
       }
