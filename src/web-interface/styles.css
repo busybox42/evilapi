@@ -269,7 +269,8 @@ input[type="file"] {
 
 .config-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   margin-bottom: 10px;
   gap: 10px;
 }
@@ -544,7 +545,6 @@ input[type="file"] {
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9em;
   transition: background-color 0.3s;
 }
 
@@ -1728,10 +1728,14 @@ input[type="file"] {
 
 .ssl-scan-input-group input {
   width: 200px; /* Fixed width for hostname/IP input */
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .ssl-scan-input-group input[type="text"][placeholder="443"] {
   width: 75px; /* Fixed width for port input */
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 
 .ssl-scan-input-group button {

@@ -4,8 +4,64 @@ import json
 import socket
 import ssl
 import datetime
+import re
+import traceback
+
+def try_starttls_connect(host, port, protocol):
+    try:
+        sock = socket.create_connection((host, port), timeout=5)
+        if protocol == "smtp":
+            # Read banner
+            banner = sock.recv(4096).decode()
+            if not banner.startswith("220"):
+                raise Exception(f"SMTP banner not received: {banner.strip()}")
+            sock.sendall(b"EHLO example.com\r\n")
+            ehlo_response = sock.recv(4096).decode()
+            if "STARTTLS" not in ehlo_response:
+                raise Exception("STARTTLS not supported by SMTP server")
+            sock.sendall(b"STARTTLS\r\n")
+            starttls_response = sock.recv(4096).decode()
+            if not starttls_response.startswith("220"):
+                raise Exception(f"STARTTLS command failed: {starttls_response.strip()}")
+        elif protocol == "imap":
+            banner = sock.recv(4096).decode()
+            if not banner.startswith("* OK"):
+                raise Exception(f"IMAP banner not received: {banner.strip()}")
+            sock.sendall(b"A1 CAPABILITY\r\n")
+            cap_response = sock.recv(4096).decode()
+            if "STARTTLS" not in cap_response:
+                raise Exception("STARTTLS not supported by IMAP server")
+            sock.sendall(b"A2 STARTTLS\r\n")
+            starttls_response = sock.recv(4096).decode()
+            if not starttls_response.startswith("A2 OK"):
+                raise Exception(f"STARTTLS command failed: {starttls_response.strip()}")
+        elif protocol == "pop3":
+            banner = sock.recv(4096).decode()
+            if not banner.startswith("+OK"):
+                raise Exception(f"POP3 banner not received: {banner.strip()}")
+            sock.sendall(b"CAPA\r\n")
+            cap_response = sock.recv(4096).decode()
+            if "STLS" not in cap_response:
+                raise Exception("STLS not supported by POP3 server")
+            sock.sendall(b"STLS\r\n")
+            starttls_response = sock.recv(4096).decode()
+            if not starttls_response.startswith("+OK"):
+                raise Exception(f"STLS command failed: {starttls_response.strip()}")
+        else:
+            raise Exception(f"Unsupported STARTTLS protocol: {protocol}")
+
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        ssock = context.wrap_socket(sock, server_hostname=host)
+        return ssock
+    except Exception as e:
+        print(f"DEBUG: try_starttls_connect failed for protocol {protocol}: {e}")
+        print(f"DEBUG: Traceback: {traceback.format_exc()}")
+        raise
 
 def check_heartbleed(host, port):
+
     # Real Heartbleed test (sends malicious heartbeat and checks for extra data)
     # No OpenSSL dependency
     hello = bytes.fromhex(
@@ -240,7 +296,11 @@ def detect_protocols_and_ciphers(host, port):
             context = ssl.SSLContext(proto)
             if port in starttls_ports:
                 # Attempt STARTTLS
-                ssock = try_starttls_connect(host, port, starttls_ports[port])
+                try:
+                    ssock = try_starttls_connect(host, port, starttls_ports[port])
+                except Exception:
+                    # If STARTTLS fails, do not fall back to direct SSL for known STARTTLS ports
+                    continue
             else:
                 # Direct SSL/TLS connection
                 sock = socket.create_connection((host, port), timeout=5)
@@ -260,7 +320,9 @@ def detect_protocols_and_ciphers(host, port):
 
 def get_cert_info(host, port):
     try:
-        context = ssl.create_default_context()
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
         ssock = None
         
         # Common STARTTLS ports
@@ -274,12 +336,22 @@ def get_cert_info(host, port):
         if port in starttls_ports:
             try:
                 ssock = try_starttls_connect(host, port, starttls_ports[port])
-            except Exception:
-                pass # Fall through to direct SSL if STARTTLS fails
-
-        if not ssock: # If not connected via STARTTLS, try direct SSL
-            sock = socket.create_connection((host, port), timeout=5)
-            ssock = context.wrap_socket(sock, server_hostname=host)
+            except Exception as e:
+                print(f"DEBUG: get_cert_info STARTTLS failed: {e}")
+                print(f"DEBUG: Traceback: {traceback.format_exc()}")
+                return {"error": f"STARTTLS connection failed: {e}", "valid": False}
+        else:
+            # Direct SSL/TLS connection
+            try:
+                sock = socket.create_connection((host, port), timeout=5)
+                context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                context.check_hostname = False
+                context.verify_mode = ssl.CERT_NONE
+                ssock = context.wrap_socket(sock, server_hostname=host)
+            except Exception as e:
+                print(f"DEBUG: get_cert_info direct SSL failed: {e}")
+                print(f"DEBUG: Traceback: {traceback.format_exc()}")
+                return {"error": f"Could not establish SSL/TLS connection: {e}", "valid": False}
 
         if ssock:
             cert = ssock.getpeercert()
@@ -308,6 +380,8 @@ def get_cert_info(host, port):
         else:
             return {"error": "Could not establish SSL/TLS connection", "valid": False}
     except Exception as e:
+        print(f"DEBUG: get_cert_info general error: {e}")
+        print(f"DEBUG: Traceback: {traceback.format_exc()}")
         return {"error": str(e), "valid": False}
 
 def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
@@ -363,8 +437,18 @@ def main():
     results["SWEET32"] = check_sweet32(host, port)
     results["Ticketbleed"] = check_ticketbleed(host, port)
     # New: protocol/cipher/cert info
-    protocol_support, cipher_strength = detect_protocols_and_ciphers(host, port)
-    cert_info = get_cert_info(host, port)
+    try:
+        protocol_support, cipher_strength = detect_protocols_and_ciphers(host, port)
+    except Exception as e:
+        protocol_support = []
+        cipher_strength = 0
+        results["protocol_detection_error"] = {"status": "error", "info": f"Protocol detection failed: {e}"}
+
+    try:
+        cert_info = get_cert_info(host, port)
+    except Exception as e:
+        cert_info = {"error": str(e), "valid": False}
+        results["cert_info_error"] = {"status": "error", "info": f"Certificate information retrieval failed: {e}"}
     grade_info = compute_ssl_grade(results, cert_info, protocol_support, cipher_strength)
     output = {
         "results": results,

@@ -100,7 +100,13 @@ function renderSslScanResult(data) {
     if (ci.issuer) html += `<div><b>Issuer:</b> <span style="color:#333;">${JSON.stringify(ci.issuer)}</span></div>`;
     if (ci.not_before) html += `<div><b>Valid From:</b> <span style="color:#333;">${ci.not_before}</span></div>`;
     if (ci.not_after) html += `<div><b>Valid Until:</b> <span style="color:#333;">${ci.not_after}</span></div>`;
-    if (ci.error) html += `<div style="color:red;"><b>Cert Error:</b> ${ci.error}</div>`;
+    if (ci.error) {
+      if (ci.error.includes("STARTTLS connection failed")) {
+        html += `<div style="color:red;"><b>Connection Error:</b> ${ci.error}</div>`;
+      } else {
+        html += `<div style="color:red;"><b>Cert Error:</b> ${ci.error}</div>`;
+      }
+    }
   }
   html += `<div><small>Scanned at: ${data.timestamp}</small></div>`;
   return html;
