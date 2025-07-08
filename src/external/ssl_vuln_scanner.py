@@ -411,17 +411,20 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength):
     grade = "A"
     reasons = []
 
-    # If cert_info is not applicable, don't penalize the grade
+    is_ssl_relevant = True
+
+    # If cert_info is not applicable, don't penalize the grade and mark as not SSL relevant
     if cert_info and cert_info.get("status") == "not_applicable":
-        pass
+        is_ssl_relevant = False
     elif cert_info and not cert_info.get("valid", True):
         grade = "F"
         reasons.append("Certificate invalid/expired")
 
-    # If protocol_detection is not applicable, don't penalize the grade
+    # If protocol_detection is not applicable, don't penalize the grade and mark as not SSL relevant
     if results.get("protocol_detection_status", {}).get("status") == "not_applicable":
-        pass
-    else:
+        is_ssl_relevant = False
+
+    if is_ssl_relevant:
         # Protocol support
         if protocol_support:
             if "SSLv3" in protocol_support or "SSLv2" in protocol_support:
