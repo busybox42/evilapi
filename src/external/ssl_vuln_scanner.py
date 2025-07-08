@@ -324,7 +324,7 @@ def detect_protocols_and_ciphers(host, port):
             if ssock:
                 ssock.close()
             continue
-    return protocols, max(cipher_strengths) if cipher_strengths else 0
+    return protocols, max(cipher_strengths) if cipher_strengths else 0, {"status": "success", "info": "Protocol detection completed."}
 
 def get_cert_info(host, port):
     try:
