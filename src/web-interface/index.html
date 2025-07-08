@@ -41,30 +41,51 @@
       </div>
     </a>    
     <nav class="nav">
-      <button id="emailInfoBtn" class="nav-btn">Email Info</button>
-      <button id="smtpTestBtn" class="nav-btn">SMTP Test</button>
-      <button id="blacklistCheckBtn" class="nav-btn">Email Blacklist Check</button>
-      <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
-      <button id="spamScanBtn" class="nav-btn">Spam Scan</button>
-      <button id="validateDmarcBtn" class="nav-btn">Validate DMARC</button>
-      <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>
-      <button id="testEmailDeliveryBtn" class="nav-btn">Test Email Delivery</button>
-      <button id="authValidatorBtn" class="nav-btn">Auth Validator</button>
-      <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
-      <button id="dnsLookupBtn" class="nav-btn">DNS Lookup</button>
-      <button id="dnsPropagationBtn" class="nav-btn">DNS Propagation</button>
-      <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
-      <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
-      <button id="passwordHashBtn" class="nav-btn">Password Hashing</button>
-      <button id="portScanBtn" class="nav-btn">Port Scanner</button>
-      <button id="networkTestBtn" class="nav-btn">Network Tests</button>
-      <button id="removeWhitespaceBtn" class="nav-btn">Whitespace Remover</button>
-      <button id="base64DecoderBtn" class="nav-btn">Base64 Decoder</button>
-      <button id="urlEncoderBtn" class="nav-btn">URL Encoder</button>
-      <button id="timeToolsBtn" class="nav-btn">Epoch Converter</button>
-      <button id="sslTlsScannerBtn" class="nav-btn">SSL/TLS Scanner</button>
-      <button id="secretPushBtn" class="nav-btn">Secret Push</button>
-      <button id="apiDocsBtn" class="nav-btn">API Docs</button>
+      <div class="dropdown">
+        <button class="nav-btn dropdown-toggle">Email Tools</button>
+        <div class="dropdown-content">
+          <button id="emailInfoBtn" class="nav-btn">Email Info</button>
+          <button id="smtpTestBtn" class="nav-btn">SMTP Test</button>
+          <button id="blacklistCheckBtn" class="nav-btn">Email Blacklist Check</button>
+          <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
+          <button id="spamScanBtn" class="nav-btn">Spam Scan</button>
+          <button id="validateDmarcBtn" class="nav-btn">Validate DMARC</button>
+          <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>
+          <button id="testEmailDeliveryBtn" class="nav-btn">Test Email Delivery</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="nav-btn dropdown-toggle">DNS & Network</button>
+        <div class="dropdown-content">
+          <button id="dnsLookupBtn" class="nav-btn">DNS Lookup</button>
+          <button id="dnsPropagationBtn" class="nav-btn">DNS Propagation</button>
+          <button id="whoAmIBtn" class="nav-btn">Who Am I</button>
+          <button id="portScanBtn" class="nav-btn">Port Scanner</button>
+          <button id="networkTestBtn" class="nav-btn">Network Tests</button>
+          <button id="speedTestBtn" class="nav-btn">Speed Test</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="nav-btn dropdown-toggle">Security & Encryption</button>
+        <div class="dropdown-content">
+          <button id="sslValidationBtn" class="nav-btn">SSL Validation</button>
+          <button id="sslTlsScannerBtn" class="nav-btn">SSL/TLS Scanner</button>
+          <button id="pgpEncryptionBtn" class="nav-btn">PGP Encryption</button>
+          <button id="passwordHashBtn" class="nav-btn">Password Hashing</button>
+          <button id="secretPushBtn" class="nav-btn">Secret Push</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="nav-btn dropdown-toggle">Utilities</button>
+        <div class="dropdown-content">
+          <button id="removeWhitespaceBtn" class="nav-btn">Whitespace Remover</button>
+          <button id="base64DecoderBtn" class="nav-btn">Base64 Decoder</button>
+          <button id="urlEncoderBtn" class="nav-btn">URL Encoder</button>
+          <button id="timeToolsBtn" class="nav-btn">Epoch Converter</button>
+          <button id="authValidatorBtn" class="nav-btn">Auth Validator</button>
+          <button id="apiDocsBtn" class="nav-btn">API Docs</button>
+        </div>
+      </div>
     </nav>
   </header>
   <main id="mainContent" class="main">
@@ -1190,31 +1211,38 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       <div id="upload-speed"></div>
     </div>
     <div id="secretPushView" class="content-view hidden">
-      <h2>Push a Secret</h2>
-      <textarea id="secretTextInput" placeholder="Enter your secret here..." rows="6"></textarea>
-      <div class="config-container">
-        <div class="config-column">
-          <label for="secretExpiresIn">Expires in (seconds):</label>
-          <input type="number" id="secretExpiresIn" value="86400" min="1" max="2592000" />
+        <h2>Push a Secret</h2>
+        <textarea id="secretTextInput" placeholder="Enter your secret here..." rows="6"></textarea>
+        
+        <div class="config-container">
+          <div class="config-column">
+            <label for="secretExpiresIn">Expires in: <span id="expiresInValue">1 day</span></label>
+            <input type="range" id="secretExpiresIn" min="900" max="604800" value="86400" step="3600">
+          </div>
+          <div class="config-column">
+            <label for="secretMaxViews">Max views: <span id="maxViewsValue">5</span></label>
+            <input type="range" id="secretMaxViews" min="1" max="20" value="5">
+          </div>
         </div>
-        <div class="config-column">
-          <label for="secretMaxViews">Max views:</label>
-          <input type="number" id="secretMaxViews" value="5" min="1" max="100" />
+        
+        <button id="pushSecretBtn" class="nav-btn">Push Secret</button>
+        <button id="resetSecretBtn" class="nav-btn">Reset</button>
+
+        <div id="secretResult" style="margin-top:20px;">
+            <div id="errorContent"></div>
+            <div id="successContent" class="hidden success-content-flex">
+                <div style="flex:1 1 auto; min-width:250px; order:1;">
+                    <div id="secretSuccessMessage" class="success-message"></div>
+                    <strong style="color:#fff;">Share this link:</strong><br>
+                    <div id="secretLink" style="word-break: break-all; background:#ffffff; color:#000; padding:8px; border-radius:4px; margin:4px 0;"></div>
+                    <button id="copyLinkBtn" class="nav-btn" style="margin-top:6px;">Copy Link</button>
+                </div>
+                <div id="qrcodeWrapper" style="flex:none; order:2;">
+                    <div id="qrcode"></div>
+                </div>
+            </div>
         </div>
       </div>
-      <button id="pushSecretBtn" class="nav-btn">Push Secret</button>
-      <div id="secretResult" style="display:none; margin-top:20px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:nowrap;">
-        <div style="flex:1 1 auto; min-width:250px; order:1;">
-          <div id="secretSuccessMessage" class="success-message" style="color:#28a745; margin-bottom:8px;"></div>
-          <strong style="color:#fff;">Share this link:</strong><br>
-          <div id="secretLink" style="word-break: break-all; background:#ffffff; color:#000; padding:8px; border-radius:4px; margin:4px 0;"></div>
-          <button id="copyLinkBtn" class="nav-btn" style="margin-top:6px;">Copy Link</button>
-        </div>
-        <div id="qrcodeWrapper" style="flex:none; order:2;">
-          <div id="qrcode"></div>
-        </div>
-      </div>
-    </div>
     <div id="secretDisplayView" class="content-view hidden">
       <h2>Secret</h2>
       <div id="secretDisplayResult"></div>

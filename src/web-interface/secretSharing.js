@@ -5,14 +5,19 @@ async function pushSecret() {
   const textInput = document.getElementById('secretTextInput');
   const expiresInInput = document.getElementById('secretExpiresIn');
   const maxViewsInput = document.getElementById('secretMaxViews');
-  const resultContainer = document.getElementById('secretResult');
+  const errorContent = document.getElementById('errorContent');
+  const successContent = document.getElementById('successContent');
+
+  // Clear previous messages
+  errorContent.innerHTML = '';
+  successContent.classList.add('hidden');
 
   const text = textInput.value.trim();
   const expiresIn = parseInt(expiresInInput.value, 10);
   const maxViews = parseInt(maxViewsInput.value, 10);
 
   if (!text) {
-    resultContainer.innerHTML = '<div class="error-message">Please enter a secret to push.</div>';
+    errorContent.innerHTML = '<div class="error-message">Please enter a secret to push.</div>';
     return;
   }
 
@@ -32,7 +37,6 @@ async function pushSecret() {
     const resultData = await response.json();
     const secretUrl = `${window.location.origin}/#secret/${resultData.id}`;
     
-    document.getElementById('secretResult').style.display = 'block';
     document.getElementById('secretSuccessMessage').textContent = 'Secret pushed successfully!';
     document.getElementById('secretLink').textContent = secretUrl;
 
@@ -53,9 +57,11 @@ async function pushSecret() {
       });
     });
 
+    successContent.classList.remove('hidden');
+
   } catch (error) {
     console.error('Push secret error:', error);
-    resultContainer.innerHTML = `<div class="error-message">Failed to push secret: ${error.message}</div>`;
+    errorContent.innerHTML = `<div class="error-message">Failed to push secret: ${error.message}</div>`;
   }
 }
 
@@ -106,7 +112,52 @@ export async function retrieveAndShowSecret(id) {
   }
 }
 
+function formatTime(seconds) {
+    if (seconds < 3600) {
+        const minutes = Math.round(seconds / 60);
+        return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    } else if (seconds < 86400) {
+        const hours = Math.round(seconds / 3600);
+        return `${hours} hour${hours !== 1 ? 's' : ''}`;
+    } else {
+        const days = Math.round(seconds / 86400);
+        return `${days} day${days !== 1 ? 's' : ''}`;
+    }
+}
+
 // Initialize secret sharing functionality
 export function initSecretSharing() {
   document.getElementById('pushSecretBtn').addEventListener('click', pushSecret);
+  
+  const expiresInSlider = document.getElementById('secretExpiresIn');
+  const expiresInValue = document.getElementById('expiresInValue');
+
+  // Set initial value and text
+  expiresInSlider.value = 86400; // Default to 1 day
+  expiresInValue.textContent = formatTime(expiresInSlider.value);
+
+  expiresInSlider.addEventListener('input', () => {
+      if (expiresInSlider.value < 3600) {
+        expiresInSlider.step = 300; // 5 minute intervals
+      } else {
+        expiresInSlider.step = 3600; // 1 hour intervals
+      }
+      expiresInValue.textContent = formatTime(expiresInSlider.value);
+  });
+
+  const maxViewsSlider = document.getElementById('secretMaxViews');
+  const maxViewsValue = document.getElementById('maxViewsValue');
+  maxViewsSlider.addEventListener('input', () => {
+      maxViewsValue.textContent = maxViewsSlider.value;
+  });
+
+  document.getElementById('resetSecretBtn').addEventListener('click', () => {
+    document.getElementById('secretTextInput').value = '';
+    expiresInSlider.value = 86400;
+    expiresInValue.textContent = '1 day';
+    maxViewsSlider.value = 5;
+    maxViewsValue.textContent = '5';
+    document.getElementById('errorContent').innerHTML = '';
+    document.getElementById('successContent').classList.add('hidden');
+  });
 } 

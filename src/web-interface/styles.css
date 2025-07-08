@@ -67,6 +67,71 @@ html {
   min-width: 100px;
 }
 
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown button */
+.dropdown-toggle {
+  background-color: #0c425e;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 120px;
+  max-width: 180px;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #1A1A1A;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 4px;
+}
+
+/* Links inside the dropdown */
+.dropdown-content button {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content button:hover {background-color: #2ea4c0;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropdown-toggle {
+  background-color: #2ea4c0;
+}
+
+/* Styles for the success content when it's visible */
+.success-content-flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
 /* Main content styles */
 .main {
   width: 100%;
