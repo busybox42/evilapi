@@ -15,6 +15,9 @@ const { globalErrorHandler } = require("./middleware/errorHandler");
 const app = express();
 const webApp = express();
 
+// Trust nginx proxy
+app.set('trust proxy', true);
+
 // IP access control for logging blacklisted IPs
 app.use((req, res, next) => {
   // Normalize the IP address format for comparison
