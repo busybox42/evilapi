@@ -167,7 +167,11 @@ function displaySMTPTestResults(data, serverAddress, port) {
   const resultsDiv = document.getElementById("smtpTestResults");
   
   if (data.error) {
-    resultsDiv.innerHTML = `<div class="error-message">SMTP Test Failed: ${data.error}</div>`;
+    resultsDiv.innerHTML = `
+      <div class="error-message">
+        SMTP Test Failed: ${data.error}
+        ${data.errorDetails ? `<br><small>${data.errorDetails}</small>` : ''}
+      </div>`;
     return;
   }
 
@@ -185,6 +189,35 @@ function displaySMTPTestResults(data, serverAddress, port) {
     ? data.authMethods.map(method => `<span class="auth-method">${method}</span>`).join('')
     : '<span class="auth-method none">No auth methods detected</span>';
 
+  // Add port-specific information display
+  const portSpecificInfo = data.portSpecificInfo || {};
+  const tlsStatusDisplay = `
+    <div class="smtp-value-section">
+      <label class="smtp-label">🔒 TLS Status:</label>
+      <div class="smtp-value-container">
+        <span class="smtp-value">${portSpecificInfo.tlsMode === 'implicit' ? 'Implicit SSL/TLS' : 
+          portSpecificInfo.tlsMode === 'STARTTLS' ? 'STARTTLS Available and Working' : 
+          'No Encryption'}</span>
+        ${portSpecificInfo.tlsMode === 'STARTTLS' ? 
+          `<br><small>✅ Connection upgraded to TLS</small>` : 
+          portSpecificInfo.tlsMode === 'implicit' ? 
+          `<br><small>✅ Secure connection established</small>` : 
+          `<br><small>⚠️ Unencrypted connection</small>`}
+      </div>
+    </div>
+  `;
+
+  const portSpecificDisplay = `
+    <div class="smtp-value-section">
+      <label class="smtp-label">🔍 Connection Type:</label>
+      <div class="smtp-value-container">
+        <span class="smtp-value">${portSpecificInfo.type}</span>
+        <br><small>${portSpecificInfo.description}</small>
+      </div>
+    </div>
+    ${tlsStatusDisplay}
+  `;
+
   resultsDiv.innerHTML = `
     <div class="smtp-result-container enhanced">
       <!-- Server Information -->
@@ -198,17 +231,12 @@ function displaySMTPTestResults(data, serverAddress, port) {
             </div>
           </div>
           <div class="smtp-value-section">
-            <label class="smtp-label">${portInfo.icon} Port & Protocol:</label>
+            <label class="smtp-label">${portInfo.icon} Port:</label>
             <div class="smtp-value-container">
-              <span class="smtp-value large">${port} - ${portInfo.name}</span>
+              <span class="smtp-value large">${port}</span>
             </div>
           </div>
-          <div class="smtp-value-section">
-            <label class="smtp-label">📋 Port Description:</label>
-            <div class="smtp-value-container">
-              <span class="smtp-value">${portInfo.description}</span>
-            </div>
-          </div>
+          ${portSpecificDisplay}
           ${data.greeting ? `
           <div class="smtp-value-section">
             <label class="smtp-label">👋 Server Greeting:</label>
@@ -246,12 +274,14 @@ function displaySMTPTestResults(data, serverAddress, port) {
       <!-- Server Capabilities -->
       ${data.capabilities && data.capabilities.length > 0 ? `
       <div class="smtp-section">
-        <h3 class="section-header">⚙️ Server Capabilities (EHLO)</h3>
+        <h3 class="section-header">⚙️ Server Capabilities</h3>
         <div class="capabilities-container">
           ${capabilitiesDisplay}
         </div>
         <div class="capabilities-note">
-          <em>These are the features advertised by the server after EHLO command</em>
+          <em>${portSpecificInfo.tlsMode === 'STARTTLS' ? 
+            'These are the capabilities after STARTTLS upgrade' : 
+            'These are the features advertised by the server'}</em>
         </div>
       </div>
       ` : ''}
@@ -278,15 +308,7 @@ function displaySMTPTestResults(data, serverAddress, port) {
             <label class="smtp-label">🛡️ Authentication:</label>
             <div class="smtp-value-container">
               <span class="status-badge ${data.smtpAuthSupport ? 'badge-success' : 'badge-warning'}">
-                ${data.smtpAuthSupport ? '✅' : '⚠️'} ${data.smtpAuthSupport ? 'Supported' : 'Not Available'}
-              </span>
-            </div>
-          </div>
-          <div class="smtp-value-section">
-            <label class="smtp-label">🚫 Open Relay:</label>
-            <div class="smtp-value-container">
-              <span class="status-badge badge-info">
-                ℹ️ Not Tested (Non-invasive mode)
+                ${data.smtpAuthSupport ? '✅ Supported' : '⚠️ Not Available'}
               </span>
             </div>
           </div>
@@ -309,13 +331,14 @@ function displaySMTPTestResults(data, serverAddress, port) {
           ${authMethodsDisplay}
         </div>
         <div class="auth-methods-note">
-          <em>Authentication methods supported by this server</em>
+          <em>${portSpecificInfo.tlsMode === 'STARTTLS' ? 
+            'Authentication methods available after STARTTLS' : 
+            'Authentication methods supported by this server'}</em>
         </div>
       </div>
       ` : ''}
 
       <!-- Recommendations -->
-      ${security.issues.length > 0 || security.recommendations.length > 0 ? `
       <div class="smtp-section">
         <h3 class="section-header">💡 Security Recommendations</h3>
         ${security.issues.length > 0 ? `
@@ -335,15 +358,11 @@ function displaySMTPTestResults(data, serverAddress, port) {
           </div>
         ` : ''}
         <div class="recommendation-group">
-          <h4 class="recommendation-title">📋 Port Recommendation:</h4>
-          <p class="port-recommendation">${portInfo.recommendation}</p>
-        </div>
-        <div class="recommendation-group">
-          <h4 class="recommendation-title">ℹ️ Testing Note:</h4>
-          <p class="port-recommendation">This test only checks server capabilities via EHLO command and does not attempt to send emails, making it safe and non-invasive.</p>
+          <h4 class="recommendation-title">📋 Port Information:</h4>
+          <p class="port-recommendation">${portInfo.description}</p>
+          ${portInfo.recommendation ? `<p class="port-recommendation">${portInfo.recommendation}</p>` : ''}
         </div>
       </div>
-      ` : ''}
 
       <!-- Technical Details -->
       <div class="smtp-section">
@@ -352,7 +371,10 @@ function displaySMTPTestResults(data, serverAddress, port) {
           <div class="smtp-value-section">
             <label class="smtp-label">Security Level:</label>
             <div class="smtp-value-container">
-              <span class="smtp-value">${portInfo.security}</span>
+              <span class="smtp-value">${portSpecificInfo.tlsMode === 'none' ? 'Low - No Encryption' :
+                portSpecificInfo.tlsMode === 'STARTTLS' ? 'High - STARTTLS Encryption' :
+                portSpecificInfo.tlsMode === 'implicit' ? 'High - Implicit SSL/TLS' :
+                'Unknown'}</span>
             </div>
           </div>
           <div class="smtp-value-section">
@@ -365,12 +387,6 @@ function displaySMTPTestResults(data, serverAddress, port) {
             <label class="smtp-label">Connection Time:</label>
             <div class="smtp-value-container">
               <span class="smtp-value monospace">${data.transactionTimeMs} ms</span>
-            </div>
-          </div>
-          <div class="smtp-value-section">
-            <label class="smtp-label">Test Method:</label>
-            <div class="smtp-value-container">
-              <span class="smtp-value">EHLO capability detection</span>
             </div>
           </div>
         </div>
