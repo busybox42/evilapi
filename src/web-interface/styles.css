@@ -1741,3 +1741,25 @@ input[type="file"] {
 .ssl-scan-input-group button {
   white-space: nowrap;
 }
+
+.secret-text {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+  font-family: monospace;
+  background-color: #2C2C2C;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 10px 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.secret-text.unblurred {
+  filter: none;
+}
+
+.secret-controls {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+}

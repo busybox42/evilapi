@@ -104,8 +104,36 @@ export async function retrieveAndShowSecret(id) {
 
     resultContainer.innerHTML = `
       ${message}
-      <textarea readonly rows="6">${resultData.text}</textarea>
+      <div class="secret-controls">
+        <button id="unblurBtn" class="nav-btn">Show Secret</button>
+        <button id="copySecretBtn" class="nav-btn">Copy to Clipboard</button>
+      </div>
+      <div id="secretText" class="secret-text">${resultData.text}</div>
     `;
+
+    // Add event listeners for the buttons
+    document.getElementById('unblurBtn').addEventListener('click', function() {
+      const secretText = document.getElementById('secretText');
+      const button = this;
+      if (secretText.classList.contains('unblurred')) {
+        secretText.classList.remove('unblurred');
+        button.textContent = 'Show Secret';
+      } else {
+        secretText.classList.add('unblurred');
+        button.textContent = 'Hide Secret';
+      }
+    });
+
+    document.getElementById('copySecretBtn').addEventListener('click', function() {
+      const secretText = resultData.text;
+      navigator.clipboard.writeText(secretText).then(() => {
+        this.textContent = 'Copied!';
+        setTimeout(() => {
+          this.textContent = 'Copy to Clipboard';
+        }, 2000);
+      });
+    });
+
   } catch (error) {
     console.error('Retrieve secret error:', error);
     resultContainer.innerHTML = `<div class="error-message">${error.message}</div>`;
