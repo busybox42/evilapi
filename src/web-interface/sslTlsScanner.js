@@ -94,11 +94,11 @@ function renderSslScanResult(data) {
   }
   // Protocol support
   if (vdata.protocol_support) {
-    html += `<div style="margin-top:1.2em;"><b>Protocol Support:</b> <span style="color:#2196f3; font-weight: bold;">${Array.isArray(vdata.protocol_support) ? vdata.protocol_support.join(', ') : vdata.protocol_support}</span></div>`;
+    html += `<div style="margin-top:1.2em;"><b>Protocol Support:</b> <span style="color:#2196f3;">${Array.isArray(vdata.protocol_support) ? vdata.protocol_support.join(', ') : vdata.protocol_support}</span></div>`;
   }
   // Cipher strength
   if (typeof vdata.cipher_strength === 'number') {
-    html += `<div><b>Max Cipher Strength:</b> <span style="color:#2196f3; font-weight: bold;">${vdata.cipher_strength} bits</span></div>`;
+    html += `<div><b>Max Cipher Strength:</b> <span style="color:#2196f3;">${vdata.cipher_strength} bits</span></div>`;
   }
   // Certificate info
   if (vdata.cert_info) {
