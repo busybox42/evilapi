@@ -84,29 +84,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Event listeners for navigation buttons to toggle views
 const buttonIds = [
+  // Email Tools
   "emailInfoBtn",
-  "smtpTestBtn",
   "blacklistCheckBtn",
   "headerAnalysisBtn",
-  "whoAmIBtn",
-  "sslValidationBtn",
-  "pgpEncryptionBtn",
-  "removeWhitespaceBtn",
-  "base64DecoderBtn",
-  "portScanBtn",
-  "validateDmarcBtn",
+  "spamScanBtn",
   "dkimToolsBtn",
+  "validateDmarcBtn",
+  "smtpTestBtn",
   "testEmailDeliveryBtn",
-  "networkTestBtn",
-  "authValidatorBtn",
+  
+  // DNS & Network
   "dnsLookupBtn",
   "dnsPropagationBtn",
-  "passwordHashBtn",
-  "timeToolsBtn",
-  "urlEncoderBtn",
-  "spamScanBtn",
+  "whoAmIBtn",
+  "portScanBtn",
+  "networkTestBtn",
+  
+  // Security & Encryption
+  "sslValidationBtn",
   "sslTlsScannerBtn",
   "secretPushBtn",
+  "pgpEncryptionBtn",
+  "passwordHashBtn",
+  
+  // Utilities
+  "timeToolsBtn",
+  "authValidatorBtn",
+  "base64DecoderBtn",
+  "urlEncoderBtn",
+  "removeWhitespaceBtn",
   "apiDocsBtn",
 ];
 
