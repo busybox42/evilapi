@@ -15,8 +15,8 @@ const { globalErrorHandler } = require("./middleware/errorHandler");
 const app = express();
 const webApp = express();
 
-// Trust nginx proxy
-app.set('trust proxy', true);
+// Trust only our nginx proxy
+app.set('trust proxy', '127.0.0.1');
 
 // IP access control for logging blacklisted IPs
 app.use((req, res, next) => {
@@ -56,6 +56,16 @@ const limiter = rateLimit({
   skip: (req) => {
     // Skip rate limiting for whitelisted IPs
     return !!req.isWhitelisted;
+  },
+  // Add standardHeaders to get rate limit info in response headers
+  standardHeaders: true,
+  // Disable legacy headers
+  legacyHeaders: false,
+  // Use a more secure key generator that includes forwarded IP
+  keyGenerator: (req) => {
+    const realIp = req.ip;
+    const userAgent = req.get('user-agent') || 'unknown';
+    return `${realIp}-${userAgent}`;
   },
 });
 
