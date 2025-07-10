@@ -125,14 +125,6 @@ export const formatEmailInfo = (data) => {
     sections.push(createSection('📋 DMARC Record (Email Authentication)', dmarcContent));
   }
 
-  // BIMI Record
-  if (data.bimiRecord && data.bimiRecord.length > 0) {
-    const bimiContent = data.bimiRecord.map(record => 
-      `<code class="dns-record">${record}</code>`
-    ).join('<br>');
-    sections.push(createSection('🖼️ BIMI Record (Brand Indicators)', bimiContent));
-  }
-
   // A Records (IP Addresses)
   if (data.aRecord && data.aRecord.length > 0) {
     const ipItems = data.aRecord.map(ip => `<code class="ip-address">${ip}</code>`);
@@ -141,9 +133,11 @@ export const formatEmailInfo = (data) => {
 
   // Client Settings
   if (data.clientSettings) {
-    const settingsContent = Object.entries(data.clientSettings)
-      .map(([key, value]) => createKeyValue(key, typeof value === 'object' ? JSON.stringify(value, null, 2) : value))
-      .join('');
+    const settingsContent = `<div class="client-settings">
+      ${Object.entries(data.clientSettings)
+        .map(([key, value]) => createKeyValue(key, value))
+        .join('')}
+    </div>`;
     sections.push(createSection('⚙️ Client Settings', settingsContent));
   }
 

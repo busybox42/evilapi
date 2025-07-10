@@ -1763,3 +1763,31 @@ input[type="file"] {
   gap: 10px;
   margin: 10px 0;
 }
+
+/* Client Settings specific styles */
+.client-settings {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.client-settings .key-value {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.client-settings .key {
+  font-weight: bold;
+  color: #2ea4c0;
+  min-width: 30px;
+  text-align: right;
+}
+
+.client-settings .value {
+  color: #ffffff;
+  font-family: monospace;
+}
