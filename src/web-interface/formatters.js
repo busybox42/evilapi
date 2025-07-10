@@ -103,9 +103,10 @@ export const formatEmailInfo = (data) => {
 
   // MX Records
   if (data.mxRecords && data.mxRecords.length > 0) {
-    const mxContent = data.mxRecords.map(mx => 
-      `<code class="dns-record">Priority ${mx.priority}: ${mx.exchange || 'No exchange specified'}</code>`
-    ).join('<br>');
+    const mxLines = data.mxRecords.map(mx => 
+      `Priority ${mx.priority}: ${mx.exchange || 'No exchange specified'}`
+    );
+    const mxContent = `<code class="dns-record">${mxLines.join('\n')}\n</code>`;
     sections.push(createSection('📧 MX Records (Mail Servers)', mxContent));
   }
 
