@@ -127,9 +127,7 @@ export const formatEmailInfo = (data) => {
 
   // Client Settings
   if (data.clientSettings && data.clientSettings.length > 0) {
-    const settingsContent = data.clientSettings.map(host => 
-      `<code class="dns-record">${host}</code>`
-    ).join('<br>');
+    const settingsContent = `<code class="dns-record">${data.clientSettings.join('\n')}</code>`;
     sections.push(createSection('⚙️ Client Settings', settingsContent));
   }
 
