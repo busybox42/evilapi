@@ -1774,6 +1774,20 @@ input[type="file"] {
   border-color: #bd2130;
 }
 
+.secret-display-flex {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+#secretQrcode {
+  background: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 /* Client Settings specific styles */
 .client-settings {
   display: grid;

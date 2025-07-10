@@ -102,15 +102,40 @@ export async function retrieveAndShowSecret(id) {
       message = `<div class="success-message">Secret retrieved successfully. ${resultData.viewsRemaining} views remaining.</div>`;
     }
 
+    const secretUrl = `${window.location.origin}/#secret/${id}`;
+
     resultContainer.innerHTML = `
       ${message}
-      <div class="secret-controls">
-        <button id="unblurBtn" class="nav-btn">Show Secret</button>
-        <button id="copySecretBtn" class="nav-btn">Copy to Clipboard</button>
-        ${!resultData.deleted ? `<button id="expireSecretBtn" class="nav-btn danger">Expire Secret</button>` : ''}
+      <div class="secret-display-flex">
+        <div style="flex:1 1 auto; min-width:250px; order:1;">
+          <div class="secret-controls">
+            <button id="unblurBtn" class="nav-btn">Show Secret</button>
+            <button id="copySecretBtn" class="nav-btn">Copy to Clipboard</button>
+            ${!resultData.deleted ? `<button id="expireSecretBtn" class="nav-btn danger">Expire Secret</button>` : ''}
+          </div>
+          <div id="secretText" class="secret-text">${resultData.text}</div>
+        </div>
+        ${!resultData.deleted ? `
+          <div style="flex:none; order:2;">
+            <div id="secretQrcode"></div>
+          </div>
+        ` : ''}
       </div>
-      <div id="secretText" class="secret-text">${resultData.text}</div>
     `;
+
+    // Generate QR code if secret is not deleted
+    if (!resultData.deleted) {
+      const qrcodeContainer = document.getElementById('secretQrcode');
+      qrcodeContainer.innerHTML = ''; // Clear previous QR code
+      
+      // Generate QR code using QRious library
+      const qr = new QRious({
+        element: document.createElement('canvas'),
+        value: secretUrl,
+        size: 128
+      });
+      qrcodeContainer.appendChild(qr.canvas);
+    }
 
     // Add event listeners for the buttons
     document.getElementById('unblurBtn').addEventListener('click', function() {
