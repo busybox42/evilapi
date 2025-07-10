@@ -225,7 +225,38 @@ This document provides detailed information about the API endpoints of EvilAPI. 
   - It's crucial to ensure the domain name is correctly specified to retrieve and validate the DMARC record accurately.
   - This API is beneficial for administrators and security teams to verify the DMARC policy's correctness and effectiveness in combating email spoofing and phishing attacks.
 
-### 14. API Documentation for Email Delivery Test
+### 14. API Documentation for SPF Validation
+
+#### Endpoint: `/api/validate-spf`
+
+- **Purpose**: Validates the Sender Policy Framework (SPF) record for a specified domain. The API retrieves the SPF record, handles split records and redirects, and provides a detailed validation report.
+- **Methods**: GET
+- **URL Parameters**:
+  - `domain`: The domain name for which the SPF record is being validated.
+- **Success Response**:
+  - **Code**: 200 OK
+  - **Content**:
+    - `domain`: The domain name the SPF record belongs to.
+    - `record`: The full SPF record string as found in the DNS.
+    - `isValid`: A boolean indicating whether the SPF record is valid.
+    - `mechanisms`: Array of parsed SPF mechanisms and their parameters.
+    - `redirectDomain`: If the record uses a redirect modifier, the target domain.
+    - `errors`: Array of any syntax or validation errors found.
+    - `warnings`: Array of potential issues or recommendations.
+- **Error Response**:
+  - **Code**: 404 Not Found
+  - **Content**:
+    - `error`: "SPF record not found for the specified domain."
+  - **Code**: 400 Bad Request
+  - **Content**:
+    - `error`: "Invalid domain name provided."
+- **Notes**:
+  - The API handles split TXT records that exceed 255 characters by automatically joining them.
+  - Supports SPF redirect mechanism by following the redirect chain.
+  - Detects and prevents redirect loops.
+  - Validates syntax according to RFC 7208.
+
+### 15. API Documentation for Email Delivery Test
 
 #### Endpoint: `/api/test-email-delivery`
 
@@ -259,7 +290,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
     - `success`: A boolean indicating the operation was unsuccessful (false).
     - `message`: A string message detailing the failure, such as "Email not received within the timeout period." or the error message.
 
-### 15. Ping Endpoint
+### 16. Ping Endpoint
 
 #### Endpoint: `/api/ping/{target}`
 
@@ -270,7 +301,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - A summary of the ping operation, including success status, and ping results.
 
-### 16. Traceroute Endpoint
+### 17. Traceroute Endpoint
 
 #### Endpoint: `/api/traceroute/{target}`
 
@@ -281,7 +312,7 @@ This document provides detailed information about the API endpoints of EvilAPI. 
 - **Response**:
   - A summary of the traceroute operation, including success status, and traceroute results.
 
-### 17. Authentication Endpoint
+### 18. Authentication Endpoint
 
 #### Endpoint: `POST /api/auth`
 
@@ -300,7 +331,7 @@ The request body must include the following fields:
 - **hostname** (string): The server's hostname where the authentication should occur.
 - **protocol** (string): The protocol to use for authentication. Supported protocols are `submission`, `pop3`, `pop3s`, `imap`, `imaps`, `smtp`, `smtps`, `ftp`, and `sftp`.
 
-### 18. DNS Lookup Endpoint
+### 19. DNS Lookup Endpoint
 
 #### Endpoint: `/api/lookup`
 
@@ -318,7 +349,7 @@ The request body must include the following fields:
   - On success, returns an object containing the lookup results.
   - On failure, returns an object with an `error` key and a message describing the failure.
 
-### 19. Hash Validation Endpoint
+### 20. Hash Validation Endpoint
 
 #### Endpoint: `/api/validate-hash`
 
@@ -334,7 +365,7 @@ The request body must include the following fields:
   - `hash`: The original hash provided in the request.
   - `generatedHash`: The hash generated from the provided password using the specified algorithm.
 
-### 20. DNS Propagation Endpoints
+### 21. DNS Propagation Endpoints
 
 #### Endpoint: `/api/dns/servers`
 
@@ -399,7 +430,7 @@ The request body must include the following fields:
   - `results`: Array of detailed results for each hostname.
   - `timestamp`: Timestamp of the response.
 
-### 21. SSL/TLS Scanner Endpoint
+### 22. SSL/TLS Scanner Endpoint
 
 #### Endpoint: `/api/ssl-scan`
 
@@ -414,7 +445,7 @@ The request body must include the following fields:
   - `vulnerabilities`: Object containing scan results and identified vulnerabilities.
   - `timestamp`: Timestamp of the scan.
 
-### 22. Speed Test Endpoints
+### 23. Speed Test Endpoints
 
 #### Endpoint: `/api/speedtest/download`
 

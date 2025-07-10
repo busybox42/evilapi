@@ -895,7 +895,40 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>14. Email Delivery Test</h3>
+        <h3>14. SPF Validation</h3>
+        <h4>Endpoint: <code>/api/validate-spf</code></h4>
+        <ul>
+          <li><strong>Purpose</strong>: Validates the Sender Policy Framework (SPF) record for a specified domain. The API retrieves the SPF record, handles split records and redirects, and provides a detailed validation report.</li>
+          <li><strong>Method</strong>: GET</li>
+          <li><strong>URL Parameters</strong>:
+            <ul>
+              <li><code>domain</code>: The domain name for which the SPF record is being validated.</li>
+            </ul>
+          </li>
+          <li><strong>Response</strong>:
+            <ul>
+              <li><code>domain</code>: The domain name the SPF record belongs to.</li>
+              <li><code>record</code>: The full SPF record string as found in the DNS.</li>
+              <li><code>isValid</code>: A boolean indicating whether the SPF record is valid.</li>
+              <li><code>mechanisms</code>: Array of parsed SPF mechanisms and their parameters.</li>
+              <li><code>redirectDomain</code>: If the record uses a redirect modifier, the target domain.</li>
+              <li><code>errors</code>: Array of any syntax or validation errors found.</li>
+              <li><code>warnings</code>: Array of potential issues or recommendations.</li>
+            </ul>
+          </li>
+          <li><strong>Notes</strong>:
+            <ul>
+              <li>The API handles split TXT records that exceed 255 characters by automatically joining them.</li>
+              <li>Supports SPF redirect mechanism by following the redirect chain.</li>
+              <li>Detects and prevents redirect loops.</li>
+              <li>Validates syntax according to RFC 7208.</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div class="api-endpoint">
+        <h3>15. Email Delivery Test</h3>
         <h4>Endpoint: <code>/api/test-email-delivery</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Tests email delivery by sending an email to the specified recipient using SMTP and then verifying its arrival through IMAP.</li>
@@ -952,7 +985,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>15. Ping Endpoint</h3>
+        <h3>16. Ping Endpoint</h3>
         <h4>Endpoint: <code>/api/ping/{target}</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Performs a ping operation to the specified IP address or hostname.</li>
@@ -971,7 +1004,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>16. Traceroute Endpoint</h3>
+        <h3>17. Traceroute Endpoint</h3>
         <h4>Endpoint: <code>/api/traceroute/{target}</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Executes a traceroute to the specified IP address or hostname.</li>
@@ -990,7 +1023,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>17. Authentication Endpoint</h3>
+        <h3>18. Authentication Endpoint</h3>
         <h4>Endpoint: <code>POST /api/auth</code></h4>
         <p>This endpoint allows users to authenticate against various email and file transfer protocols. It supports a range of protocols including <code>submission</code>, <code>pop3</code>, <code>pop3s</code>, <code>imap</code>, <code>imaps</code>, <code>smtp</code>, <code>smtps</code>, <code>ftp</code>, and <code>sftp</code>.</p>
         <h4>Request Headers</h4>
@@ -1008,7 +1041,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>18. DNS Lookup Endpoint</h3>
+        <h3>19. DNS Lookup Endpoint</h3>
         <h4>Endpoint: <code>/api/lookup</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Performs a DNS lookup for the specified host and record type, optionally using a specified DNS server.</li>
@@ -1034,7 +1067,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>19. Hash Validation Endpoint</h3>
+        <h3>20. Hash Validation Endpoint</h3>
         <h4>Endpoint: <code>/api/validate-hash</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Validates a given password against a specified hash using the chosen algorithm.</li>
@@ -1058,7 +1091,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>20. DNS Propagation Endpoints</h3>
+        <h3>21. DNS Propagation Endpoints</h3>
         <h4>Endpoint: <code>/api/dns/servers</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Retrieves a list of global DNS servers used for propagation checks.</li>
@@ -1149,7 +1182,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>21. SSL/TLS Scanner Endpoint</h3>
+        <h3>22. SSL/TLS Scanner Endpoint</h3>
         <h4>Endpoint: <code>/api/ssl-scan</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Scans the SSL/TLS configuration and identifies potential vulnerabilities for a given host and port.</li>
@@ -1172,7 +1205,7 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
       </div>
 
       <div class="api-endpoint">
-        <h3>22. Speed Test Endpoints</h3>
+        <h3>23. Speed Test Endpoints</h3>
         <h4>Endpoint: <code>/api/speedtest/download</code></h4>
         <ul>
           <li><strong>Purpose</strong>: Provides a large payload for download speed testing.</li>

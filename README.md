@@ -75,6 +75,7 @@ EvilAPI also provides an optional prototype web interface designed to give email
 - **Email Header Analysis**: Deep dive into email headers to troubleshoot delivery issues and validate authenticity.
 - **DMARC Validation**: Check if the DMARC policy is correctly established for a domain.
 - **DKIM Tools**: Test and verify DKIM records for a domain to ensure proper email authentication.
+- **SPF Tools**: Validate SPF records with support for split records and redirect mechanisms.
 - **Authentication Validation**: Test the authentication mechanisms of email servers.
 - **Who Am I**: Get detailed information about the client's IP, device, and network for troubleshooting.
 - **DNS Lookup**: Perform DNS lookups for various record types including MX, SPF, and DKIM records.
