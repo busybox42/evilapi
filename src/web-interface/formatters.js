@@ -103,10 +103,10 @@ export const formatEmailInfo = (data) => {
 
   // MX Records
   if (data.mxRecords && data.mxRecords.length > 0) {
-    const mxItems = data.mxRecords.map(mx => 
-      `Priority ${mx.priority}: <strong>${mx.exchange || 'No exchange specified'}</strong>`
-    );
-    sections.push(createSection('📧 MX Records (Mail Servers)', createList(mxItems)));
+    const mxContent = data.mxRecords.map(mx => 
+      `<code class="dns-record">Priority ${mx.priority}: ${mx.exchange || 'No exchange specified'}</code>`
+    ).join('<br>');
+    sections.push(createSection('📧 MX Records (Mail Servers)', mxContent));
   }
 
   // SPF Record
@@ -128,8 +128,8 @@ export const formatEmailInfo = (data) => {
   // Client Settings
   if (data.clientSettings && data.clientSettings.length > 0) {
     const settingsContent = data.clientSettings.map(host => 
-      `<div class="client-hostname">${host}</div>`
-    ).join('');
+      `<code class="dns-record">${host}</code>`
+    ).join('<br>');
     sections.push(createSection('⚙️ Client Settings', settingsContent));
   }
 
