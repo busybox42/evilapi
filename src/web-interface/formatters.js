@@ -106,7 +106,7 @@ export const formatEmailInfo = (data) => {
     const mxLines = data.mxRecords.map(mx => 
       `Priority ${mx.priority}: ${mx.exchange || 'No exchange specified'}`
     );
-    const mxContent = `<code class="dns-record">${mxLines.join('\n')}\n</code>`;
+    const mxContent = `<code class="dns-record">${mxLines.join('<br>')}</code>`;
     sections.push(createSection('📧 MX Records (Mail Servers)', mxContent));
   }
 
@@ -128,7 +128,7 @@ export const formatEmailInfo = (data) => {
 
   // Client Settings
   if (data.clientSettings && data.clientSettings.length > 0) {
-    const settingsContent = `<code class="dns-record">${data.clientSettings.join('\n')}\n</code>`;
+    const settingsContent = `<code class="dns-record">${data.clientSettings.join('<br>')}</code>`;
     sections.push(createSection('⚙️ Client Settings', settingsContent));
   }
 
