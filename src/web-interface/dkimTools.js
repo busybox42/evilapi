@@ -93,8 +93,13 @@ function displayDkimGenResults(data) {
           <div class="private-key-warning">
             <strong>⚠️ Security Warning:</strong> ${data.privateKeyWarning || 'Keep this private key secure and never share it publicly!'}
           </div>
-          <div class="key-content"><pre>${data.privateKey}</pre></div>
-          <button class="copy-btn" onclick="copyToClipboard(window.currentDkimData.privateKey)">📋 Copy Private Key</button>
+          <div class="key-content">
+            <pre class="blurred">${data.privateKey}</pre>
+            <div class="key-actions">
+              <button class="toggle-btn" onclick="togglePrivateKeyVisibility(this)">👁️ Show</button>
+              <button class="copy-btn" onclick="copyToClipboard(window.currentDkimData.privateKey)">📋 Copy Private Key</button>
+            </div>
+          </div>
         </div>
       </div>
     `;
@@ -102,6 +107,15 @@ function displayDkimGenResults(data) {
     resultsElement.innerHTML = `<div class="error">Error: Unknown DKIM generation response format. Received: ${JSON.stringify(data)}</div>`;
   }
 }
+
+// Add toggle visibility function
+window.togglePrivateKeyVisibility = function(button) {
+  const keyContent = button.closest('.key-content').querySelector('pre');
+  const isBlurred = keyContent.classList.contains('blurred');
+  
+  keyContent.classList.toggle('blurred');
+  button.textContent = isBlurred ? '👁️ Hide' : '👁️ Show';
+};
 
 export function initDkimTools() {
   document
