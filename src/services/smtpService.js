@@ -2,8 +2,9 @@ const dns = require("dns").promises;
 const { performance } = require("perf_hooks");
 const net = require("net");
 const tls = require("tls");
+const nodemailer = require("nodemailer");
 
-async function testSmtpServer(serverAddress, port) {
+async function testSmtpServer(serverAddress, port, shouldTestOpenRelay = false) {
   let report = {};
   let connectionTime = 0;
   
@@ -30,6 +31,8 @@ async function testSmtpServer(serverAddress, port) {
       smtpAuthSupport: connectionResult.authSupported,
       authMethods: connectionResult.authMethods || [],
       openRelay: false,
+      openRelayTested: false,
+      openRelayDetails: "",
       reverseDnsMismatch: false,
       portSpecificInfo: {
         type: "SMTP",
@@ -39,7 +42,7 @@ async function testSmtpServer(serverAddress, port) {
     };
 
     if (connectionResult.success) {
-      // If we connected with implicit TLS
+      // Handle TLS modes as before...
       if (connectionResult.implicitTls) {
         report.tlsSupport = "Supported";
         report.portSpecificInfo = {
@@ -47,9 +50,7 @@ async function testSmtpServer(serverAddress, port) {
           description: "Implicit TLS/SSL",
           tlsMode: "implicit"
         };
-      } 
-      // If STARTTLS is available, test it and get updated capabilities
-      else if (connectionResult.tlsSupported) {
+      } else if (connectionResult.tlsSupported) {
         const starttlsResult = await testStartTLS(serverAddress, port);
         if (starttlsResult.success) {
           report.tlsSupport = "Supported";
@@ -59,7 +60,6 @@ async function testSmtpServer(serverAddress, port) {
             tlsMode: "STARTTLS"
           };
           
-          // Update capabilities and auth methods from post-STARTTLS connection
           if (starttlsResult.capabilities) {
             report.capabilities = starttlsResult.capabilities;
             report.smtpAuthSupport = starttlsResult.authSupported;
@@ -68,12 +68,20 @@ async function testSmtpServer(serverAddress, port) {
         }
       }
 
-      // Check for Reverse DNS Mismatch
+      // Test for open relay if requested
+      if (shouldTestOpenRelay) {
+        report.openRelayTested = true;
+        const openRelayResult = await testOpenRelay(serverAddress, port, report.portSpecificInfo.tlsMode);
+        report.openRelay = openRelayResult.isOpenRelay;
+        report.openRelayDetails = openRelayResult.details;
+      }
+
+      // Check reverse DNS as before...
       try {
         let ipAddresses = await dns.resolve(serverAddress);
         let reverseDns = await dns.reverse(ipAddresses[0]);
         report.reverseDnsMismatch = !reverseDns.some(name => 
-          name.toLowerCase() === serverAddress.toLowerCase()
+          name.toLowerCase().includes(serverAddress.toLowerCase())
         );
       } catch (dnsError) {
         report.reverseDnsMismatch = "Unable to verify";
@@ -81,6 +89,7 @@ async function testSmtpServer(serverAddress, port) {
       }
     }
 
+    return report;
   } catch (error) {
     report.error = error.message;
     report.connection = "Failed";
@@ -93,9 +102,9 @@ async function testSmtpServer(serverAddress, port) {
     } else if (error.code === 'ECONNRESET') {
       report.errorDetails = "Connection reset by server";
     }
+    
+    return report;
   }
-
-  return report;
 }
 
 function testSmtpConnection(serverAddress, port, tryImplicitTls = false) {
@@ -326,6 +335,70 @@ async function testStartTLS(serverAddress, port) {
       }
     });
   });
+}
+
+async function testOpenRelay(serverAddress, port, tlsMode) {
+  const testCases = [
+    {
+      from: "test@example.com",
+      to: "test@evil.local",
+      description: "Basic open relay test"
+    },
+    {
+      from: "spoof@" + serverAddress,
+      to: "test@evil.local",
+      description: "Domain spoofing test"
+    },
+    {
+      from: "test@nonexistent.local",
+      to: "test@evil.local",
+      description: "Non-existent domain test"
+    }
+  ];
+
+  let isOpenRelay = false;
+  let details = [];
+
+  for (const testCase of testCases) {
+    try {
+      // Create a transport based on TLS mode
+      const transportConfig = {
+        host: serverAddress,
+        port: port,
+        secure: tlsMode === "implicit",
+        tls: {
+          rejectUnauthorized: false // Allow self-signed certs
+        },
+        auth: false // No authentication for open relay test
+      };
+
+      // For STARTTLS
+      if (tlsMode === "STARTTLS") {
+        transportConfig.requireTLS = true;
+      }
+
+      const transporter = nodemailer.createTransport(transportConfig);
+
+      // Try to send a test email
+      await transporter.sendMail({
+        from: testCase.from,
+        to: testCase.to,
+        subject: "SMTP Open Relay Test",
+        text: "This is an automated test for SMTP relay configuration. Please ignore."
+      });
+
+      // If we get here without error, the server accepted the relay
+      isOpenRelay = true;
+      details.push(`WARNING: Server accepted relay from ${testCase.from} to ${testCase.to} (${testCase.description})`);
+    } catch (error) {
+      details.push(`Server rejected relay from ${testCase.from} to ${testCase.to} (${testCase.description})`);
+    }
+  }
+
+  return {
+    isOpenRelay,
+    details: details.join("\n")
+  };
 }
 
 module.exports = {

@@ -1,24 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const smtpTestService = require("../../services/smtpService");
+const smtpService = require("../../services/smtpService");
 
 // Define the SMTP testing route
-router.post("/test-smtp", async (req, res) => {
+router.post('/test', async (req, res) => {
   try {
-    const { serverAddress, port } = req.body;
-    const smtpPort = port || 25; // Default to port 25 if not specified
+    const { server, port, testOpenRelay } = req.body;
+    
+    if (!server || !port) {
+      return res.status(400).json({ 
+        error: 'Missing required parameters',
+        details: 'Server address and port are required'
+      });
+    }
 
-    // Perform SMTP server test using the service
-    const report = await smtpTestService.testSmtpServer(
-      serverAddress,
-      smtpPort
-    );
-
-    // Send the response with pretty-printed JSON
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify(report, null, 2) + "\n");
+    const results = await smtpService.testSmtpServer(server, port, testOpenRelay);
+    res.json(results);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: 'SMTP test failed',
+      details: error.message
+    });
   }
 });
 

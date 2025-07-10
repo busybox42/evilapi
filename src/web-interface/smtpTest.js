@@ -1,11 +1,12 @@
 import { API_URL } from "./config.js"; // Importing the API URL from the config file
 
 // Function to handle the SMTP test
-async function testSMTP(serverAddress, port) {
-  const url = `${API_URL}/test-smtp`;
+async function testSMTP(serverAddress, port, testOpenRelay = false) {
+  const url = `${API_URL}/test`;
   const requestBody = {
-    serverAddress: serverAddress,
+    server: serverAddress,
     port: port,
+    testOpenRelay: testOpenRelay
   };
 
   const resultsDiv = document.getElementById("smtpTestResults");
@@ -218,6 +219,27 @@ function displaySMTPTestResults(data, serverAddress, port) {
     ${tlsStatusDisplay}
   `;
 
+  // Format open relay status with the fixed logic
+  let openRelayStatus = '';
+  if (data.openRelayTested) {
+    const isOpenRelay = data.openRelay || data.openRelayDetails.includes("WARNING: Server accepted relay");
+    openRelayStatus = `
+      <div class="smtp-value-section">
+        <label class="smtp-label">🚫 Open Relay:</label>
+        <div class="smtp-value-container">
+          <span class="status-badge ${isOpenRelay ? 'badge-error' : 'badge-success'}">
+            ${isOpenRelay ? '⚠️ Open Relay Detected!' : '✅ Not an Open Relay'}
+          </span>
+          ${data.openRelayDetails ? `
+            <div class="open-relay-details">
+              <pre>${data.openRelayDetails}</pre>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }
+
   resultsDiv.innerHTML = `
     <div class="smtp-result-container enhanced">
       <!-- Server Information -->
@@ -289,6 +311,17 @@ function displaySMTPTestResults(data, serverAddress, port) {
       <!-- Security Analysis -->
       <div class="smtp-section">
         <h3 class="section-header">🔒 Security Analysis</h3>
+        <div class="smtp-values-grid">
+          <div class="smtp-value-section">
+            <label class="smtp-label">🛡️ Authentication:</label>
+            <div class="smtp-value-container">
+              <span class="status-badge ${data.smtpAuthSupport ? 'badge-success' : 'badge-warning'}">
+                ${data.smtpAuthSupport ? '✅ Supported' : '⚠️ Not Available'}
+              </span>
+            </div>
+          </div>
+          ${openRelayStatus}
+        </div>
         <div class="security-overview">
           <div class="security-score">
             <span class="score-label">Security Score:</span>
@@ -397,24 +430,21 @@ function displaySMTPTestResults(data, serverAddress, port) {
 
 // Initialization function for SMTP test functionality
 export function initSmtpTest() {
-  document
-    .getElementById("performSmtpTestBtn")
-    .addEventListener("click", async function () {
-      const serverAddress = document.getElementById("smtpServerInput").value.trim();
-      let port = document.getElementById("smtpPortInput").value.trim();
+  const performTestBtn = document.getElementById("performSmtpTestBtn");
+  if (!performTestBtn) return;
 
-      // Use default port 587 if no port is specified
-      if (!port) {
-        port = 587;
-      }
+  performTestBtn.addEventListener("click", async function() {
+    const serverAddress = document.getElementById("smtpServerInput").value.trim();
+    const port = document.getElementById("smtpPortInput").value.trim() || "25";
+    const testOpenRelay = document.getElementById("testOpenRelay")?.checked || false;
 
-      if (serverAddress) {
-        await testSMTP(serverAddress, port);
-      } else {
-        document.getElementById("smtpTestResults").innerHTML = 
-          '<div class="error-message">Please enter the server address.</div>';
-      }
-    });
+    if (serverAddress) {
+      await testSMTP(serverAddress, port, testOpenRelay);
+    } else {
+      document.getElementById("smtpTestResults").innerHTML = 
+        '<div class="error-message">Please enter the server address.</div>';
+    }
+  });
 
   // Add Enter key support
   document.getElementById("smtpServerInput").addEventListener("keypress", (e) => {
@@ -424,4 +454,16 @@ export function initSmtpTest() {
   document.getElementById("smtpPortInput").addEventListener("keypress", (e) => {
     if (e.key === "Enter") document.getElementById("performSmtpTestBtn").click();
   });
+
+  // Add the open relay checkbox if it doesn't exist
+  const formGroup = document.getElementById("smtpServerInput").parentElement;
+  if (!document.getElementById("testOpenRelay")) {
+    const checkboxDiv = document.createElement("div");
+    checkboxDiv.className = "form-group checkbox-group";
+    checkboxDiv.innerHTML = `
+      <input type="checkbox" id="testOpenRelay" name="testOpenRelay">
+      <label for="testOpenRelay">Test for open relay (Warning: This will attempt to send a test email)</label>
+    `;
+    formGroup.insertAdjacentElement("afterend", checkboxDiv);
+  }
 }
