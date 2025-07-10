@@ -11,6 +11,7 @@ import { initPgpEncryption } from "./pgpEncryption.js";
 import { initPortScan } from "./portScan.js";
 import { initValidateDmarc } from "./validateDmarc.js";
 import { initDkimTools } from "./dkimTools.js";
+import { initSpfTools } from "./spfTools.js";
 import { initTestEmailDelivery } from "./testEmailDelivery.js";
 import { initNetworkTests } from "./networkTests.js";
 import { initAuthValidator } from "./authValidator.js";
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPortScan();
   initValidateDmarc();
   initDkimTools();
+  initSpfTools();
   initTestEmailDelivery();
   initNetworkTests();
   initAuthValidator();
@@ -90,6 +92,7 @@ const buttonIds = [
   "headerAnalysisBtn",
   "spamScanBtn",
   "dkimToolsBtn",
+  "spfToolsBtn",
   "validateDmarcBtn",
   "smtpTestBtn",
   "testEmailDeliveryBtn",

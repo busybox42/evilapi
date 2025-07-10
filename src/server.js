@@ -11,6 +11,9 @@ const path = require("path");
 const config = require("./config/secureConfig");
 const { initializeStaticKeys } = require("./utils/pgpUtils");
 const { globalErrorHandler } = require("./middleware/errorHandler");
+const dkimGenKeyRoute = require("./api/routes/dkimGenKeyRoute");
+const dkimLookUpRoute = require("./api/routes/dkimLookUpRoute");
+const spfValidationRoute = require("./api/routes/spfValidationRoute");
 
 const app = express();
 const webApp = express();
@@ -150,6 +153,13 @@ function pruneUploads() {
     // Manually load and mount the speed test route
     const speedTestRoute = require(path.join(__dirname, "api", "routes", "speedTestRoute.js"));
     app.use("/api/speedtest", speedTestRoute);
+
+    // Register routes
+    app.use("/api", [
+        dkimGenKeyRoute,
+        dkimLookUpRoute,
+        spfValidationRoute,
+    ]);
 
     // Serve static documentation files
     app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));
