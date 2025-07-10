@@ -435,7 +435,7 @@ export function initSmtpTest() {
 
   performTestBtn.addEventListener("click", async function() {
     const serverAddress = document.getElementById("smtpServerInput").value.trim();
-    const port = document.getElementById("smtpPortInput").value.trim() || "25";
+    const port = document.getElementById("smtpPortInput").value.trim() || "587";
     const testOpenRelay = document.getElementById("testOpenRelay")?.checked || false;
 
     if (serverAddress) {
