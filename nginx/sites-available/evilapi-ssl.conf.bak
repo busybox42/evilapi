@@ -1,7 +1,7 @@
 # HTTP to HTTPS redirect
 server {
     listen 80;
-    server_name evil-admin.com www.evil-admin.com;
+    server_name example.com www.example.com;
     
     # ACME Challenge for Let's Encrypt
     location ^~ /.well-known/acme-challenge/ {
@@ -20,14 +20,13 @@ server {
 
 # HTTPS Server - Main EvilAPI Proxy
 server {
-    listen 443 ssl;
-    http2 on;
-    server_name evil-admin.com www.evil-admin.com;
+    listen 443 ssl http2;
+    server_name example.com www.example.com;
     
     # SSL Configuration
-    ssl_certificate /etc/letsencrypt/live/evil-admin.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/evil-admin.com/privkey.pem;
-    ssl_trusted_certificate /etc/letsencrypt/live/evil-admin.com/chain.pem;
+    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/example.com/chain.pem;
     
     # SSL Security Settings
     ssl_protocols TLSv1.2 TLSv1.3;

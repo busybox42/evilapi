@@ -241,9 +241,9 @@ To authenticate using supported email and file transfer protocols, construct a `
 curl -X POST http://localhost:3011/api/auth \
 -H "Content-Type: application/json" \
 -d '{
-  "username": "test@evil-admin.com",
+  "username": "test@example.com",
   "password": "13atbac0n",
-  "hostname": "mail.evil-admin.com",
+  "hostname": "mail.example.com",
   "protocol": "imaps"
 }'
 ```

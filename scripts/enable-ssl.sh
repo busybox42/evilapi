@@ -32,7 +32,7 @@ print_header() {
 # Check if domain is provided
 if [ -z "$1" ]; then
     print_error "Usage: $0 <domain> [email] [additional_domains...]"
-    print_error "Example: $0 evil-admin.com admin@evil-admin.com www.evil-admin.com"
+    print_error "Example: $0 example.com admin@example.com www.example.com"
     exit 1
 fi
 

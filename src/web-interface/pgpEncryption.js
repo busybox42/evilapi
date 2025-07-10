@@ -131,7 +131,7 @@ export function initPgpEncryption() {
       return;
     }
 
-    const email = `${name}@evil-admin.com`;
+    const email = `${name}@example.com`;
     const password = generateRandomPassword(24);
 
     try {

@@ -49,7 +49,7 @@ help:
 	@echo "Usage Examples:"
 	@echo "  make dev                              # Local development"
 	@echo "  make deploy                           # Production HTTP deployment"
-	@echo "  DOMAIN=evil-admin.com make enable-ssl # Add SSL to HTTP deployment"
+	@echo "  DOMAIN=example.com make enable-ssl # Add SSL to HTTP deployment"
 
 # Docker Commands
 .PHONY: build
@@ -162,8 +162,8 @@ enable-ssl:
 	@echo "Enabling SSL on existing deployment..."
 	@if [ -z "$(DOMAIN)" ]; then \
 		echo "Error: DOMAIN environment variable is required"; \
-		echo "Usage: DOMAIN=evil-admin.com make enable-ssl"; \
-		echo "       DOMAIN=evil-admin.com EMAIL=admin@evil-admin.com make enable-ssl"; \
+		echo "Usage: DOMAIN=example.com make enable-ssl"; \
+		echo "       DOMAIN=example.com EMAIL=admin@example.com make enable-ssl"; \
 		exit 1; \
 	fi
 	@# Ensure SSL config exists

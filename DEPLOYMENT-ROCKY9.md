@@ -1,7 +1,7 @@
 # EvilAPI Production Deployment Guide - Rocky Linux 9 ARM64
 
 ## Overview
-Deploy EvilAPI to production on Rocky Linux 9 ARM64 with SSL certificates for `evil-admin.com` and `www.evil-admin.com`.
+Deploy EvilAPI to production on Rocky Linux 9 ARM64 with SSL certificates for `example.com` and `www.example.com`.
 
 ## Prerequisites
 
@@ -15,11 +15,11 @@ Deploy EvilAPI to production on Rocky Linux 9 ARM64 with SSL certificates for `e
 Configure your DNS records to point both domains to your server:
 
 ```
-evil-admin.com       A    YOUR_SERVER_IP
-www.evil-admin.com   A    YOUR_SERVER_IP
+example.com       A    YOUR_SERVER_IP
+www.example.com   A    YOUR_SERVER_IP
 ```
 
-**Wait for DNS propagation** (can take up to 24 hours, check with `nslookup evil-admin.com`)
+**Wait for DNS propagation** (can take up to 24 hours, check with `nslookup example.com`)
 
 ### 3. System Preparation (Rocky Linux 9 specific)
 ```bash
@@ -81,11 +81,11 @@ cp src/config/config.js.example src/config/config.js
 ### 2. Deploy to Production
 ```bash
 # Option A: Quick deployment with SSL
-DOMAIN=evil-admin.com EMAIL=admin@evil-admin.com make deploy-ssl
+DOMAIN=example.com EMAIL=admin@example.com make deploy-ssl
 
 # Option B: Manual step-by-step deployment
 make deploy
-./scripts/setup-ssl.sh evil-admin.com admin@evil-admin.com www.evil-admin.com
+./scripts/setup-ssl.sh example.com admin@example.com www.example.com
 ```
 
 ### 3. Verify Deployment
@@ -97,8 +97,8 @@ make deploy-status
 make deploy-logs
 
 # Test endpoints
-curl -I https://evil-admin.com/api/health
-curl -I https://www.evil-admin.com/api/health
+curl -I https://example.com/api/health
+curl -I https://www.example.com/api/health
 ```
 
 ## Rocky Linux 9 Specific Configuration
@@ -199,7 +199,7 @@ make deploy-update
 ### SSL Management
 ```bash
 # Setup SSL certificates
-./scripts/setup-ssl.sh evil-admin.com admin@evil-admin.com www.evil-admin.com
+./scripts/setup-ssl.sh example.com admin@example.com www.example.com
 
 # Renew certificates
 make ssl-renew
@@ -244,12 +244,12 @@ sudo setenforce 1
 ### 4. DNS Issues
 ```bash
 # Test DNS resolution
-nslookup evil-admin.com
-dig evil-admin.com
+nslookup example.com
+dig example.com
 
 # Test from different DNS servers
-nslookup evil-admin.com 8.8.8.8
-nslookup evil-admin.com 1.1.1.1
+nslookup example.com 8.8.8.8
+nslookup example.com 1.1.1.1
 ```
 
 ## System Service Integration
@@ -284,10 +284,10 @@ sudo systemctl start evilapi
 ## Success Verification
 
 After deployment, verify these work:
-- ✅ `https://evil-admin.com` - Loads EvilAPI interface
-- ✅ `https://www.evil-admin.com` - Loads EvilAPI interface  
-- ✅ `http://evil-admin.com` - Redirects to HTTPS
-- ✅ `https://evil-admin.com/api/health` - Returns API health status
+- ✅ `https://example.com` - Loads EvilAPI interface
+- ✅ `https://www.example.com` - Loads EvilAPI interface  
+- ✅ `http://example.com` - Redirects to HTTPS
+- ✅ `https://example.com/api/health` - Returns API health status
 - ✅ SSL certificate is valid and trusted
 - ✅ All EvilAPI tools function correctly
 
@@ -309,12 +309,12 @@ cd evilapi
 cp src/config/config.js.example src/config/config.js
 
 # Deploy with SSL
-DOMAIN=evil-admin.com EMAIL=admin@evil-admin.com make deploy-ssl
+DOMAIN=example.com EMAIL=admin@example.com make deploy-ssl
 ```
 
 Your EvilAPI will be live at:
-- **https://evil-admin.com**
-- **https://www.evil-admin.com**
+- **https://example.com**
+- **https://www.example.com**
 
 ## Additional Rocky Linux 9 Resources
 

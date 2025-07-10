@@ -39,7 +39,7 @@ if [ $? -eq 0 ]; then
     
     echo ""
     echo "If localhost works, test your domain:"
-    echo "curl -I http://evil-admin.com/"
+    echo "curl -I http://example.com/"
     
 else
     echo "✗ Nginx config is invalid. Check the error above."

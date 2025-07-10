@@ -21,27 +21,27 @@ sudo make deploy
 sudo make deploy-status
 
 # Test the website
-curl -I http://evil-admin.com/api/health
-curl -I http://www.evil-admin.com/api/health
+curl -I http://example.com/api/health
+curl -I http://www.example.com/api/health
 
 # Visit in browser
-http://evil-admin.com
+http://example.com
 ```
 
 ### Step 3: Enable SSL (after HTTP works)
 ```bash
 # Enable SSL certificates for both domains
-sudo DOMAIN=evil-admin.com make enable-ssl
+sudo DOMAIN=example.com make enable-ssl
 ```
 
 ### Step 4: Verify HTTPS deployment
 ```bash
 # Test HTTPS access
-curl -I https://evil-admin.com/api/health
-curl -I https://www.evil-admin.com/api/health
+curl -I https://example.com/api/health
+curl -I https://www.example.com/api/health
 
 # Visit in browser (should auto-redirect from HTTP)
-https://evil-admin.com
+https://example.com
 ```
 
 ## 🔧 Management Commands
@@ -55,7 +55,7 @@ sudo make deploy-logs    # View logs
 sudo make deploy-status  # Check status
 
 # SSL operations
-sudo DOMAIN=evil-admin.com make enable-ssl  # Add SSL to existing HTTP deployment
+sudo DOMAIN=example.com make enable-ssl  # Add SSL to existing HTTP deployment
 sudo make ssl-renew      # Renew certificates
 sudo make ssl-status     # Check certificate status
 ```
@@ -70,7 +70,7 @@ sudo make ssl-status     # Check certificate status
 ## 🌐 Final Result
 
 - **HTTP**: Automatically redirects to HTTPS
-- **HTTPS**: https://evil-admin.com and https://www.evil-admin.com
+- **HTTPS**: https://example.com and https://www.example.com
 - **Security**: Full SSL/TLS encryption with Let's Encrypt certificates
 - **Performance**: Nginx reverse proxy with caching and compression
 
@@ -85,7 +85,7 @@ sudo docker ps           # See container status
 If SSL enablement fails:
 ```bash
 # HTTP site still works, SSL can be retried
-sudo DOMAIN=evil-admin.com make enable-ssl
+sudo DOMAIN=example.com make enable-ssl
 ```
 
 This approach separates concerns and makes deployment much more reliable! 🚀 

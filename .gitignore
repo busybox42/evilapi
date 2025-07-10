@@ -4,6 +4,7 @@ apiTest/node_modules/
 
 # Environment variables
 .env
+.env.evil-admin.com
 
 # Coverage dir
 coverage/

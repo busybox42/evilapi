@@ -32,4 +32,4 @@ curl -I http://localhost:3011/api/health
 
 echo ""
 echo "If EvilAPI is responding, test your domain:"
-echo "curl -I http://evil-admin.com/api/health" 
+echo "curl -I http://example.com/api/health" 

@@ -1,7 +1,7 @@
 # EvilAPI Production Deployment Guide
 
 ## Overview
-Deploy EvilAPI to production with SSL certificates for `evil-admin.com` and `www.evil-admin.com`.
+Deploy EvilAPI to production with SSL certificates for `example.com` and `www.example.com`.
 
 ## Prerequisites
 
@@ -15,11 +15,11 @@ Deploy EvilAPI to production with SSL certificates for `evil-admin.com` and `www
 Configure your DNS records to point both domains to your server:
 
 ```
-evil-admin.com       A    YOUR_SERVER_IP
-www.evil-admin.com   A    YOUR_SERVER_IP
+example.com       A    YOUR_SERVER_IP
+www.example.com   A    YOUR_SERVER_IP
 ```
 
-**Wait for DNS propagation** (can take up to 24 hours, check with `nslookup evil-admin.com`)
+**Wait for DNS propagation** (can take up to 24 hours, check with `nslookup example.com`)
 
 ### 3. Install Dependencies
 ```bash
@@ -56,11 +56,11 @@ cp src/config/config.js.example src/config/config.js
 ### 2. Deploy to Production
 ```bash
 # Option A: Quick deployment with SSL
-DOMAIN=evil-admin.com EMAIL=admin@evil-admin.com make deploy-ssl
+DOMAIN=example.com EMAIL=admin@example.com make deploy-ssl
 
 # Option B: Manual step-by-step deployment
 make deploy
-./scripts/setup-ssl.sh evil-admin.com admin@evil-admin.com www.evil-admin.com
+./scripts/setup-ssl.sh example.com admin@example.com www.example.com
 ```
 
 ### 3. Verify Deployment
@@ -72,8 +72,8 @@ make deploy-status
 make deploy-logs
 
 # Test endpoints
-curl -I https://evil-admin.com/api/health
-curl -I https://www.evil-admin.com/api/health
+curl -I https://example.com/api/health
+curl -I https://www.example.com/api/health
 ```
 
 ## Configuration Details
@@ -85,9 +85,9 @@ The deployment creates these services:
 - **Certbot**: SSL certificate management
 
 ### SSL Configuration
-- **Primary Domain**: `evil-admin.com`
-- **Additional Domain**: `www.evil-admin.com`
-- **Certificate Path**: `/etc/letsencrypt/live/evil-admin.com/`
+- **Primary Domain**: `example.com`
+- **Additional Domain**: `www.example.com`
+- **Certificate Path**: `/etc/letsencrypt/live/example.com/`
 - **Auto-renewal**: Configured via cron job
 
 ### Security Features
@@ -123,7 +123,7 @@ make deploy-update
 ### SSL Management
 ```bash
 # Setup SSL certificates
-./scripts/setup-ssl.sh evil-admin.com admin@evil-admin.com www.evil-admin.com
+./scripts/setup-ssl.sh example.com admin@example.com www.example.com
 
 # Renew certificates (automatic via cron)
 make ssl-renew
@@ -171,9 +171,9 @@ sudo iptables-save > /etc/iptables/rules.v4
 ## Monitoring and Maintenance
 
 ### Health Checks
-- **API Health**: `https://evil-admin.com/api/health`
-- **Nginx Status**: `https://evil-admin.com/health`
-- **SSL Certificate**: `https://evil-admin.com` (check browser lock icon)
+- **API Health**: `https://example.com/api/health`
+- **Nginx Status**: `https://example.com/health`
+- **SSL Certificate**: `https://example.com` (check browser lock icon)
 
 ### Log Locations
 - **EvilAPI Logs**: `docker-compose logs evilapi`
@@ -240,12 +240,12 @@ make ssl-renew
 ### 1. Certificate Request Fails
 ```bash
 # Check DNS propagation
-nslookup evil-admin.com
-nslookup www.evil-admin.com
+nslookup example.com
+nslookup www.example.com
 
 # Check firewall
 sudo ufw status
-curl -I http://evil-admin.com/.well-known/acme-challenge/test
+curl -I http://example.com/.well-known/acme-challenge/test
 ```
 
 ### 2. nginx Configuration Errors
@@ -272,10 +272,10 @@ curl http://localhost:3011/api/health
 ## Success Verification
 
 After deployment, verify these work:
-- ✅ `https://evil-admin.com` - Loads EvilAPI interface
-- ✅ `https://www.evil-admin.com` - Loads EvilAPI interface  
-- ✅ `http://evil-admin.com` - Redirects to HTTPS
-- ✅ `https://evil-admin.com/api/health` - Returns API health status
+- ✅ `https://example.com` - Loads EvilAPI interface
+- ✅ `https://www.example.com` - Loads EvilAPI interface  
+- ✅ `http://example.com` - Redirects to HTTPS
+- ✅ `https://example.com/api/health` - Returns API health status
 - ✅ SSL certificate is valid and trusted
 - ✅ All EvilAPI tools function correctly
 
@@ -288,8 +288,8 @@ For issues or questions:
 4. Review this deployment guide
 
 Your EvilAPI should now be live at:
-- **https://evil-admin.com**
-- **https://www.evil-admin.com**
+- **https://example.com**
+- **https://www.example.com**
 
 ## Next Steps
 
