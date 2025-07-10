@@ -66,6 +66,21 @@ const createSecret = (text, expiresIn, maxViews) => {
   return id;
 };
 
+// Manually expire a secret
+const expireSecret = (id) => {
+  console.log(`[DEBUG] Manually expiring secret ${id}`);
+  const secret = secrets[id];
+  
+  if (!secret) {
+    console.log(`[DEBUG] Secret ${id} not found for expiration`);
+    return false;
+  }
+
+  delete secrets[id];
+  console.log(`[DEBUG] Secret ${id} manually expired and deleted`);
+  return true;
+};
+
 // Get a secret
 const getSecret = (id) => {
   console.log(`\n[DEBUG] Getting secret ${id}`);
@@ -131,4 +146,5 @@ const getSecret = (id) => {
 module.exports = {
   createSecret,
   getSecret,
+  expireSecret,
 }; 

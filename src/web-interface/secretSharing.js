@@ -107,6 +107,7 @@ export async function retrieveAndShowSecret(id) {
       <div class="secret-controls">
         <button id="unblurBtn" class="nav-btn">Show Secret</button>
         <button id="copySecretBtn" class="nav-btn">Copy to Clipboard</button>
+        ${!resultData.deleted ? `<button id="expireSecretBtn" class="nav-btn danger">Expire Secret</button>` : ''}
       </div>
       <div id="secretText" class="secret-text">${resultData.text}</div>
     `;
@@ -133,6 +134,31 @@ export async function retrieveAndShowSecret(id) {
         }, 2000);
       });
     });
+
+    if (!resultData.deleted) {
+      document.getElementById('expireSecretBtn').addEventListener('click', async function() {
+        if (confirm('Are you sure you want to expire this secret? This action cannot be undone.')) {
+          try {
+            const expireResponse = await fetch(`${API_URL}/secret/${id}`, {
+              method: 'DELETE'
+            });
+
+            if (!expireResponse.ok) {
+              throw new Error(`HTTP error! status: ${expireResponse.status}`);
+            }
+
+            resultContainer.innerHTML = `
+              <div class="success-message">Secret has been manually expired and deleted.</div>
+            `;
+          } catch (error) {
+            console.error('Error expiring secret:', error);
+            resultContainer.innerHTML += `
+              <div class="error-message">Failed to expire secret: ${error.message}</div>
+            `;
+          }
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Retrieve secret error:', error);

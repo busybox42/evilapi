@@ -52,4 +52,26 @@ router.get('/secret/:id', (req, res) => {
   }
 });
 
+// Manually expire a secret
+router.delete('/secret/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    if (!id || typeof id !== 'string') {
+      return res.status(400).json({ error: 'Secret ID is required' });
+    }
+    
+    const expired = secretService.expireSecret(id);
+    
+    if (!expired) {
+      return res.status(404).json({ error: 'Secret not found or already expired' });
+    }
+    
+    res.json({ message: 'Secret expired successfully' });
+  } catch (error) {
+    console.error('Error expiring secret:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

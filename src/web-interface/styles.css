@@ -1764,6 +1764,16 @@ input[type="file"] {
   margin: 10px 0;
 }
 
+.nav-btn.danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.nav-btn.danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
 /* Client Settings specific styles */
 .client-settings {
   display: grid;
