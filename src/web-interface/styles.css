@@ -1791,3 +1791,10 @@ input[type="file"] {
   color: #ffffff;
   font-family: monospace;
 }
+
+/* Client hostname styles */
+.client-hostname {
+  font-family: monospace;
+  padding: 4px 0;
+  color: #2ea4c0;
+}

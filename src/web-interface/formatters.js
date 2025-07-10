@@ -122,22 +122,14 @@ export const formatEmailInfo = (data) => {
     const dmarcContent = data.dmarcRecord.map(record => 
       `<code class="dns-record">${record}</code>`
     ).join('<br>');
-    sections.push(createSection('📋 DMARC Record (Email Authentication)', dmarcContent));
-  }
-
-  // A Records (IP Addresses)
-  if (data.aRecord && data.aRecord.length > 0) {
-    const ipItems = data.aRecord.map(ip => `<code class="ip-address">${ip}</code>`);
-    sections.push(createSection('🌐 A Records (IP Addresses)', createList(ipItems)));
+    sections.push(createSection('🔒 DMARC Record (Domain-based Message Authentication)', dmarcContent));
   }
 
   // Client Settings
-  if (data.clientSettings) {
-    const settingsContent = `<div class="client-settings">
-      ${Object.entries(data.clientSettings)
-        .map(([key, value]) => createKeyValue(key, value))
-        .join('')}
-    </div>`;
+  if (data.clientSettings && data.clientSettings.length > 0) {
+    const settingsContent = data.clientSettings.map(host => 
+      `<div class="client-hostname">${host}</div>`
+    ).join('');
     sections.push(createSection('⚙️ Client Settings', settingsContent));
   }
 
