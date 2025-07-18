@@ -14,6 +14,7 @@ const { globalErrorHandler } = require("./middleware/errorHandler");
 const dkimGenKeyRoute = require("./api/routes/dkimGenKeyRoute");
 const dkimLookUpRoute = require("./api/routes/dkimLookUpRoute");
 const spfValidationRoute = require("./api/routes/spfValidationRoute");
+const ipReputationRoutes = require("./api/routes/ipReputationRoutes");
 
 const app = express();
 const webApp = express();
@@ -160,6 +161,9 @@ function pruneUploads() {
         dkimLookUpRoute,
         spfValidationRoute,
     ]);
+    
+    // IP reputation routes
+    app.use("/api/ip-reputation", ipReputationRoutes);
 
     // Serve static documentation files
     app.use('/docs', express.static(path.join(__dirname, '..', 'docs')));

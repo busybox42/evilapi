@@ -433,6 +433,37 @@ export function initSmtpTest() {
   const performTestBtn = document.getElementById("performSmtpTestBtn");
   if (!performTestBtn) return;
 
+  // Create warning message element for port 25
+  const createPort25Warning = () => {
+    const warning = document.createElement("div");
+    warning.id = "smtpPort25Warning";
+    warning.className = "port25-warning";
+    warning.innerHTML = `
+      <div class="warning-content">
+        ⚠️ <strong>Note:</strong> Port 25 is blocked by our hosting provider for security reasons. 
+        SMTP tests on port 25 may appear to fail even if the server is running. Consider using port 587 (STARTTLS) or 465 (SSL/TLS) instead.
+      </div>
+    `;
+    return warning;
+  };
+
+  // Function to show/hide port 25 warning
+  const handlePort25Warning = () => {
+    const port = document.getElementById("smtpPortInput").value;
+    const existingWarning = document.getElementById("smtpPort25Warning");
+    
+    if (port === "25") {
+      if (!existingWarning) {
+        const warning = createPort25Warning();
+        document.getElementById("smtpPortInput").parentNode.appendChild(warning);
+      }
+    } else {
+      if (existingWarning) {
+        existingWarning.remove();
+      }
+    }
+  };
+
   performTestBtn.addEventListener("click", async function() {
     const serverAddress = document.getElementById("smtpServerInput").value.trim();
     const port = document.getElementById("smtpPortInput").value.trim() || "587";
@@ -454,6 +485,9 @@ export function initSmtpTest() {
   document.getElementById("smtpPortInput").addEventListener("keypress", (e) => {
     if (e.key === "Enter") document.getElementById("performSmtpTestBtn").click();
   });
+
+  // Add event listener for port input changes to show/hide warning
+  document.getElementById("smtpPortInput").addEventListener("input", handlePort25Warning);
 
   // Add the open relay checkbox if it doesn't exist
   const formGroup = document.getElementById("smtpServerInput").parentElement;

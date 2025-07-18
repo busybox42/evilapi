@@ -702,6 +702,35 @@ input[type="file"] {
   line-height: 1.5;
 }
 
+.port25-warning {
+  background: linear-gradient(135deg, #d69e2e, #b7791f);
+  color: #1a1a1a;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 4px solid #ed8936;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: 8px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.port25-warning .warning-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .technical-info {
   background: linear-gradient(135deg, #4a5568, #2d3748);
   color: #e2e8f0;
@@ -1852,4 +1881,331 @@ input[type="file"] {
   font-family: monospace;
   padding: 4px 0;
   color: #2ea4c0;
+}
+
+/* IP Reputation Checker Styles */
+.reputation-result {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #333;
+}
+
+.score-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.reputation-score {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.score-label {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  text-align: center;
+  padding: 10px;
+  background: #2a2a2a;
+  border-radius: 5px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.blacklist-results {
+  margin-top: 20px;
+}
+
+.blacklist-results h3 {
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.blacklist-results ul {
+  list-style: none;
+  padding: 0;
+}
+
+.blacklist-results li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background: #2a2a2a;
+}
+
+.blacklist-results li.listed {
+  background: #4a1a1a;
+  border-left: 4px solid #ff4444;
+}
+
+.blacklist-results li.not-listed {
+  background: #1a4a1a;
+  border-left: 4px solid #44ff44;
+}
+
+.blacklist-results li.error {
+  background: #4a4a1a;
+  border-left: 4px solid #ffaa00;
+}
+
+.blacklist-results .status {
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.blacklist-results .provider-info {
+  font-size: 11px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.blacklist-results .error {
+  color: #ffaa00;
+  font-size: 11px;
+}
+
+.warning-message {
+  background: #4a4a1a;
+  border: 1px solid #ffaa00;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 15px 0;
+  color: #ffaa00;
+}
+
+.error-message {
+  background: #4a1a1a;
+  border: 1px solid #ff4444;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 15px 0;
+  color: #ff4444;
+}
+
+.timestamp {
+  text-align: center;
+  margin-top: 20px;
+  color: #888;
+  font-size: 12px;
+}
+
+/* IP Reputation Checker Styles */
+.ip-reputation-checker {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.ip-reputation-checker .input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ip-reputation-checker .form-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.reputation-result {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.score-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.reputation-score {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.score-label {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.stat {
+  text-align: center;
+  margin: 10px;
+}
+
+.stat-label {
+  display: block;
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.blacklist-results {
+  margin-top: 20px;
+}
+
+.blacklist-results h3 {
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.blacklist-results ul {
+  list-style: none;
+  padding: 0;
+}
+
+.blacklist-results li {
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+  background: #2a2a2a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.blacklist-results li strong {
+  color: #fff;
+  margin-right: 10px;
+}
+
+.blacklist-results .status {
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+.blacklist-results .listed {
+  border-left: 4px solid #ff4444;
+}
+
+.blacklist-results .listed .status {
+  color: #ff4444;
+}
+
+.blacklist-results .not-listed {
+  border-left: 4px solid #00cc00;
+}
+
+.blacklist-results .not-listed .status {
+  color: #00cc00;
+}
+
+.blacklist-results .error {
+  border-left: 4px solid #ff8800;
+}
+
+.blacklist-results .error .status {
+  color: #ff8800;
+}
+
+.blacklist-results .error span.error {
+  color: #ff8800;
+  font-size: 0.9em;
+  margin-left: 10px;
+  font-style: italic;
+}
+
+.provider-info {
+  color: #888;
+  font-size: 12px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.timestamp {
+  margin-top: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

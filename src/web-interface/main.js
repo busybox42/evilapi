@@ -3,6 +3,7 @@ import { initEmailInfo } from "./emailInfo.js";
 import { initSmtpTest } from "./smtpTest.js";
 import { initBlacklistCheck } from "./blacklistCheck.js";
 import { initHeaderAnalysis } from "./headerAnalysis.js";
+import { initIPReputationChecker } from "./ipReputation.js";
 import { initWhoAmI } from "./whoAmI.js";
 import { initSslValidation } from "./sslValidation.js";
 import { initRemoveWhitespace } from "./removeWhitespace.js";
@@ -54,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSmtpTest();
   initBlacklistCheck();
   initHeaderAnalysis();
+  initIPReputationChecker();
   initWhoAmI();
   initSslValidation();
   initRemoveWhitespace();
@@ -90,6 +92,7 @@ const buttonIds = [
   "emailInfoBtn",
   "blacklistCheckBtn",
   "headerAnalysisBtn",
+  "ipReputationBtn",
   "spamScanBtn",
   "dkimToolsBtn",
   "spfToolsBtn",

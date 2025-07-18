@@ -9,6 +9,37 @@ function initPortScan() {
   const portScanResults = document.getElementById("portScanResults");
   const portScanLoading = document.getElementById("portScanLoading");
 
+  // Create warning message element for port 25
+  const createPort25Warning = () => {
+    const warning = document.createElement("div");
+    warning.id = "port25Warning";
+    warning.className = "port25-warning";
+    warning.innerHTML = `
+      <div class="warning-content">
+        ⚠️ <strong>Note:</strong> Port 25 scanning is blocked by our hosting provider for security reasons. 
+        Results may show as closed/filtered even if the service is running.
+      </div>
+    `;
+    return warning;
+  };
+
+  // Function to show/hide port 25 warning
+  const handlePort25Warning = () => {
+    const port = portInput.value;
+    const existingWarning = document.getElementById("port25Warning");
+    
+    if (port === "25") {
+      if (!existingWarning) {
+        const warning = createPort25Warning();
+        portInput.parentNode.appendChild(warning);
+      }
+    } else {
+      if (existingWarning) {
+        existingWarning.remove();
+      }
+    }
+  };
+
   const performScan = async () => {
     const host = hostInput.value;
     const port = portInput.value;
@@ -30,6 +61,9 @@ function initPortScan() {
   };
 
   performPortScanBtn.addEventListener("click", performScan);
+
+  // Event listener for port input changes to show/hide warning
+  portInput.addEventListener("input", handlePort25Warning);
 
   // Event listener for the Enter key in the host input
   hostInput.addEventListener("keypress", function (event) {

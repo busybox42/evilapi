@@ -49,6 +49,7 @@
           <button id="emailInfoBtn" class="nav-btn">Email Info</button>
           <button id="blacklistCheckBtn" class="nav-btn">Email Blacklist Check</button>
           <button id="headerAnalysisBtn" class="nav-btn">Email Header Analysis</button>
+          <button id="ipReputationBtn" class="nav-btn">IP Reputation Checker</button>
           <button id="spamScanBtn" class="nav-btn">Spam Scan</button>
           <button id="dkimToolsBtn" class="nav-btn">DKIM Tools</button>          
           <button id="spfToolsBtn" class="nav-btn">SPF Tools</button>
@@ -147,6 +148,22 @@
       <textarea id="emailHeaderInput" placeholder="Paste email header here" rows="6"></textarea>
       <button id="analyzeHeaderBtn" class="nav-btn">Analyze Header</button>
       <div id="headerAnalysisResults"></div>
+    </div>
+    <div id="ipReputationView" class="content-view hidden">
+      <h2>IP Reputation Checker</h2>
+      <p>Check IP addresses against multiple DNS blacklists (DNSBLs) to assess reputation.</p>
+      
+      <div class="input-group">
+        <input type="text" id="ipReputationInput" class="form-input" placeholder="Enter IP address (e.g., 8.8.8.8)" style="width: 300px;">
+        <button id="checkIpReputationBtn" class="nav-btn">Check Reputation</button>
+      </div>
+      
+      <div id="ipReputationLoading" class="loading-indicator hidden">
+        <div class="spinner"></div>
+        <p>Checking IP reputation across multiple blacklists...</p>
+      </div>
+      
+      <div id="ipReputationResults"></div>
     </div>
     <div id="spamScanView" class="content-view hidden">
       <h2>SpamAssassin Scan</h2>
