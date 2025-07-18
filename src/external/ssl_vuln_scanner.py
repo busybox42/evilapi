@@ -316,11 +316,13 @@ def detect_protocols_and_ciphers(host, port):
 
     protocols = []
     cipher_strengths = []
-    protocol_versions = [
-        ("TLSv1.3", ssl.PROTOCOL_TLS_CLIENT),
-        ("TLSv1.2", ssl.PROTOCOL_TLSv1_2),
-        ("TLSv1.1", ssl.PROTOCOL_TLSv1_1),
-        ("TLSv1.0", ssl.PROTOCOL_TLSv1),
+    
+    # Test protocol versions using proper individual protocol testing
+    protocol_tests = [
+        ("TLSv1.3", "TLSv1_3"),
+        ("TLSv1.2", "TLSv1_2"),
+        ("TLSv1.1", "TLSv1_1"),
+        ("TLSv1.0", "TLSv1"),
     ]
     
     # Common STARTTLS ports and their associated protocols
@@ -331,16 +333,77 @@ def detect_protocols_and_ciphers(host, port):
         587: "smtp",
     }
 
-    for name, proto in protocol_versions:
+    for name, version_attr in protocol_tests:
         ssock = None
         try:
-            context = ssl.SSLContext(proto)
+            # Use create_default_context and configure it properly
+            context = ssl.create_default_context()
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            
+            # Set minimum and maximum version to test only this specific version
+            if hasattr(ssl, 'TLSVersion') and hasattr(ssl.TLSVersion, version_attr):
+                tls_version = getattr(ssl.TLSVersion, version_attr)
+                context.minimum_version = tls_version
+                context.maximum_version = tls_version
+            else:
+                # Fallback for older Python versions - skip deprecated protocols
+                if name in ["TLSv1.0", "TLSv1.1"]:
+                    continue
+                # For TLS 1.2 and 1.3, use default context (will negotiate best available)
+                pass
+            
             if port in starttls_ports:
-                # Attempt STARTTLS
+                # Use the existing STARTTLS function but with our specific context
                 try:
-                    ssock = try_starttls_connect(host, port, starttls_ports[port])
+                    sock = socket.create_connection((host, port), timeout=5)
+                    protocol = starttls_ports[port]
+                    
+                    if protocol == "smtp":
+                        # SMTP STARTTLS
+                        banner = sock.recv(4096).decode()
+                        if not banner.startswith("220"):
+                            raise Exception(f"SMTP banner not received: {banner.strip()}")
+                        sock.sendall(b"EHLO example.com\r\n")
+                        ehlo_response = sock.recv(4096).decode()
+                        if "STARTTLS" not in ehlo_response:
+                            raise Exception("STARTTLS not supported by SMTP server")
+                        sock.sendall(b"STARTTLS\r\n")
+                        starttls_response = sock.recv(4096).decode()
+                        if not starttls_response.startswith("220"):
+                            raise Exception(f"STARTTLS command failed: {starttls_response.strip()}")
+                    elif protocol == "imap":
+                        # IMAP STARTTLS
+                        banner = sock.recv(4096).decode()
+                        if not banner.startswith("* OK"):
+                            raise Exception(f"IMAP banner not received: {banner.strip()}")
+                        sock.sendall(b"A1 CAPABILITY\r\n")
+                        cap_response = sock.recv(4096).decode()
+                        if "STARTTLS" not in cap_response:
+                            raise Exception("STARTTLS not supported by IMAP server")
+                        sock.sendall(b"A2 STARTTLS\r\n")
+                        starttls_response = sock.recv(4096).decode()
+                        if not starttls_response.startswith("A2 OK"):
+                            raise Exception(f"STARTTLS command failed: {starttls_response.strip()}")
+                    elif protocol == "pop3":
+                        # POP3 STARTTLS
+                        banner = sock.recv(4096).decode()
+                        if not banner.startswith("+OK"):
+                            raise Exception(f"POP3 banner not received: {banner.strip()}")
+                        sock.sendall(b"CAPA\r\n")
+                        cap_response = sock.recv(4096).decode()
+                        if "STLS" not in cap_response:
+                            raise Exception("STLS not supported by POP3 server")
+                        sock.sendall(b"STLS\r\n")
+                        starttls_response = sock.recv(4096).decode()
+                        if not starttls_response.startswith("+OK"):
+                            raise Exception(f"STLS command failed: {starttls_response.strip()}")
+                    
+                    # Now upgrade to SSL/TLS with our specific context
+                    ssock = context.wrap_socket(sock, server_hostname=host)
                 except Exception:
-                    # If STARTTLS fails, do not fall back to direct SSL for known STARTTLS ports
+                    if ssock:
+                        ssock.close()
                     continue
             else:
                 # Direct SSL/TLS connection
@@ -348,15 +411,18 @@ def detect_protocols_and_ciphers(host, port):
                 ssock = context.wrap_socket(sock, server_hostname=host)
 
             if ssock:
+                # Successfully connected with this protocol version
                 protocols.append(name)
                 cipher = ssock.cipher()
                 if cipher:
                     cipher_strengths.append(cipher[2])
                 ssock.close()
         except Exception:
+            # If connection fails, this protocol version is not supported
             if ssock:
                 ssock.close()
             continue
+    
     return protocols, max(cipher_strengths) if cipher_strengths else 0, {"status": "success", "info": "Protocol detection completed."}
 
 def get_cert_info(host, port):
