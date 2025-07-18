@@ -14,36 +14,59 @@ function extractIPv4(ip) {
 const whoamiService = {
   async getWhoamiData(ipAddressOrHostname) {
     // Extract IPv4 if it's an IPv4-mapped IPv6 address
-    const processedIp = extractIPv4(ipAddressOrHostname);
+    const processedInput = extractIPv4(ipAddressOrHostname);
 
     const whoamiInfo = {
-      ip: processedIp,
+      originalInput: ipAddressOrHostname,
+      ip: processedInput,
+      resolvedIp: null,
       geoInfo: null,
       ptrRecord: null,
       ispInfo: null,
     };
 
-    // Check if the processed IP is an IP address
-    const isIpAddress = net.isIP(processedIp);
+    // Check if the processed input is an IP address
+    const isIpAddress = net.isIP(processedInput);
+    let targetIp = processedInput;
 
-    // Geo location data
-    if (isIpAddress) {
-      whoamiInfo.geoInfo = geoip.lookup(processedIp);
+    // If it's not an IP address, try to resolve it as a hostname
+    if (!isIpAddress) {
+      try {
+        const addresses = await dns.resolve4(processedInput);
+        if (addresses && addresses.length > 0) {
+          targetIp = addresses[0];
+          whoamiInfo.resolvedIp = targetIp;
+        }
+      } catch (error) {
+        console.error("Error resolving hostname:", error.message);
+        // If hostname resolution fails, still try WHOIS with original input
+        targetIp = processedInput;
+      }
     }
 
-    // PTR record (only if it's an IP address)
-    if (isIpAddress) {
+    // Update IP field to show resolved IP if available
+    if (whoamiInfo.resolvedIp) {
+      whoamiInfo.ip = whoamiInfo.resolvedIp;
+    }
+
+    // Geo location data (use resolved IP if available)
+    if (net.isIP(targetIp)) {
+      whoamiInfo.geoInfo = geoip.lookup(targetIp);
+    }
+
+    // PTR record (use resolved IP if available)
+    if (net.isIP(targetIp)) {
       try {
-        const ptrRecord = await dns.reverse(processedIp);
+        const ptrRecord = await dns.reverse(targetIp);
         whoamiInfo.ptrRecord = ptrRecord[0];
       } catch (error) {
         console.error("Error fetching PTR record:", error.message);
       }
     }
 
-    // ISP info using WHOIS data (for both IP addresses and hostnames)
+    // ISP info using WHOIS data (use resolved IP if available, otherwise original input)
     try {
-      const whoisData = await whoisJson(processedIp);
+      const whoisData = await whoisJson(targetIp);
       whoamiInfo.ispInfo = whoisData; // This will contain detailed WHOIS information, including ISP details
     } catch (error) {
       console.error("Error fetching WHOIS data:", error.message);

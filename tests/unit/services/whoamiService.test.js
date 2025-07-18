@@ -1,7 +1,8 @@
 // Mock the dependencies
 jest.mock('dns', () => ({
   promises: {
-    reverse: jest.fn()
+    reverse: jest.fn(),
+    resolve4: jest.fn()
   }
 }));
 
@@ -44,7 +45,9 @@ describe('Whoami Service', () => {
     const result = await whoamiService.getWhoamiData(ipAddress);
 
     // Assert
+    expect(result.originalInput).toBe(ipAddress);
     expect(result.ip).toBe(ipAddress);
+    expect(result.resolvedIp).toBeNull();
     expect(result.geoInfo).toEqual(mockGeoData);
     expect(result.ptrRecord).toBe(mockPtrRecord[0]);
     expect(result.ispInfo).toEqual(mockWhoisData);
@@ -76,7 +79,9 @@ describe('Whoami Service', () => {
     const result = await whoamiService.getWhoamiData(ipv6Address);
 
     // Assert
+    expect(result.originalInput).toBe(ipv6Address);
     expect(result.ip).toBe(ipv4Address);
+    expect(result.resolvedIp).toBeNull();
     expect(result.geoInfo).toEqual(mockGeoData);
     expect(result.ptrRecord).toBe(mockPtrRecord[0]);
     expect(result.ispInfo).toEqual(mockWhoisData);
@@ -85,28 +90,75 @@ describe('Whoami Service', () => {
     expect(whoisJson).toHaveBeenCalledWith(ipv4Address);
   });
 
-  test('should handle hostname', async () => {
+  test('should handle hostname with DNS resolution', async () => {
     // Arrange
     const hostname = 'example.com';
+    const resolvedIp = '93.184.216.34';
+    const mockGeoData = {
+      country: 'US',
+      region: 'MA',
+      city: 'Norwood'
+    };
+    const mockPtrRecord = ['example.com'];
     const mockWhoisData = {
       domainName: 'example.com',
       registrar: 'Example Registrar'
     };
 
-    geoip.lookup.mockReturnValue(null);
+    dns.resolve4.mockResolvedValue([resolvedIp]);
+    geoip.lookup.mockReturnValue(mockGeoData);
+    dns.reverse.mockResolvedValue(mockPtrRecord);
     whoisJson.mockResolvedValue(mockWhoisData);
 
     // Act
     const result = await whoamiService.getWhoamiData(hostname);
 
     // Assert
+    expect(result.originalInput).toBe(hostname);
+    expect(result.ip).toBe(resolvedIp);
+    expect(result.resolvedIp).toBe(resolvedIp);
+    expect(result.geoInfo).toEqual(mockGeoData);
+    expect(result.ptrRecord).toBe(mockPtrRecord[0]);
+    expect(result.ispInfo).toEqual(mockWhoisData);
+    expect(dns.resolve4).toHaveBeenCalledWith(hostname);
+    expect(geoip.lookup).toHaveBeenCalledWith(resolvedIp);
+    expect(dns.reverse).toHaveBeenCalledWith(resolvedIp);
+    expect(whoisJson).toHaveBeenCalledWith(resolvedIp);
+  });
+
+  test('should handle hostname with DNS resolution failure', async () => {
+    // Arrange
+    const hostname = 'nonexistent.example.com';
+    const mockWhoisData = {
+      domainName: 'nonexistent.example.com',
+      registrar: 'Example Registrar'
+    };
+
+    dns.resolve4.mockRejectedValue(new Error('DNS resolution failed'));
+    geoip.lookup.mockReturnValue(null);
+    whoisJson.mockResolvedValue(mockWhoisData);
+
+    // Spy on console.error
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    // Act
+    const result = await whoamiService.getWhoamiData(hostname);
+
+    // Assert
+    expect(result.originalInput).toBe(hostname);
     expect(result.ip).toBe(hostname);
+    expect(result.resolvedIp).toBeNull();
     expect(result.geoInfo).toBeNull();
     expect(result.ptrRecord).toBeNull();
     expect(result.ispInfo).toEqual(mockWhoisData);
+    expect(dns.resolve4).toHaveBeenCalledWith(hostname);
     expect(geoip.lookup).not.toHaveBeenCalled();
     expect(dns.reverse).not.toHaveBeenCalled();
     expect(whoisJson).toHaveBeenCalledWith(hostname);
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error resolving hostname:', 'DNS resolution failed');
+    
+    // Restore console.error
+    consoleErrorSpy.mockRestore();
   });
 
   test('should handle errors in PTR lookup', async () => {
@@ -133,7 +185,9 @@ describe('Whoami Service', () => {
     const result = await whoamiService.getWhoamiData(ipAddress);
 
     // Assert
+    expect(result.originalInput).toBe(ipAddress);
     expect(result.ip).toBe(ipAddress);
+    expect(result.resolvedIp).toBeNull();
     expect(result.geoInfo).toEqual(mockGeoData);
     expect(result.ptrRecord).toBeNull();
     expect(result.ispInfo).toEqual(mockWhoisData);
@@ -164,7 +218,9 @@ describe('Whoami Service', () => {
     const result = await whoamiService.getWhoamiData(ipAddress);
 
     // Assert
+    expect(result.originalInput).toBe(ipAddress);
     expect(result.ip).toBe(ipAddress);
+    expect(result.resolvedIp).toBeNull();
     expect(result.geoInfo).toEqual(mockGeoData);
     expect(result.ptrRecord).toBe(mockPtrRecord[0]);
     expect(result.ispInfo).toBeNull();

@@ -510,10 +510,20 @@ export const formatWhoAmIResult = (data) => {
 
   // IP Information (handle different data structures)
   const ipAddress = data.ip || data.ipAddress || data.query || data.requestedIp;
-  if (ipAddress) {
-    sections.push(createSection('🌐 IP Address Information', 
-      createKeyValue('IP Address', ipAddress, true)
-    ));
+  if (ipAddress || data.resolvedIp || data.originalInput) {
+    let ipContent = '';
+    
+    // Show original input if it was a hostname
+    if (data.originalInput && data.resolvedIp) {
+      ipContent += createKeyValue('Hostname', data.originalInput, true);
+      ipContent += createKeyValue('Resolved IP Address', data.resolvedIp, true);
+    } else if (ipAddress) {
+      ipContent += createKeyValue('IP Address', ipAddress, true);
+    }
+    
+    if (ipContent) {
+      sections.push(createSection('🌐 IP Address Information', ipContent));
+    }
   }
 
   // Location Information (handle geoInfo nested structure)
