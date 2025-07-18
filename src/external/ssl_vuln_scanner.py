@@ -495,6 +495,23 @@ def get_cert_info(host, port):
                             not_before = cert_obj.get_notBefore().decode()
                             not_after = cert_obj.get_notAfter().decode()
                             
+                            # Extract serial number
+                            serial_number = str(cert_obj.get_serial_number())
+                            
+                            # Extract Subject Alternative Names
+                            alt_names = []
+                            for i in range(cert_obj.get_extension_count()):
+                                ext = cert_obj.get_extension(i)
+                                if ext.get_short_name() == b'subjectAltName':
+                                    san_str = str(ext)
+                                    # Parse DNS names from SAN
+                                    dns_names = []
+                                    for part in san_str.split(', '):
+                                        if part.startswith('DNS:'):
+                                            dns_names.append(part[4:])  # Remove 'DNS:' prefix
+                                    alt_names = dns_names
+                                    break
+                            
                             # Convert dates to standard format
                             if not_before:
                                 not_before_dt = datetime.datetime.strptime(not_before, '%Y%m%d%H%M%SZ')
@@ -510,18 +527,24 @@ def get_cert_info(host, port):
                             issuer = []
                             not_before = None
                             not_after = None
+                            serial_number = None
+                            alt_names = []
                         except Exception as e:
                             # Error parsing certificate, use empty data
                             subject = []
                             issuer = []
                             not_before = None
                             not_after = None
+                            serial_number = None
+                            alt_names = []
                     else:
                         # No certificate data available
                         subject = []
                         issuer = []
                         not_before = None
                         not_after = None
+                        serial_number = None
+                        alt_names = []
                 
                 now = datetime.datetime.utcnow()
                 valid = True
@@ -548,6 +571,8 @@ def get_cert_info(host, port):
                     "issuer": issuer,
                     "not_before": not_before,
                     "not_after": not_after,
+                    "serial_number": serial_number,
+                    "alt_names": alt_names,
                     "valid": valid
                 }
             except Exception as e:
