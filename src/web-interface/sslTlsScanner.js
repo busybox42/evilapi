@@ -13,6 +13,41 @@ export function renderSslTlsScanner(container) {
 
   const form = container.querySelector('#ssl-scan-form');
   const resultDiv = container.querySelector('#ssl-scan-result');
+  const portInput = container.querySelector('#ssl-port');
+
+  // Create warning message element for port 25
+  const createPort25Warning = () => {
+    const warning = document.createElement("div");
+    warning.id = "sslPort25Warning";
+    warning.className = "port25-warning";
+    warning.innerHTML = `
+      <div class="warning-content">
+        ⚠️ <strong>Note:</strong> Port 25 is blocked by our hosting provider for security reasons. 
+        SSL/TLS scanning on port 25 may fail even if the service is running. Consider testing port 587 (STARTTLS) or 465 (SSL/TLS) instead.
+      </div>
+    `;
+    return warning;
+  };
+
+  // Function to show/hide port 25 warning
+  const handlePort25Warning = () => {
+    const port = portInput.value;
+    const existingWarning = container.querySelector("#sslPort25Warning");
+    
+    if (port === "25") {
+      if (!existingWarning) {
+        const warning = createPort25Warning();
+        form.appendChild(warning);
+      }
+    } else {
+      if (existingWarning) {
+        existingWarning.remove();
+      }
+    }
+  };
+
+  // Add event listener for port input changes
+  portInput.addEventListener("input", handlePort25Warning);
 
   form.onsubmit = async (e) => {
     e.preventDefault();
