@@ -9,9 +9,9 @@ import traceback
 from urllib.parse import urlparse
 
 def is_ssl_or_starttls_port(port):
-    ssl_ports = [443, 993, 995, 465]
-    starttls_ports = [25, 110, 143, 587]
-    return port in ssl_ports or port in starttls_ports
+    # Instead of only allowing specific ports, block ports that are definitively NOT SSL/TLS
+    non_ssl_ports = {22, 21, 20, 23, 53, 161, 162, 3306, 5432, 6379, 27017, 1433, 1521, 5984, 11211, 6667, 194}
+    return port not in non_ssl_ports
 
 def is_http_port(port):
     http_ports = [80, 443, 8080, 8443]
@@ -578,27 +578,34 @@ def main():
     host = sys.argv[1]
     port = int(sys.argv[2])
     
-    # Check if port is appropriate for SSL/TLS scanning
-    if not is_ssl_or_starttls_port(port) and port != 80:
-        # For non-SSL/TLS ports, return an informative message
-        common_ports = {
-            22: "SSH",
-            21: "FTP",
-            23: "Telnet",
-            53: "DNS",
-            161: "SNMP",
-            389: "LDAP",
-            3306: "MySQL",
-            5432: "PostgreSQL",
-            6379: "Redis",
-            27017: "MongoDB"
-        }
-        
-        service_name = common_ports.get(port, "Unknown service")
-        
+    # Check if port is definitively NOT an SSL/TLS service
+    # Only block ports that are clearly non-SSL/TLS protocols
+    non_ssl_ports = {
+        22: "SSH",
+        21: "FTP (control)",
+        20: "FTP (data)",
+        23: "Telnet",
+        53: "DNS",
+        161: "SNMP",
+        162: "SNMP Trap",
+        3306: "MySQL",
+        5432: "PostgreSQL",
+        6379: "Redis",
+        27017: "MongoDB",
+        1433: "SQL Server",
+        1521: "Oracle",
+        5984: "CouchDB",
+        11211: "Memcached",
+        6667: "IRC",
+        194: "IRC"
+    }
+    
+    # Only block if it's a definitively non-SSL/TLS port
+    if port in non_ssl_ports:
+        service_name = non_ssl_ports[port]
         output = {
             "error": f"Port {port} is not an SSL/TLS service port",
-            "info": f"Port {port} is typically used for {service_name}, not SSL/TLS. SSL/TLS vulnerability scanning is only applicable to HTTPS (443), SMTPS (465), IMAPS (993), POP3S (995), and STARTTLS ports (25, 110, 143, 587).",
+            "info": f"Port {port} is typically used for {service_name}, which doesn't support SSL/TLS. If you believe this port is running an SSL/TLS service, please verify the port number. Common SSL/TLS ports include: HTTPS (443), SMTPS (465), IMAPS (993), POP3S (995), LDAPS (636), FTPS (989/990), and STARTTLS ports (25, 110, 143, 587).",
             "results": {},
             "protocol_support": [],
             "cipher_strength": 0,
