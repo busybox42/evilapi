@@ -72,6 +72,17 @@ export function renderSslTlsScanner(container) {
 function renderSslScanResult(data) {
   if (!data) return '<em>No result</em>';
   let html = `<h3>Result for ${data.host}:${data.port}</h3>`;
+  
+  // Handle non-SSL/TLS port error responses (both direct and wrapped formats)
+  const errorData = data.error ? data : data.vulnerabilities;
+  if (errorData && errorData.error && errorData.info) {
+    html += `<div style="background:#f0f0f0;border-left:4px solid #2196f3;padding:16px;margin:1em 0;border-radius:4px;">
+      <div style="color:#2196f3;font-weight:bold;margin-bottom:8px;">ℹ️ ${errorData.error}</div>
+      <div style="color:#666;line-height:1.4;">${errorData.info}</div>
+    </div>`;
+    return html;
+  }
+  
   const vdata = data.vulnerabilities || {};
   // Grade badge
   if (vdata.grade) {

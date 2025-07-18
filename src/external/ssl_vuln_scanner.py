@@ -577,6 +577,38 @@ def main():
         sys.exit(1)
     host = sys.argv[1]
     port = int(sys.argv[2])
+    
+    # Check if port is appropriate for SSL/TLS scanning
+    if not is_ssl_or_starttls_port(port) and port != 80:
+        # For non-SSL/TLS ports, return an informative message
+        common_ports = {
+            22: "SSH",
+            21: "FTP",
+            23: "Telnet",
+            53: "DNS",
+            161: "SNMP",
+            389: "LDAP",
+            3306: "MySQL",
+            5432: "PostgreSQL",
+            6379: "Redis",
+            27017: "MongoDB"
+        }
+        
+        service_name = common_ports.get(port, "Unknown service")
+        
+        output = {
+            "error": f"Port {port} is not an SSL/TLS service port",
+            "info": f"Port {port} is typically used for {service_name}, not SSL/TLS. SSL/TLS vulnerability scanning is only applicable to HTTPS (443), SMTPS (465), IMAPS (993), POP3S (995), and STARTTLS ports (25, 110, 143, 587).",
+            "results": {},
+            "protocol_support": [],
+            "cipher_strength": 0,
+            "cert_info": {"error": f"Port {port} is not an SSL/TLS service port", "valid": False},
+            "grade": "N/A",
+            "grade_breakdown": [f"Port {port} is not an SSL/TLS service port"]
+        }
+        print(json.dumps(output))
+        return
+    
     results = {}
     results["Heartbleed"] = check_heartbleed(host, port)
     results["POODLE"] = check_poodle(host, port)
