@@ -495,6 +495,40 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
     grade = "A"
     reasons = []
 
+    # Check if this is a connection/service issue rather than SSL/TLS issue
+    connection_errors = []
+    ssl_service_detected = False
+    
+    # Analyze connection errors to determine if SSL/TLS service exists
+    for vuln_name, vuln_result in results.items():
+        if isinstance(vuln_result, dict) and vuln_result.get("info"):
+            error_info = vuln_result.get("info", "")
+            if "Host is unreachable" in error_info or "Connection refused" in error_info:
+                connection_errors.append("unreachable")
+            elif "wrong version number" in error_info:
+                connection_errors.append("not_ssl_service")
+            elif "Connection reset by peer" in error_info:
+                connection_errors.append("connection_reset")
+            elif any(ssl_indicator in error_info.lower() for ssl_indicator in ["ssl", "tls", "certificate", "handshake"]):
+                ssl_service_detected = True
+    
+    # If we have cert_info or protocol_support, SSL/TLS service exists
+    if cert_info and not cert_info.get("error"):
+        ssl_service_detected = True
+    if protocol_support:
+        ssl_service_detected = True
+    
+    # If no SSL/TLS service detected, return N/A
+    if not ssl_service_detected:
+        if "unreachable" in connection_errors:
+            return {"grade": "N/A", "reasons": ["Host or port is unreachable - no service detected"]}
+        elif "not_ssl_service" in connection_errors:
+            return {"grade": "N/A", "reasons": ["Port is open but not running an SSL/TLS service"]}
+        elif "connection_reset" in connection_errors:
+            return {"grade": "N/A", "reasons": ["Connection rejected - likely not an SSL/TLS service"]}
+        else:
+            return {"grade": "N/A", "reasons": ["No SSL/TLS service detected on this port"]}
+
     # If it's not an SSL/STARTTLS port and not an HTTP port, it's an F by default
     if not is_ssl_or_starttls_port(port) and not is_http_port(port):
         grade = "F"
@@ -523,7 +557,7 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
                     https_grade_info = compute_ssl_grade(https_redirect_results, https_redirect_results.get("cert_info"), https_redirect_results.get("protocol_support", []), https_redirect_results.get("cipher_strength", 0), 443) # Pass 443 as port for recursive call
                     grade = https_grade_info["grade"]
                     reasons.extend(https_grade_info["reasons"])
-                    reasons.append(f"HTTP redirects to HTTPS. Grade based on {http_redirect_status.get("info")}")
+                    reasons.append(f"HTTP redirects to HTTPS. Grade based on {http_redirect_status.get('info')}")
                 else:
                     grade = "F"
                     reasons.append("HTTP redirects to HTTPS, but secondary HTTPS scan failed.")
@@ -532,14 +566,9 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
                 reasons.append("HTTP does not redirect to HTTPS.")
             elif http_redirect_status.get("status") == "error":
                 grade = "F"
-                reasons.append(f"HTTP redirect check failed: {http_redirect_status.get("info")}")
+                reasons.append(f"HTTP redirect check failed: {http_redirect_status.get('info')}")
 
     if is_ssl_relevant:
-        # If SSL/TLS is relevant but no protocols were detected and cert info has an error, it's an F
-        if not protocol_support and cert_info and cert_info.get("error") and grade != "F":
-            grade = "F"
-            reasons.append("Failed to establish SSL/TLS connection on a relevant port.")
-
         # Protocol support
         if protocol_support:
             if "SSLv3" in protocol_support or "SSLv2" in protocol_support:
@@ -570,6 +599,64 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
                 reasons.append(f"Weak: {vuln}")
 
     return {"grade": grade, "reasons": reasons}
+
+def detect_basic_service(host, port):
+    """
+    Basic service detection for non-SSL/TLS ports
+    Returns a dictionary with service information
+    """
+    try:
+        sock = socket.create_connection((host, port), timeout=5)
+        
+        # Try to read a banner (many services send one immediately)
+        banner = ""
+        try:
+            sock.settimeout(2)
+            banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
+        except:
+            pass
+        
+        # Send a basic HTTP request to see if it's HTTP
+        if not banner:
+            try:
+                sock.sendall(b"GET / HTTP/1.0\r\n\r\n")
+                sock.settimeout(2)
+                response = sock.recv(1024).decode('utf-8', errors='ignore')
+                if response.startswith("HTTP/"):
+                    banner = response.split('\n')[0].strip()
+            except:
+                pass
+        
+        sock.close()
+        
+        # Analyze the banner to identify services
+        if banner:
+            banner_lower = banner.lower()
+            if "ssh" in banner_lower:
+                return {"service": "SSH", "banner": banner, "description": "Secure Shell server"}
+            elif "ftp" in banner_lower:
+                return {"service": "FTP", "banner": banner, "description": "File Transfer Protocol server"}
+            elif "http" in banner_lower:
+                return {"service": "HTTP", "banner": banner, "description": "HTTP web server"}
+            elif "smtp" in banner_lower:
+                return {"service": "SMTP", "banner": banner, "description": "Simple Mail Transfer Protocol server"}
+            elif "pop3" in banner_lower:
+                return {"service": "POP3", "banner": banner, "description": "Post Office Protocol v3 server"}
+            elif "imap" in banner_lower:
+                return {"service": "IMAP", "banner": banner, "description": "Internet Message Access Protocol server"}
+            elif "mysql" in banner_lower:
+                return {"service": "MySQL", "banner": banner, "description": "MySQL database server"}
+            else:
+                return {"service": "Unknown", "banner": banner, "description": "Unknown service"}
+        else:
+            return {"service": "Unknown", "banner": "", "description": "Service detected but no banner received"}
+    
+    except socket.timeout:
+        return {"error": "Service detection timed out"}
+    except ConnectionRefusedError:
+        return {"error": "Connection refused"}
+    except Exception as e:
+        return {"error": f"Service detection failed: {str(e)}"}
 
 def main():
     if len(sys.argv) != 3:
@@ -603,9 +690,23 @@ def main():
     # Only block if it's a definitively non-SSL/TLS port
     if port in non_ssl_ports:
         service_name = non_ssl_ports[port]
+        # Try to detect what's actually running
+        service_info = detect_basic_service(host, port)
+        
+        info_message = f"Port {port} is typically used for {service_name}, which doesn't support SSL/TLS."
+        if service_info.get("service") and service_info.get("service") != "Unknown":
+            info_message += f" Detected service: {service_info['service']} - {service_info['description']}"
+            if service_info.get("banner"):
+                info_message += f" (Banner: {service_info['banner'][:100]})"
+        elif service_info.get("error"):
+            info_message += f" Service detection: {service_info['error']}"
+        
+        info_message += " If you believe this port is running an SSL/TLS service, please verify the port number. Common SSL/TLS ports include: HTTPS (443), SMTPS (465), IMAPS (993), POP3S (995), LDAPS (636), FTPS (989/990), and STARTTLS ports (25, 110, 143, 587)."
+        
         output = {
             "error": f"Port {port} is not an SSL/TLS service port",
-            "info": f"Port {port} is typically used for {service_name}, which doesn't support SSL/TLS. If you believe this port is running an SSL/TLS service, please verify the port number. Common SSL/TLS ports include: HTTPS (443), SMTPS (465), IMAPS (993), POP3S (995), LDAPS (636), FTPS (989/990), and STARTTLS ports (25, 110, 143, 587).",
+            "info": info_message,
+            "service_detection": service_info if not service_info.get("error") else None,
             "results": {},
             "protocol_support": [],
             "cipher_strength": 0,
@@ -686,6 +787,12 @@ def main():
     except Exception as e:
         cert_info = {"error": str(e), "valid": False}
         results["cert_info_error"] = {"status": "error", "info": f"Certificate information retrieval failed: {e}"}
+    
+    # If no SSL/TLS service was detected, try basic service detection
+    service_detection = None
+    if not protocol_support and cert_info and cert_info.get("error"):
+        service_detection = detect_basic_service(host, port)
+    
     grade_info = compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, port, http_redirect_status, https_redirect_results)
     output = {
         "results": results,
@@ -695,6 +802,11 @@ def main():
         "grade": grade_info["grade"],
         "grade_breakdown": grade_info["reasons"]
     }
+    
+    # Add service detection if available
+    if service_detection and not service_detection.get("error"):
+        output["service_detection"] = service_detection
+    
     print(json.dumps(output))
 
 if __name__ == "__main__":

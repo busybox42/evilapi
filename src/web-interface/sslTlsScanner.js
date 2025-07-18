@@ -80,6 +80,20 @@ function renderSslScanResult(data) {
       <div style="color:#2196f3;font-weight:bold;margin-bottom:8px;">ℹ️ ${errorData.error}</div>
       <div style="color:#666;line-height:1.4;">${errorData.info}</div>
     </div>`;
+    
+    // Add service detection information if available
+    if (errorData.service_detection) {
+      const service = errorData.service_detection;
+      html += `<div style="background:#f9f9f9;border-left:4px solid #4caf50;padding:16px;margin:1em 0;border-radius:4px;">
+        <div style="color:#4caf50;font-weight:bold;margin-bottom:8px;">🔍 Service Detection</div>
+        <div style="color:#333;">
+          <strong>Service:</strong> ${service.service}<br>
+          <strong>Description:</strong> ${service.description}
+          ${service.banner ? `<br><strong>Banner:</strong> <code style="background:#e8e8e8;padding:2px 4px;border-radius:3px;font-size:0.9em;">${service.banner}</code>` : ''}
+        </div>
+      </div>`;
+    }
+    
     return html;
   }
   
@@ -90,7 +104,8 @@ function renderSslScanResult(data) {
     if (vdata.grade === 'B') gradeColor = '#2196f3';
     else if (vdata.grade === 'C') gradeColor = 'orange';
     else if (vdata.grade === 'F') gradeColor = '#ff4444';
-    html += `<div style="margin-bottom:0.7em;"><span style="background:${gradeColor};color:#fff;padding:4px 18px;border-radius:8px;font-size:1.5em;font-weight:bold;letter-spacing:2px;">${vdata.grade}</span> <span style="font-size:1.1em;color:#555;">SSL Grade</span></div>`;
+    else if (vdata.grade === 'N/A') gradeColor = '#888888';
+    html += `<div style="margin-bottom:0.7em;"><span style="background:${gradeColor};color:#fff;padding:4px 18px;border-radius:8px;font-size:1.5em;font-weight:bold;letter-spacing:2px;">${vdata.grade}</span> <span style="font-size:1.1em;color:#555;">${vdata.grade === 'N/A' ? 'Service Status' : 'SSL Grade'}</span></div>`;
     if (Array.isArray(vdata.grade_breakdown) && vdata.grade_breakdown.length) {
       html += `<ul style="margin:0 0 1em 0.5em;padding:0 0 0 1.2em;color:#333;">`;
       for (const reason of vdata.grade_breakdown) {
@@ -105,6 +120,19 @@ function renderSslScanResult(data) {
         html += `<li style="${reasonStyle}">${reason}</li>`;
       }
       html += `</ul>`;
+    }
+    
+    // Add service detection information if available (for N/A grades)
+    if (vdata.grade === 'N/A' && (vdata.service_detection || data.service_detection)) {
+      const service = vdata.service_detection || data.service_detection;
+      html += `<div style="background:#f9f9f9;border-left:4px solid #4caf50;padding:16px;margin:1em 0;border-radius:4px;">
+        <div style="color:#4caf50;font-weight:bold;margin-bottom:8px;">🔍 Service Detection</div>
+        <div style="color:#333;">
+          <strong>Service:</strong> ${service.service}<br>
+          <strong>Description:</strong> ${service.description}
+          ${service.banner ? `<br><strong>Banner:</strong> <code style="background:#e8e8e8;padding:2px 4px;border-radius:3px;font-size:0.9em;">${service.banner}</code>` : ''}
+        </div>
+      </div>`;
     }
   }
   // Vulnerabilities table
