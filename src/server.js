@@ -19,8 +19,8 @@ const sslValidationRoutes = require("./api/routes/sslValidationRoutes");
 const app = express();
 const webApp = express();
 
-// Trust only our nginx proxy
-app.set('trust proxy', '127.0.0.1');
+// Trust nginx proxy - support both local and Docker network
+app.set('trust proxy', ['127.0.0.1', '172.18.0.0/16', '::ffff:172.18.0.0/112']);
 
 // IP access control for logging blacklisted IPs
 app.use((req, res, next) => {
