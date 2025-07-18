@@ -171,19 +171,30 @@ function pruneUploads() {
 
     // Optional Web Server Configuration
     if (config.webServer.enabled) {
-      webApp.use(express.static(path.join(__dirname, "web-interface")));
+      // Mount static files and web interface on the main app (after API routes)
+      app.use(express.static(path.join(__dirname, "web-interface")));
 
-      webApp.get("*", (req, res) => {
+      // Handle any remaining routes that aren't API routes
+      app.get("*", (req, res, next) => {
+        // Only serve the web interface for non-API routes
+        if (req.path.startsWith("/api/")) {
+          return next(); // Let API routes handle this
+        }
         res.sendFile(path.join(__dirname, "web-interface", "index.html"));
       });
 
-      // Remove app.use(webApp) to prevent web server from interfering with API routes
+      // Also run web server on separate port for development
+      webApp.use(express.static(path.join(__dirname, "web-interface")));
+      webApp.get("*", (req, res) => {
+        res.sendFile(path.join(__dirname, "web-interface", "index.html"));
+      });
+      
       http.createServer(webApp).listen(config.webServer.webPort, () => {
         console.log(`Web Server running on port ${config.webServer.webPort}`);
       });
     }
 
-    // Global error handler
+    // Global error handler (only for API routes now)
     app.use((req, res, next) => {
       const error = new Error("Not Found");
       error.status = 404;
