@@ -462,29 +462,99 @@ def get_cert_info(host, port):
                 return {"error": f"Could not establish SSL/TLS connection: {e}", "valid": False}
 
         if ssock:
-            cert = ssock.getpeercert()
-            not_after = cert.get('notAfter')
-            not_before = cert.get('notBefore')
-            subject = cert.get('subject')
-            issuer = cert.get('issuer')
-            now = datetime.datetime.utcnow()
-            valid = True
-            if not_after:
-                exp = datetime.datetime.strptime(not_after, '%b %d %H:%M:%S %Y %Z')
-                if exp < now:
-                    valid = False
-            if not_before:
-                start = datetime.datetime.strptime(not_before, '%b %d %H:%M:%S %Y %Z')
-                if start > now:
-                    valid = False
-            ssock.close()
-            return {
-                "subject": subject,
-                "issuer": issuer,
-                "not_before": not_before,
-                "not_after": not_after,
-                "valid": valid
-            }
+            try:
+                # Try to get certificate in standard format first
+                cert = ssock.getpeercert()
+                if cert and cert.get('subject'):
+                    # Standard format worked
+                    not_after = cert.get('notAfter')
+                    not_before = cert.get('notBefore')
+                    subject = cert.get('subject')
+                    issuer = cert.get('issuer')
+                else:
+                    # Fall back to binary format and parse manually
+                    cert_der = ssock.getpeercert(binary_form=True)
+                    if cert_der:
+                        try:
+                            from OpenSSL import crypto
+                            cert_obj = crypto.load_certificate(crypto.FILETYPE_ASN1, cert_der)
+                            
+                            # Extract subject as dictionary
+                            subject_obj = cert_obj.get_subject()
+                            subject = []
+                            for component in subject_obj.get_components():
+                                subject.append((component[0].decode(), component[1].decode()))
+                            
+                            # Extract issuer as dictionary
+                            issuer_obj = cert_obj.get_issuer()
+                            issuer = []
+                            for component in issuer_obj.get_components():
+                                issuer.append((component[0].decode(), component[1].decode()))
+                            
+                            # Extract dates
+                            not_before = cert_obj.get_notBefore().decode()
+                            not_after = cert_obj.get_notAfter().decode()
+                            
+                            # Convert dates to standard format
+                            if not_before:
+                                not_before_dt = datetime.datetime.strptime(not_before, '%Y%m%d%H%M%SZ')
+                                not_before = not_before_dt.strftime('%b %d %H:%M:%S %Y %Z').replace(' ', ' ').strip()
+                            
+                            if not_after:
+                                not_after_dt = datetime.datetime.strptime(not_after, '%Y%m%d%H%M%SZ')  
+                                not_after = not_after_dt.strftime('%b %d %H:%M:%S %Y %Z').replace(' ', ' ').strip()
+                                
+                        except ImportError:
+                            # OpenSSL not available, use empty data
+                            subject = []
+                            issuer = []
+                            not_before = None
+                            not_after = None
+                        except Exception as e:
+                            # Error parsing certificate, use empty data
+                            subject = []
+                            issuer = []
+                            not_before = None
+                            not_after = None
+                    else:
+                        # No certificate data available
+                        subject = []
+                        issuer = []
+                        not_before = None
+                        not_after = None
+                
+                now = datetime.datetime.utcnow()
+                valid = True
+                if not_after:
+                    try:
+                        exp = datetime.datetime.strptime(not_after, '%b %d %H:%M:%S %Y %Z')
+                        if exp < now:
+                            valid = False
+                    except ValueError:
+                        # Date parsing failed, assume valid
+                        pass
+                if not_before:
+                    try:
+                        start = datetime.datetime.strptime(not_before, '%b %d %H:%M:%S %Y %Z')
+                        if start > now:
+                            valid = False
+                    except ValueError:
+                        # Date parsing failed, assume valid
+                        pass
+                        
+                ssock.close()
+                return {
+                    "subject": subject,
+                    "issuer": issuer,
+                    "not_before": not_before,
+                    "not_after": not_after,
+                    "valid": valid
+                }
+            except Exception as e:
+                # Error processing certificate, close socket and return error
+                if ssock:
+                    ssock.close()
+                return {"error": f"Error processing certificate: {e}", "valid": False}
         else:
             return {"error": "Could not establish SSL/TLS connection", "valid": False}
     except Exception as e:

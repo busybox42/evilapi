@@ -50,11 +50,28 @@ async function getCertInfoFromPythonScanner(hostname, port) {
         // Extract certificate info from Python scanner results
         if (results.cert_info && !results.cert_info.error) {
           const cert = results.cert_info;
+          
+          // Convert subject and issuer from array format to object format
+          const subjectObj = {};
+          const issuerObj = {};
+          
+          if (cert.subject && Array.isArray(cert.subject)) {
+            cert.subject.forEach(([key, value]) => {
+              subjectObj[key] = value;
+            });
+          }
+          
+          if (cert.issuer && Array.isArray(cert.issuer)) {
+            cert.issuer.forEach(([key, value]) => {
+              issuerObj[key] = value;
+            });
+          }
+          
           return resolve({
             valid: cert.valid,
             details: {
-              subject: cert.subject || {},
-              issuer: cert.issuer || {},
+              subject: subjectObj,
+              issuer: issuerObj,
               validFrom: cert.not_before || cert.validFrom,
               validTo: cert.not_after || cert.validTo,
               serialNumber: cert.serial_number || cert.serialNumber,

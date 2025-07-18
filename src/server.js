@@ -14,6 +14,7 @@ const { globalErrorHandler } = require("./middleware/errorHandler");
 const dkimGenKeyRoute = require("./api/routes/dkimGenKeyRoute");
 const dkimLookUpRoute = require("./api/routes/dkimLookUpRoute");
 const spfValidationRoute = require("./api/routes/spfValidationRoute");
+const sslValidationRoutes = require("./api/routes/sslValidationRoutes");
 
 const app = express();
 const webApp = express();
@@ -159,6 +160,7 @@ function pruneUploads() {
         dkimGenKeyRoute,
         dkimLookUpRoute,
         spfValidationRoute,
+        sslValidationRoutes,
     ]);
     
     // Serve static documentation files
@@ -175,8 +177,8 @@ function pruneUploads() {
         res.sendFile(path.join(__dirname, "web-interface", "index.html"));
       });
 
-      app.use(webApp);
-      http.createServer(app).listen(config.webServer.webPort, () => {
+      // Remove app.use(webApp) to prevent web server from interfering with API routes
+      http.createServer(webApp).listen(config.webServer.webPort, () => {
         console.log(`Web Server running on port ${config.webServer.webPort}`);
       });
     }
