@@ -304,8 +304,11 @@ XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X
     </div>
     <div id="sslValidationView" class="content-view hidden">
       <h2>SSL Certificate Validation</h2>
-      <input type="text" id="hostnameInput" placeholder="Enter hostname [optional port]" style="width: 300px;" />
-      <button id="validateSslBtn" class="nav-btn">Validate SSL</button>
+      <div class="ssl-validation-input-group">
+        <input type="text" id="hostnameInput" placeholder="Enter hostname or IP" style="width: 250px;" />
+        <input type="text" id="sslValidationPortInput" placeholder="443" style="width: 75px;" />
+        <button id="validateSslBtn" class="nav-btn">Validate SSL</button>
+      </div>
       <div id="sslValidationResults"></div>
     </div>
     <div id="pgpEncryptionView" class="content-view hidden">

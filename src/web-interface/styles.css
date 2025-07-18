@@ -1802,6 +1802,29 @@ input[type="file"] {
   white-space: nowrap;
 }
 
+.ssl-validation-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ssl-validation-input-group input {
+  width: 200px; /* Fixed width for hostname/IP input */
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.ssl-validation-input-group input[type="text"][placeholder="443"] {
+  width: 75px; /* Fixed width for port input */
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.ssl-validation-input-group button {
+  white-space: nowrap;
+}
+
 .secret-text {
   filter: blur(5px);
   transition: filter 0.3s ease;
