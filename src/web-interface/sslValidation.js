@@ -6,6 +6,14 @@ import { formatSSLValidation } from "./formatters.js";
 async function validateSSL(hostname, port = 443) {
   let url = `${API_URL}/validate-ssl?hostname=${encodeURIComponent(hostname)}&port=${encodeURIComponent(port)}`;
 
+  // Show loading message
+  document.getElementById("sslValidationResults").innerHTML = `
+    <div class="loading-message">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Validating SSL certificate for ${hostname}:${port}...</div>
+    </div>
+  `;
+
   try {
     const response = await fetch(url);
     if (!response.ok) {
