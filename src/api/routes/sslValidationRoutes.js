@@ -5,12 +5,15 @@ const sslValidationService = require("../../services/sslValidationService");
 router.get("/validate-ssl", async (req, res) => {
   try {
     const hostname = req.query.hostname;
+    const port = req.query.port ? parseInt(req.query.port, 10) : 443;
+    
     if (!hostname) {
       return res.status(400).json({ error: "Hostname is required" });
     }
 
     const sslValidationResult = await sslValidationService.validateSSL(
-      hostname
+      hostname,
+      port
     );
 
     // Respond with pretty formatted JSON
