@@ -512,7 +512,19 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
             elif any(ssl_indicator in error_info.lower() for ssl_indicator in ["ssl", "tls", "certificate", "handshake"]):
                 ssl_service_detected = True
     
-    # If we have cert_info or protocol_support, SSL/TLS service exists
+    # Also check cert_info for connection errors
+    if cert_info and cert_info.get("error"):
+        cert_error = cert_info.get("error", "")
+        if "Host is unreachable" in cert_error or "Connection refused" in cert_error:
+            connection_errors.append("unreachable")
+        elif "wrong version number" in cert_error:
+            connection_errors.append("not_ssl_service")
+        elif "Connection reset by peer" in cert_error:
+            connection_errors.append("connection_reset")
+        elif any(ssl_indicator in cert_error.lower() for ssl_indicator in ["ssl", "tls", "certificate", "handshake"]):
+            ssl_service_detected = True
+    
+    # If we have cert_info without error or protocol_support, SSL/TLS service exists
     if cert_info and not cert_info.get("error"):
         ssl_service_detected = True
     if protocol_support:
@@ -540,7 +552,8 @@ def compute_ssl_grade(results, cert_info, protocol_support, cipher_strength, por
     # If cert_info is not applicable, don't penalize the grade and mark as not SSL relevant
     if cert_info and cert_info.get("status") == "not_applicable":
         pass
-    elif cert_info and not cert_info.get("valid", True):
+    elif cert_info and not cert_info.get("error") and not cert_info.get("valid", True):
+        # Only validate certificates if there's no connection error
         grade = "F"
         reasons.append("Certificate invalid/expired")
 
