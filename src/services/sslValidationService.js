@@ -97,24 +97,23 @@ async function getCertInfoFromPythonScanner(hostname, port) {
 const validateSSL = async (hostname, port = 443) => {
   console.log(`SSL Validation: Starting validation for ${hostname}:${port}`);
   
-  // For STARTTLS ports, use Python SSL scanner which handles the protocol properly
-  if (isStarttlsPort(port)) {
-    console.log(`SSL Validation: Port ${port} is a STARTTLS port, using Python SSL scanner`);
-    try {
-      const result = await getCertInfoFromPythonScanner(hostname, port);
-      console.log(`SSL Validation: Python scanner succeeded for ${hostname}:${port}`);
-      return result;
-    } catch (error) {
-      console.error(`SSL Validation: Python scanner failed for ${hostname}:${port}:`, error);
-      // If Python scanner fails, return the error
-      return {
-        valid: false,
-        errors: [error.message]
-      };
-    }
+  // Use Python SSL scanner for all SSL/TLS ports - it's more robust and handles all protocols
+  console.log(`SSL Validation: Using Python SSL scanner for ${hostname}:${port}`);
+  try {
+    const result = await getCertInfoFromPythonScanner(hostname, port);
+    console.log(`SSL Validation: Python scanner succeeded for ${hostname}:${port}`);
+    return result;
+  } catch (error) {
+    console.error(`SSL Validation: Python scanner failed for ${hostname}:${port}:`, error);
+    // If Python scanner fails, return the error
+    return {
+      valid: false,
+      errors: [error.message]
+    };
   }
   
-  console.log(`SSL Validation: Port ${port} is not a STARTTLS port, using Node.js https module`);
+  // Keep the Node.js approach as fallback (though it's not used anymore)
+  console.log(`SSL Validation: Fallback to Node.js https module (not used anymore)`);
   
   // For direct SSL/TLS ports, use the existing Node.js approach
   return new Promise((resolve, reject) => {
