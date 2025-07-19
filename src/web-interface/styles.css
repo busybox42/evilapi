@@ -2431,6 +2431,8 @@ input[type="file"] {
 .value-cell {
   color: #E0E0E0;
   word-break: break-all;
+  width: auto;
+  min-width: 150px;
 }
 
 .no-value {
@@ -2438,11 +2440,3 @@ input[type="file"] {
   font-style: italic;
 }
 
-/* Full text styling */
-.fulltext-cell {
-  color: #BDBDBD;
-  font-family: monospace;
-  background-color: #2a2a2a;
-  border-radius: 3px;
-  padding: 6px 8px !important;
-}

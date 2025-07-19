@@ -88,7 +88,6 @@ async function validateSpfRecord() {
                     <td class="qualifier-cell ${qualifierClass}">${m.qualifier}</td>
                     <td class="type-cell ${typeClass}">${m.type}</td>
                     <td class="value-cell">${m.value || '<span class="no-value">—</span>'}</td>
-                    <td class="fulltext-cell">${m.fullText}</td>
                 </tr>
             `;
         }).join('');
@@ -131,7 +130,6 @@ async function validateSpfRecord() {
                                 <th>Qualifier</th>
                                 <th>Type</th>
                                 <th>Value</th>
-                                <th>Full Text</th>
                             </tr>
                         </thead>
                         <tbody>
