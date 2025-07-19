@@ -171,11 +171,12 @@ const validateSpfRecord = (spfRecord) => {
       errors.push(`Invalid mechanism: ${mechanismType}`);
     }
 
-    // Check for duplicate mechanisms
-    if (seenMechanisms.has(mechanismType)) {
-      warnings.push(`Duplicate mechanism: ${mechanismType}`);
+    // Check for duplicate mechanisms (full mechanism, not just type)
+    const fullMechanism = part.toLowerCase();
+    if (seenMechanisms.has(fullMechanism)) {
+      warnings.push(`Duplicate mechanism: ${part}`);
     }
-    seenMechanisms.add(mechanismType);
+    seenMechanisms.add(fullMechanism);
 
     // Store mechanism details
     mechanisms.push({
@@ -205,7 +206,7 @@ const validateSpfRecord = (spfRecord) => {
   }
 
   // Warn about ptr usage
-  if (seenMechanisms.has("ptr")) {
+  if (mechanisms.some(m => m.type === "ptr")) {
     warnings.push("Use of 'ptr' mechanism is discouraged due to performance impact.");
   }
 
