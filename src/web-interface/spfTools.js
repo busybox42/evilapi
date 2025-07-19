@@ -1,4 +1,41 @@
 // SPF Tools functionality
+
+// Function to format SPF record for better readability
+function formatSpfRecord(record) {
+    if (!record) return '';
+    
+    // Split the record into parts, keeping the version at the start
+    const parts = record.trim().split(/\s+/);
+    const version = parts[0]; // v=spf1
+    const mechanisms = parts.slice(1);
+    
+    // Format each mechanism with proper spacing and color coding
+    const formattedMechanisms = mechanisms.map(mechanism => {
+        // Color code different types of mechanisms
+        let className = 'mechanism';
+        if (mechanism.startsWith('include:')) {
+            className += ' mechanism-include';
+        } else if (mechanism.match(/^[+\-~?]?ip[46]:/)) {
+            className += ' mechanism-ip';
+        } else if (mechanism.startsWith('mx') || mechanism.startsWith('a')) {
+            className += ' mechanism-dns';
+        } else if (mechanism === '-all' || mechanism === '~all' || mechanism === '+all' || mechanism === '?all') {
+            className += ' mechanism-all';
+        }
+        
+        return `<span class="${className}">${mechanism}</span>`;
+    });
+    
+    return `
+        <div class="spf-record-parts">
+            <span class="spf-version">${version}</span>
+            <div class="spf-mechanisms">
+                ${formattedMechanisms.join(' ')}
+            </div>
+        </div>
+    `;
+}
+
 async function validateSpfRecord() {
     const domain = document.getElementById('spfDomain').value.trim();
     const resultsDiv = document.getElementById('spfResults');
@@ -50,7 +87,9 @@ async function validateSpfRecord() {
                     <h3>${data.isValid ? '✅ Valid SPF Record' : '❌ Invalid SPF Record'}</h3>
                     <div class="record-display">
                         <strong>Record:</strong>
-                        <pre>${data.record}</pre>
+                        <div class="spf-record-formatted">
+                            ${formatSpfRecord(data.record)}
+                        </div>
                     </div>
                 </div>
 
