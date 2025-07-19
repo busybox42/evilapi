@@ -71,15 +71,27 @@ async function validateSpfRecord() {
             return;
         }
 
-        // Format mechanisms table
-        const mechanismsTable = data.mechanisms.map(m => `
-            <tr>
-                <td>${m.qualifier}</td>
-                <td>${m.type}</td>
-                <td>${m.value || '-'}</td>
-                <td>${m.fullText}</td>
-            </tr>
-        `).join('');
+        // Format mechanisms table with better styling
+        const mechanismsTable = data.mechanisms.map(m => {
+            const qualifierClass = m.qualifier === '+' ? 'qualifier-pass' : 
+                                   m.qualifier === '-' ? 'qualifier-fail' : 
+                                   m.qualifier === '~' ? 'qualifier-soft' : 
+                                   m.qualifier === '?' ? 'qualifier-neutral' : 'qualifier-default';
+            
+            const typeClass = m.type === 'include' ? 'type-include' :
+                             m.type === 'ip4' || m.type === 'ip6' ? 'type-ip' :
+                             m.type === 'mx' || m.type === 'a' ? 'type-dns' :
+                             m.type === 'all' ? 'type-all' : 'type-default';
+            
+            return `
+                <tr class="mechanism-row">
+                    <td class="qualifier-cell ${qualifierClass}">${m.qualifier}</td>
+                    <td class="type-cell ${typeClass}">${m.type}</td>
+                    <td class="value-cell">${m.value || '<span class="no-value">—</span>'}</td>
+                    <td class="fulltext-cell">${m.fullText}</td>
+                </tr>
+            `;
+        }).join('');
 
         resultsDiv.innerHTML = `
             <div class="spf-results ${data.isValid ? 'success' : 'error'}">

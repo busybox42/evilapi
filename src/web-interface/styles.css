@@ -2329,3 +2329,120 @@ input[type="file"] {
   border-color: #F44336;
   font-weight: bold;
 }
+
+/* SPF Mechanisms Table Styling */
+.mechanisms-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: 'Courier New', Consolas, monospace;
+}
+
+.mechanisms-table th {
+  background-color: #2d2d2d;
+  color: #ffffff;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #444;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mechanism-row {
+  border-bottom: 1px solid #333;
+}
+
+.mechanism-row:hover {
+  background-color: #252525;
+}
+
+.mechanism-row:last-child {
+  border-bottom: none;
+}
+
+.mechanisms-table td {
+  padding: 10px 8px;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+/* Qualifier styling */
+.qualifier-cell {
+  width: 80px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.qualifier-pass {
+  color: #4CAF50;
+}
+
+.qualifier-fail {
+  color: #F44336;
+}
+
+.qualifier-soft {
+  color: #FF9800;
+}
+
+.qualifier-neutral {
+  color: #9E9E9E;
+}
+
+.qualifier-default {
+  color: #2196F3;
+}
+
+/* Type styling */
+.type-cell {
+  width: 100px;
+  font-weight: 600;
+}
+
+.type-include {
+  color: #2196F3;
+}
+
+.type-ip {
+  color: #FF9800;
+}
+
+.type-dns {
+  color: #4CAF50;
+}
+
+.type-all {
+  color: #F44336;
+  font-weight: bold;
+}
+
+.type-default {
+  color: #9E9E9E;
+}
+
+/* Value styling */
+.value-cell {
+  color: #E0E0E0;
+  word-break: break-all;
+}
+
+.no-value {
+  color: #666;
+  font-style: italic;
+}
+
+/* Full text styling */
+.fulltext-cell {
+  color: #BDBDBD;
+  font-family: monospace;
+  background-color: #2a2a2a;
+  border-radius: 3px;
+  padding: 6px 8px !important;
+}
